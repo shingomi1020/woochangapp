@@ -14,6 +14,8 @@ const taskClientInput = document.getElementById("taskClientInput");
 const taskDescriptionInput = document.getElementById("taskDescriptionInput");
 const taskReceivedDateInput = document.getElementById("taskReceivedDateInput");
 const taskDueDateInput = document.getElementById("taskDueDateInput");
+const taskSubmitBtn = document.getElementById("taskSubmitBtn");
+const taskCancelBtn = document.getElementById("taskCancelBtn");
 const taskProgressLabel = document.getElementById("taskProgressLabel");
 const taskProgressBar = document.getElementById("taskProgressBar");
 const toast = document.getElementById("toast");
@@ -30,6 +32,7 @@ const text = {
   booting: "\uc571 \uc2e4\ud589\uc744 \uc2dc\uc791\ud558\ub294 \uc911\uc785\ub2c8\ub2e4.",
   readyToAdd: "\uc0c8 \uc5c5\ubb34\ub97c \ubc14\ub85c \ucd94\uac00\ud560 \uc218 \uc788\uc5b4\uc694.",
   taskAdded: "\uc5c5\ubb34\uac00 \ucd94\uac00\ub418\uc5c8\uc2b5\ub2c8\ub2e4. \ub9c8\uac10 \uce98\ub9b0\ub354\uc5d0\ub3c4 \ubc18\uc601\ub429\ub2c8\ub2e4.",
+  taskUpdated: "\uc5c5\ubb34 \uc815\ubcf4\ub97c \uc218\uc815\ud588\uc2b5\ub2c8\ub2e4.",
   invalidTaskDate: "\ub9c8\uac10\uc77c\uc740 \uc811\uc218\uc77c\ubcf4\ub2e4 \ube60\ub97c \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.",
   movedToday: "\uc624\ub298 \ub9c8\uac10 \uc5c5\ubb34\ub85c \uc774\ub3d9\ud588\uc2b5\ub2c8\ub2e4.",
   taskActive: "\uc5c5\ubb34\uac00 \ub2e4\uc2dc \uc9c4\ud589\uc911 \uc0c1\ud0dc\ub85c \ubcc0\uacbd\ub418\uc5c8\uc2b5\ub2c8\ub2e4.",
@@ -56,6 +59,10 @@ const text = {
   countDayLabel: (count) => `${count}\uac1c`,
   ariaDay: (date, count) => `${date} \ub9c8\uac10 \uc5c5\ubb34 ${count}\uac1c`,
   deleteLabel: "\uc0ad\uc81c",
+  editLabel: "\uc218\uc815",
+  cancelEditLabel: "\uc218\uc815 \ucde8\uc18c",
+  submitCreateLabel: "\ucd94\uac00",
+  submitEditLabel: "\uc218\uc815 \uc800\uc7a5",
   activeLabel: "\uc5c5\ubb34 \ubbf8\uc644\ub8cc\ub85c \ubcc0\uacbd",
   doneLabel: "\uc5c5\ubb34 \uc644\ub8cc \ucc98\ub9ac",
   taskStatusDone: "\uc644\ub8cc",
@@ -69,6 +76,7 @@ const state = {
   viewDate: new Date(currentMonth),
   selectedDateKey: formatDateKey(today),
   taskFilter: "all",
+  editingTaskId: null,
   toastTimer: null,
   isLoading: true,
   tasks: [],
@@ -107,6 +115,7 @@ focusTodayBtn.addEventListener("click", () => {
 });
 
 focusInputBtn.addEventListener("click", () => {
+  clearEditingState();
   taskClientInput.focus();
   showToast(text.readyToAdd);
 });
@@ -128,36 +137,65 @@ taskForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  const { data, error } = await requestTasks("/rest/v1/tasks", {
-    method: "POST",
-    headers: {
-      Prefer: "return=representation",
-    },
-    body: JSON.stringify({
-      title: value,
-      done: false,
-      category: "New Task",
-      client,
-      description,
-      received_date: receivedDate,
-      due_date: dueDate,
-    }),
-  });
+  const isEditing = state.editingTaskId !== null;
+  const payload = {
+    title: value,
+    client,
+    description,
+    received_date: receivedDate,
+    due_date: dueDate,
+  };
+
+  const { data, error } = await requestTasks(
+    isEditing ? `/rest/v1/tasks?id=eq.${state.editingTaskId}` : "/rest/v1/tasks",
+    {
+      method: isEditing ? "PATCH" : "POST",
+      headers: {
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(
+        isEditing
+          ? payload
+          : {
+              ...payload,
+              done: false,
+              category: "\uc77c\ubc18 \uc5c5\ubb34",
+            }
+      ),
+    }
+  );
 
   if (error) {
-    handleSupabaseError("Failed to insert task:", error);
+    handleSupabaseError(isEditing ? "Failed to update task:" : "Failed to insert task:", error);
     return;
   }
 
-  state.tasks.unshift(mapTaskRecord(Array.isArray(data) ? data[0] : data));
+  const savedTask = mapTaskRecord(Array.isArray(data) ? data[0] : data);
+
+  if (isEditing) {
+    state.tasks = state.tasks.map((task) => (task.id === savedTask.id ? savedTask : task));
+  } else {
+    state.tasks.unshift(savedTask);
+  }
+
   taskForm.reset();
+  clearEditingState();
   taskReceivedDateInput.value = formatDateKey(today);
   taskDueDateInput.value = formatDateKey(today);
   state.selectedDateKey = dueDate;
   state.viewDate = new Date(new Date(`${dueDate}T00:00:00`).getFullYear(), new Date(`${dueDate}T00:00:00`).getMonth(), 1);
   renderAll();
   taskClientInput.focus();
-  showToast(text.taskAdded);
+  showToast(isEditing ? text.taskUpdated : text.taskAdded);
+});
+
+taskCancelBtn.addEventListener("click", () => {
+  taskForm.reset();
+  clearEditingState();
+  taskReceivedDateInput.value = formatDateKey(today);
+  taskDueDateInput.value = formatDateKey(today);
+  taskClientInput.focus();
+  showToast(text.cancelEditLabel);
 });
 
 filterButtons.forEach((button) => {
@@ -317,7 +355,10 @@ function renderTasks() {
               <span class="task-date-chip">\ub9c8\uac10\uc77c ${formatDisplayDate(task.dueDate)}</span>
             </div>
           </div>
-          <button class="remove-btn" type="button" data-action="remove" data-id="${task.id}">${text.deleteLabel}</button>
+          <div class="task-actions">
+            <button class="edit-btn" type="button" data-action="edit" data-id="${task.id}">${text.editLabel}</button>
+            <button class="remove-btn" type="button" data-action="remove" data-id="${task.id}">${text.deleteLabel}</button>
+          </div>
         </article>
       `
     )
@@ -343,6 +384,24 @@ function renderTasks() {
 
         state.tasks = state.tasks.map((task) => (task.id === taskId ? { ...task, done: nextDone } : task));
         showToast(toggledTask?.done ? text.taskActive : text.taskDone);
+      }
+
+      if (action === "edit") {
+        const currentTask = state.tasks.find((task) => task.id === taskId);
+        if (!currentTask) {
+          return;
+        }
+
+        state.editingTaskId = taskId;
+        taskClientInput.value = currentTask.client || "";
+        taskInput.value = currentTask.title || "";
+        taskDescriptionInput.value = currentTask.description || "";
+        taskReceivedDateInput.value = currentTask.receivedDate || formatDateKey(today);
+        taskDueDateInput.value = currentTask.dueDate || formatDateKey(today);
+        syncFormMode();
+        taskForm.scrollIntoView({ behavior: "smooth", block: "center" });
+        taskInput.focus();
+        return;
       }
 
       if (action === "remove") {
@@ -486,6 +545,17 @@ function handleSupabaseError(prefix, error) {
   showToast(`${text.syncError} (${detail})`);
 }
 
+function clearEditingState() {
+  state.editingTaskId = null;
+  syncFormMode();
+}
+
+function syncFormMode() {
+  const isEditing = state.editingTaskId !== null;
+  taskSubmitBtn.textContent = isEditing ? text.submitEditLabel : text.submitCreateLabel;
+  taskCancelBtn.hidden = !isEditing;
+}
+
 async function requestTasks(path, options = {}) {
   const controller = new AbortController();
   const timeoutId = window.setTimeout(() => controller.abort(), 5000);
@@ -536,11 +606,12 @@ async function requestTasks(path, options = {}) {
 }
 
 function mapTaskRecord(record) {
+  const category = record.category === "New Task" ? "\uc77c\ubc18 \uc5c5\ubb34" : record.category;
   return {
     id: record.id,
     title: record.title,
     done: record.done,
-    category: record.category,
+    category,
     client: record.client,
     description: record.description,
     receivedDate: record.received_date,
@@ -550,4 +621,5 @@ function mapTaskRecord(record) {
 
 taskReceivedDateInput.value = formatDateKey(today);
 taskDueDateInput.value = formatDateKey(today);
+syncFormMode();
 loadTasks();

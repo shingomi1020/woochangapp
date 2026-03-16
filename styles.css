@@ -256,6 +256,12 @@ h2 {
   line-height: 1.6;
 }
 
+.build-stamp {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .hero-btn,
 .ghost-btn,
 .chip,
@@ -399,6 +405,12 @@ h2 {
   gap: 10px;
 }
 
+.calendar-scroll {
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+}
+
 .calendar-topline {
   margin-bottom: 14px;
 }
@@ -415,6 +427,7 @@ h2 {
 }
 
 .weekdays {
+  min-width: 700px;
   margin-bottom: 12px;
   padding: 0 4px;
   font-size: 0.82rem;
@@ -426,6 +439,7 @@ h2 {
 }
 
 .calendar-grid {
+  min-width: 700px;
   gap: 10px;
 }
 
@@ -639,6 +653,16 @@ h2 {
   border-radius: var(--radius-md);
 }
 
+.task-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.task-cancel {
+  min-height: 56px;
+}
+
 .chip.active {
   background: var(--accent);
   color: #ffffff;
@@ -780,6 +804,20 @@ h2 {
 .task-submit {
   min-height: 56px;
   min-width: 110px;
+}
+
+.task-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.edit-btn {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 0;
+  background: var(--accent-soft-2);
+  color: var(--accent-strong);
+  cursor: pointer;
 }
 
 .task-item.is-done .task-title {
@@ -969,18 +1007,33 @@ h2 {
     border-radius: 26px;
   }
 
+  .calendar-scroll {
+    margin: 0 -6px;
+    padding: 0 6px 10px;
+  }
+
+  .weekdays,
   .calendar-grid {
-    gap: 8px;
+    min-width: 620px;
+  }
+
+  .calendar-grid {
+    gap: 10px;
   }
 
   .day-card {
-    min-height: 98px;
-    padding: 10px;
+    min-height: 122px;
+    padding: 12px;
+  }
+
+  .day-number {
+    font-size: 1.2rem;
   }
 
   .mini-event {
-    padding: 6px 8px;
-    font-size: 0.72rem;
+    max-width: 100%;
+    padding: 7px 9px;
+    font-size: 0.78rem;
   }
 
   .task-form {
@@ -997,13 +1050,33 @@ h2 {
     width: 100%;
   }
 
-  .task-item {
-    grid-template-columns: auto 1fr;
+  .task-form-actions {
+    width: 100%;
+    flex-direction: column-reverse;
   }
 
-  .remove-btn {
+  .task-cancel,
+  .task-submit {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .task-item {
+    grid-template-columns: auto 1fr;
+    align-items: start;
+  }
+
+  .task-actions {
     grid-column: 2;
-    justify-self: end;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 8px;
+  }
+
+  .edit-btn,
+  .remove-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
