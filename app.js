@@ -1188,6 +1188,199 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+function mapEmployeeRecord(record) {
+  return {
+    id: record.id,
+    name: record.name || "",
+    employmentType: record.employment_type || "insured",
+    baseSalary: Number(record.base_salary || 0),
+    overtimeRate: Number(record.overtime_rate || 0),
+    weekendRate: Number(record.weekend_rate || 0),
+    createdAt: record.created_at || new Date().toISOString(),
+  };
+}
+
+function mapAttendanceRecord(record) {
+  return {
+    id: record.id,
+    employeeId: record.employee_id,
+    workDate: record.work_date,
+    clockIn: record.clock_in,
+    clockOut: record.clock_out,
+    createdAt: record.created_at || new Date().toISOString(),
+  };
+}
+
+async function loadHrData() {
+  const [employeesResult, attendanceResult] = await Promise.all([
+    requestTasks("/rest/v1/employees?select=*&order=created_at.desc"),
+    requestTasks("/rest/v1/attendance_records?select=*&order=work_date.desc"),
+  ]);
+
+  if (employeesResult.error) {
+    handleSupabaseError("Failed to load employees:", employeesResult.error);
+    return;
+  }
+
+  if (attendanceResult.error) {
+    handleSupabaseError("Failed to load attendance:", attendanceResult.error);
+    return;
+  }
+
+  state.employees = (employeesResult.data ?? []).map(mapEmployeeRecord);
+  state.attendanceRecords = (attendanceResult.data ?? []).map(mapAttendanceRecord);
+  renderHrWorkspace();
+}
+
+async function saveEmployee() {
+  const name = employeeNameInput.value.trim();
+  const employmentType = employeeTypeInput.value;
+  const baseSalary = Number(employeeBaseSalaryInput.value || 0);
+  const overtimeRate = Number(employeeOvertimeRateInput.value || 0);
+  const weekendRate = Number(employeeWeekendRateInput.value || 0);
+
+  if (!name || baseSalary < 0 || overtimeRate < 0 || weekendRate < 0) {
+    return;
+  }
+
+  const { data, error } = await requestTasks("/rest/v1/employees", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
+      name,
+      employment_type: employmentType,
+      base_salary: baseSalary,
+      overtime_rate: overtimeRate,
+      weekend_rate: weekendRate,
+    }),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to insert employee:", error);
+    return;
+  }
+
+  const savedEmployee = mapEmployeeRecord(Array.isArray(data) ? data[0] : data);
+  state.employees.unshift(savedEmployee);
+  employeeForm.reset();
+  employeeTypeInput.value = "insured";
+  renderHrWorkspace();
+  showToast(`${name} 직원을 등록했습니다.`);
+}
+
+async function saveAttendance() {
+  const employeeId = attendanceEmployeeSelect.value;
+  const workDate = attendanceDateInput.value;
+  const clockIn = attendanceClockInInput.value;
+  const clockOut = attendanceClockOutInput.value;
+
+  if (!employeeId || !workDate || !clockIn || !clockOut || clockOut <= clockIn) {
+    return;
+  }
+
+  const { data, error } = await requestTasks("/rest/v1/attendance_records", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
+      employee_id: employeeId,
+      work_date: workDate,
+      clock_in: clockIn,
+      clock_out: clockOut,
+    }),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to insert attendance:", error);
+    return;
+  }
+
+  const savedRecord = mapAttendanceRecord(Array.isArray(data) ? data[0] : data);
+  state.attendanceRecords.unshift(savedRecord);
+  attendanceForm.reset();
+  attendanceDateInput.value = formatDateKey(today);
+  attendanceClockInInput.value = "09:00";
+  attendanceClockOutInput.value = "18:00";
+  renderHrWorkspace();
+  showToast("출퇴근 기록을 저장했습니다.");
+}
+
+function renderEmployeeSelect() {
+  if (!state.employees.length) {
+    attendanceEmployeeSelect.innerHTML = `<option value="">직원을 먼저 등록해 주세요</option>`;
+    return;
+  }
+
+  attendanceEmployeeSelect.innerHTML = [
+    `<option value="">직원을 선택하세요</option>`,
+    ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
+  ].join("");
+}
+
+function renderEmployees() {
+  if (!state.employees.length) {
+    employeeList.innerHTML = `<div class="empty-state">등록된 직원이 없습니다. 기본급과 수당 기준을 먼저 입력해 주세요.</div>`;
+    return;
+  }
+
+  employeeList.innerHTML = state.employees
+    .map(
+      (employee) => `
+        <article class="employee-card">
+          <div class="employee-card-head">
+            <strong>${employee.name}</strong>
+            <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</span>
+          </div>
+          <div class="employee-pay-grid">
+            <span>기본급 ${formatCurrency(employee.baseSalary)}</span>
+            <span>야근 수당 ${formatCurrency(employee.overtimeRate)}/h</span>
+            <span>주말 수당 ${formatCurrency(employee.weekendRate)}/h</span>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderAttendanceList() {
+  if (!state.attendanceRecords.length) {
+    attendanceList.innerHTML = `<div class="empty-state">출근기록부가 비어 있습니다. 직원과 출퇴근 시간을 입력해 주세요.</div>`;
+    return;
+  }
+
+  attendanceList.innerHTML = state.attendanceRecords
+    .slice()
+    .sort((a, b) => `${b.workDate}${b.clockIn}`.localeCompare(`${a.workDate}${a.clockIn}`))
+    .map((record) => {
+      const employee = state.employees.find((item) => String(item.id) === String(record.employeeId));
+      const summary = calculateAttendance(record, employee);
+      return `
+        <article class="attendance-card">
+          <div class="attendance-card-head">
+            <div>
+              <strong>${employee?.name || "알 수 없는 직원"}</strong>
+              <p>${formatLongDate(new Date(`${record.workDate}T00:00:00`))}</p>
+            </div>
+            <span class="task-date-chip">${employee?.employmentType === "freelancer" ? "프리랜서" : "4대보험 적용 직원"}</span>
+          </div>
+          <div class="attendance-times">
+            <span>출근 ${record.clockIn}</span>
+            <span>퇴근 ${record.clockOut}</span>
+            <span>총 ${summary.totalHours.toFixed(1)}시간</span>
+          </div>
+          <div class="attendance-pay-grid">
+            <span>야근 ${summary.overtimeHours.toFixed(1)}시간 / ${formatCurrency(summary.overtimePay)}</span>
+            <span>주말 ${summary.weekendHours.toFixed(1)}시간 / ${formatCurrency(summary.weekendPay)}</span>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
 taskReceivedDateInput.value = formatDateKey(today);
 taskDueDateInput.value = formatDateKey(today);
 taskStatusInput.value = "todo";
@@ -1199,10 +1392,29 @@ employeeTypeInput.value = "insured";
 syncFormMode();
 loadHrState();
 renderHrWorkspace();
+employeeForm.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    void saveEmployee();
+  },
+  true
+);
+attendanceForm.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    void saveAttendance();
+  },
+  true
+);
 switchView(
   ["tasks", "hr", "estimate", "statement", "payroll"].includes(window.location.hash.replace("#", ""))
     ? window.location.hash.replace("#", "")
     : "tasks",
   false
 );
+loadHrData();
 loadTasks();
