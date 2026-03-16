@@ -17,6 +17,8 @@ const taskDueDateInput = document.getElementById("taskDueDateInput");
 const taskProgressLabel = document.getElementById("taskProgressLabel");
 const taskProgressBar = document.getElementById("taskProgressBar");
 const toast = document.getElementById("toast");
+const connectionBadge = document.getElementById("connectionBadge");
+const connectionMessage = document.getElementById("connectionMessage");
 const filterButtons = document.querySelectorAll("[data-filter]");
 const focusTodayBtn = document.getElementById("focusTodayBtn");
 const focusInputBtn = document.getElementById("focusInputBtn");
@@ -35,6 +37,9 @@ const text = {
   taskDeleted: "\uc5c5\ubb34\uac00 \uc0ad\uc81c\ub418\uc5c8\uc2b5\ub2c8\ub2e4.",
   loadingTasks: "\uc5c5\ubb34 \ub370\uc774\ud130\ub97c \ubd88\ub7ec\uc624\ub294 \uc911\uc785\ub2c8\ub2e4.",
   syncError: "\ub370\uc774\ud130 \uc5f0\uacb0\uc5d0 \ubb38\uc81c\uac00 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \uc7a0\uc2dc \ud6c4 \ub2e4\uc2dc \uc2dc\ub3c4\ud574 \uc8fc\uc138\uc694.",
+  connectionChecking: "Supabase \uc5f0\uacb0 \uc0c1\ud0dc\ub97c \ud655\uc778\ud558\ub294 \uc911\uc785\ub2c8\ub2e4.",
+  connectionReady: "Supabase \uc5f0\uacb0\uc740 \uc815\uc0c1\uc785\ub2c8\ub2e4. \ub2e4\ub978 \uc7a5\uce58\uc5d0\uc11c\ub3c4 \uac19\uc740 \ub370\uc774\ud130\ub97c \ubd88\ub7ec\uc62c \uc218 \uc788\uc5b4\uc694.",
+  connectionErrorPrefix: "Supabase \uc5f0\uacb0 \uc2e4\ud328:",
   noTasks:
     "\ud45c\uc2dc\ud560 \ud560 \uc77c\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \uc0c8 \uc5c5\ubb34\ub97c \ucd94\uac00\ud574 \ubcf4\uc138\uc694.",
   noDone: "\uc644\ub8cc\ub41c \uc5c5\ubb34\uac00 \uc544\uc9c1 \uc5c6\uc2b5\ub2c8\ub2e4.",
@@ -123,8 +128,7 @@ taskForm.addEventListener("submit", async (event) => {
     .single();
 
   if (error) {
-    console.error("Failed to insert task:", error);
-    showToast(text.syncError);
+    handleSupabaseError("Failed to insert task:", error);
     return;
   }
 
@@ -313,8 +317,7 @@ function renderTasks() {
         const { error } = await supabase.from("tasks").update({ done: nextDone }).eq("id", taskId);
 
         if (error) {
-          console.error("Failed to toggle task:", error);
-          showToast(text.syncError);
+          handleSupabaseError("Failed to toggle task:", error);
           return;
         }
 
@@ -326,8 +329,7 @@ function renderTasks() {
         const { error } = await supabase.from("tasks").delete().eq("id", taskId);
 
         if (error) {
-          console.error("Failed to delete task:", error);
-          showToast(text.syncError);
+          handleSupabaseError("Failed to delete task:", error);
           return;
         }
 
@@ -374,6 +376,7 @@ function createDayConfig(date, isOutside) {
 
 async function loadTasks() {
   state.isLoading = true;
+  setConnectionState("checking", text.connectionChecking);
   renderAll();
 
   const { data, error } = await supabase.from("tasks").select("*").order("created_at", { ascending: false });
@@ -382,12 +385,13 @@ async function loadTasks() {
     console.error("Failed to load tasks:", error);
     state.isLoading = false;
     renderAll();
-    showToast(text.syncError);
+    handleSupabaseError("Failed to load tasks:", error);
     return;
   }
 
   state.tasks = (data ?? []).map(mapTaskRecord);
   state.isLoading = false;
+  setConnectionState("ready", text.connectionReady);
   renderAll();
 }
 
@@ -435,6 +439,30 @@ function showToast(message) {
   toast.textContent = message;
   toast.classList.add("is-visible");
   state.toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
+}
+
+function setConnectionState(status, message) {
+  connectionBadge.className = `connection-badge is-${status}`;
+  connectionMessage.textContent = message;
+
+  if (status === "ready") {
+    connectionBadge.textContent = "\uc5f0\uacb0 \uc815\uc0c1";
+    return;
+  }
+
+  if (status === "error") {
+    connectionBadge.textContent = "\uc5f0\uacb0 \uc2e4\ud328";
+    return;
+  }
+
+  connectionBadge.textContent = "\ud655\uc778 \uc911";
+}
+
+function handleSupabaseError(prefix, error) {
+  const detail = error?.message || error?.hint || error?.details || "\uc54c \uc218 \uc5c6\ub294 \uc624\ub958";
+  console.error(prefix, error);
+  setConnectionState("error", `${text.connectionErrorPrefix} ${detail}`);
+  showToast(`${text.syncError} (${detail})`);
 }
 
 function mapTaskRecord(record) {
