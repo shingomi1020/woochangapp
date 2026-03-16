@@ -392,6 +392,18 @@ function renderTasks() {
             <div class="task-title">${task.title}</div>
             <div class="task-meta">${getStatusLabel(task.status)} · ${getPriorityLabel(task.priority)} · ${task.category}</div>
             <div class="task-description">${task.description ?? ""}</div>
+            <div class="task-inline-controls">
+              <div class="task-choice-group" aria-label="진행 상태 선택">
+                ${renderChoiceButton("status", task, "todo", getStatusLabel("todo"))}
+                ${renderChoiceButton("status", task, "paused", getStatusLabel("paused"))}
+                ${renderChoiceButton("status", task, "done", getStatusLabel("done"))}
+              </div>
+              <div class="task-choice-group" aria-label="중요도 선택">
+                ${renderChoiceButton("priority", task, "high", getPriorityLabel("high"))}
+                ${renderChoiceButton("priority", task, "medium", getPriorityLabel("medium"))}
+                ${renderChoiceButton("priority", task, "low", getPriorityLabel("low"))}
+              </div>
+            </div>
             <div class="task-dates">
               <span class="task-date-chip">\uc811\uc218\uc77c ${formatDisplayDate(task.receivedDate)}</span>
               <span class="task-date-chip">\ub9c8\uac10\uc77c ${formatDisplayDate(task.dueDate)}</span>
@@ -431,6 +443,52 @@ function renderTasks() {
           task.id === taskId ? { ...task, done: nextDone, status: nextStatus } : task
         );
         showToast(toggledTask?.done ? text.taskActive : text.taskDone);
+      }
+
+      if (action === "status") {
+        const nextStatus = button.dataset.value;
+        const nextDone = nextStatus === "done";
+        const { error } = await requestTasks(`/rest/v1/tasks?id=eq.${taskId}`, {
+          method: "PATCH",
+          body: JSON.stringify({ status: nextStatus, done: nextDone }),
+        });
+
+        if (error) {
+          handleSupabaseError("Failed to update status:", error);
+          return;
+        }
+
+        state.tasks = state.tasks.map((task) =>
+          task.id === taskId ? { ...task, status: nextStatus, done: nextDone } : task
+        );
+        showToast(`진행 상태를 ${getStatusLabel(nextStatus)}로 변경했습니다.`);
+      }
+
+      if (action === "priority") {
+        const nextPriority = button.dataset.value;
+        let { error } = await requestTasks(`/rest/v1/tasks?id=eq.${taskId}`, {
+          method: "PATCH",
+          body: JSON.stringify({ priority: nextPriority }),
+        });
+
+        if (error && shouldRetryWithoutPriority(error)) {
+          state.tasks = state.tasks.map((task) =>
+            task.id === taskId ? { ...task, priority: nextPriority } : task
+          );
+          renderAll();
+          showToast(`중요도를 ${getPriorityLabel(nextPriority)}으로 표시했습니다.`);
+          return;
+        }
+
+        if (error) {
+          handleSupabaseError("Failed to update priority:", error);
+          return;
+        }
+
+        state.tasks = state.tasks.map((task) =>
+          task.id === taskId ? { ...task, priority: nextPriority } : task
+        );
+        showToast(`중요도를 ${getPriorityLabel(nextPriority)}으로 변경했습니다.`);
       }
 
       if (action === "edit") {
@@ -711,6 +769,12 @@ function renderClientFilterOptions() {
   ].join("");
   clientFilterSelect.value = clients.includes(currentValue) || currentValue === "all" ? currentValue : "all";
   state.clientFilter = clientFilterSelect.value;
+}
+
+function renderChoiceButton(kind, task, value, label) {
+  const isActive = (kind === "status" ? task.status : task.priority) === value;
+  const tone = kind === "status" ? `status-${value}` : `priority-${value}`;
+  return `<button class="task-choice-btn ${tone} ${isActive ? "is-active" : ""}" type="button" data-action="${kind}" data-id="${task.id}" data-value="${value}">${label}</button>`;
 }
 
 function getStatusLabel(status) {
