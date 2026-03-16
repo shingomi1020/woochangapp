@@ -14,8 +14,11 @@ const taskClientInput = document.getElementById("taskClientInput");
 const taskDescriptionInput = document.getElementById("taskDescriptionInput");
 const taskReceivedDateInput = document.getElementById("taskReceivedDateInput");
 const taskDueDateInput = document.getElementById("taskDueDateInput");
+const taskStatusInput = document.getElementById("taskStatusInput");
+const taskPriorityInput = document.getElementById("taskPriorityInput");
 const taskSubmitBtn = document.getElementById("taskSubmitBtn");
 const taskCancelBtn = document.getElementById("taskCancelBtn");
+const clientFilterSelect = document.getElementById("clientFilterSelect");
 const taskProgressLabel = document.getElementById("taskProgressLabel");
 const taskProgressBar = document.getElementById("taskProgressBar");
 const toast = document.getElementById("toast");
@@ -47,6 +50,7 @@ const text = {
   runtimeErrorPrefix: "\ub7f0\ud0c0\uc784 \uc624\ub958:",
   noTasks:
     "\ud45c\uc2dc\ud560 \ud560 \uc77c\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \uc0c8 \uc5c5\ubb34\ub97c \ucd94\uac00\ud574 \ubcf4\uc138\uc694.",
+  noClientTasks: "\uc120\ud0dd\ud55c \uac70\ub798\ucc98\uc5d0 \ud574\ub2f9\ud558\ub294 \uc5c5\ubb34\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.",
   noDone: "\uc644\ub8cc\ub41c \uc5c5\ubb34\uac00 \uc544\uc9c1 \uc5c6\uc2b5\ub2c8\ub2e4.",
   noCalendarTasks:
     "\uc120\ud0dd\ud55c \ub0a0\uc9dc\uc5d0 \ub9c8\uac10\uc778 \uc5c5\ubb34\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.<br />\ud560 \uc77c\uc744 \ucd94\uac00\ud558\uba74 \uce98\ub9b0\ub354\uc5d0 \uc790\ub3d9\uc73c\ub85c \ud45c\uc2dc\ub429\ub2c8\ub2e4.",
@@ -67,6 +71,11 @@ const text = {
   doneLabel: "\uc5c5\ubb34 \uc644\ub8cc \ucc98\ub9ac",
   taskStatusDone: "\uc644\ub8cc",
   taskStatusTodo: "\uc9c4\ud589\uc911",
+  taskStatusPaused: "\ubcf4\ub958",
+  priorityHigh: "\uae34\uae09",
+  priorityMedium: "\ubcf4\ud1b5",
+  priorityLow: "\ub0ae\uc74c",
+  clientFilterAll: "\uc804\uccb4 \uac70\ub798\ucc98",
 };
 
 const today = new Date();
@@ -76,6 +85,7 @@ const state = {
   viewDate: new Date(currentMonth),
   selectedDateKey: formatDateKey(today),
   taskFilter: "all",
+  clientFilter: "all",
   editingTaskId: null,
   toastTimer: null,
   isLoading: true,
@@ -144,9 +154,11 @@ taskForm.addEventListener("submit", async (event) => {
     description,
     received_date: receivedDate,
     due_date: dueDate,
+    status: taskStatusInput.value,
+    priority: taskPriorityInput.value,
   };
 
-  const { data, error } = await requestTasks(
+  let { data, error } = await requestTasks(
     isEditing ? `/rest/v1/tasks?id=eq.${state.editingTaskId}` : "/rest/v1/tasks",
     {
       method: isEditing ? "PATCH" : "POST",
@@ -158,12 +170,34 @@ taskForm.addEventListener("submit", async (event) => {
           ? payload
           : {
               ...payload,
-              done: false,
+              done: taskStatusInput.value === "done",
               category: "\uc77c\ubc18 \uc5c5\ubb34",
             }
       ),
     }
   );
+
+  if (error && shouldRetryWithoutPriority(error)) {
+    ({ data, error } = await requestTasks(
+      isEditing ? `/rest/v1/tasks?id=eq.${state.editingTaskId}` : "/rest/v1/tasks",
+      {
+        method: isEditing ? "PATCH" : "POST",
+        headers: {
+          Prefer: "return=representation",
+        },
+        body: JSON.stringify(
+          isEditing
+            ? { ...payload, priority: undefined }
+            : {
+                ...payload,
+                priority: undefined,
+                done: taskStatusInput.value === "done",
+                category: "\uc77c\ubc18 \uc5c5\ubb34",
+              }
+        ),
+      }
+    ));
+  }
 
   if (error) {
     handleSupabaseError(isEditing ? "Failed to update task:" : "Failed to insert task:", error);
@@ -206,11 +240,17 @@ filterButtons.forEach((button) => {
   });
 });
 
+clientFilterSelect.addEventListener("change", () => {
+  state.clientFilter = clientFilterSelect.value;
+  renderTasks();
+});
+
 function renderAll() {
   renderCalendar();
   renderSelectedDate();
   renderTasks();
   updateMetrics();
+  renderClientFilterOptions();
 }
 
 function renderCalendar() {
@@ -301,12 +341,16 @@ function renderSelectedDate() {
   selectedDateEvents.innerHTML = tasks
     .map(
       (task, index) => `
-        <article class="schedule-item" style="animation-delay:${index * 70}ms">
+        <article class="schedule-item schedule-item-detail priority-${task.priority}" style="animation-delay:${index * 70}ms">
           <div class="schedule-item-head">
             <strong>${task.title}</strong>
-            <span class="day-count">${task.done ? text.taskStatusDone : text.taskStatusTodo}</span>
+            <span class="day-count">${getStatusLabel(task.status)}</span>
           </div>
           <div class="schedule-meta">${task.client} / ${task.description}</div>
+          <div class="schedule-detail-row">
+            <span class="task-date-chip">${getPriorityLabel(task.priority)}</span>
+            <span class="task-date-chip">${isOverdue(task) ? "\ub9c8\uac10 \uc9c0\uc5f0" : isTodayTask(task) ? "\uc624\ub298 \ub9c8\uac10" : "\ub9c8\uac10 \uc608\uc815"}</span>
+          </div>
         </article>
       `
     )
@@ -319,25 +363,23 @@ function renderTasks() {
     return;
   }
 
-  const filteredTasks = state.tasks.filter((task) => {
-    if (state.taskFilter === "todo") {
-      return !task.done;
-    }
-    if (state.taskFilter === "done") {
-      return task.done;
-    }
-    return true;
-  });
+  const filteredTasks = getVisibleTasks();
 
   if (!filteredTasks.length) {
-    taskList.innerHTML = `<div class="empty-state">${state.taskFilter === "done" ? text.noDone : text.noTasks}</div>`;
+    const message =
+      state.clientFilter !== "all"
+        ? text.noClientTasks
+        : state.taskFilter === "done"
+          ? text.noDone
+          : text.noTasks;
+    taskList.innerHTML = `<div class="empty-state">${message}</div>`;
     return;
   }
 
   taskList.innerHTML = filteredTasks
     .map(
       (task, index) => `
-        <article class="task-item ${task.done ? "is-done" : ""}" style="animation-delay:${index * 80}ms">
+        <article class="task-item ${task.done ? "is-done" : ""} priority-${task.priority} ${isOverdue(task) ? "is-overdue" : ""} ${isTodayTask(task) ? "is-today-deadline" : ""}" style="animation-delay:${index * 80}ms">
           <button
             class="check-btn"
             type="button"
@@ -348,11 +390,13 @@ function renderTasks() {
           <div class="task-content">
             <div class="task-client">${task.client ?? task.category}</div>
             <div class="task-title">${task.title}</div>
-            <div class="task-meta">${task.category}</div>
+            <div class="task-meta">${getStatusLabel(task.status)} · ${getPriorityLabel(task.priority)} · ${task.category}</div>
             <div class="task-description">${task.description ?? ""}</div>
             <div class="task-dates">
               <span class="task-date-chip">\uc811\uc218\uc77c ${formatDisplayDate(task.receivedDate)}</span>
               <span class="task-date-chip">\ub9c8\uac10\uc77c ${formatDisplayDate(task.dueDate)}</span>
+              ${isOverdue(task) ? `<span class="task-date-chip task-date-chip-alert">\ub9c8\uac10 \uc9c0\uc5f0</span>` : ""}
+              ${isTodayTask(task) ? `<span class="task-date-chip task-date-chip-today">\uc624\ub298 \ub9c8\uac10</span>` : ""}
             </div>
           </div>
           <div class="task-actions">
@@ -372,9 +416,10 @@ function renderTasks() {
       if (action === "toggle") {
         const toggledTask = state.tasks.find((task) => task.id === taskId);
         const nextDone = !toggledTask?.done;
+        const nextStatus = nextDone ? "done" : "todo";
         const { error } = await requestTasks(`/rest/v1/tasks?id=eq.${taskId}`, {
           method: "PATCH",
-          body: JSON.stringify({ done: nextDone }),
+          body: JSON.stringify({ done: nextDone, status: nextStatus }),
         });
 
         if (error) {
@@ -382,7 +427,9 @@ function renderTasks() {
           return;
         }
 
-        state.tasks = state.tasks.map((task) => (task.id === taskId ? { ...task, done: nextDone } : task));
+        state.tasks = state.tasks.map((task) =>
+          task.id === taskId ? { ...task, done: nextDone, status: nextStatus } : task
+        );
         showToast(toggledTask?.done ? text.taskActive : text.taskDone);
       }
 
@@ -398,6 +445,8 @@ function renderTasks() {
         taskDescriptionInput.value = currentTask.description || "";
         taskReceivedDateInput.value = currentTask.receivedDate || formatDateKey(today);
         taskDueDateInput.value = currentTask.dueDate || formatDateKey(today);
+        taskStatusInput.value = currentTask.status || "todo";
+        taskPriorityInput.value = currentTask.priority || "medium";
         syncFormMode();
         taskForm.scrollIntoView({ behavior: "smooth", block: "center" });
         taskInput.focus();
@@ -442,7 +491,12 @@ function updateCalendarHint() {
 function getTasksByDate(dateKey) {
   return state.tasks
     .filter((task) => task.dueDate === dateKey)
-    .sort((a, b) => Number(a.done) - Number(b.done) || a.title.localeCompare(b.title, "ko"));
+    .sort(
+      (a, b) =>
+        Number(a.done) - Number(b.done) ||
+        priorityWeight(a.priority) - priorityWeight(b.priority) ||
+        a.title.localeCompare(b.title, "ko")
+    );
 }
 
 function createDayConfig(date, isOutside) {
@@ -545,9 +599,16 @@ function handleSupabaseError(prefix, error) {
   showToast(`${text.syncError} (${detail})`);
 }
 
+function shouldRetryWithoutPriority(error) {
+  const source = `${error?.message || ""} ${error?.details || ""} ${error?.hint || ""}`.toLowerCase();
+  return source.includes("priority") && (source.includes("column") || source.includes("schema"));
+}
+
 function clearEditingState() {
   state.editingTaskId = null;
   syncFormMode();
+  taskStatusInput.value = "todo";
+  taskPriorityInput.value = "medium";
 }
 
 function syncFormMode() {
@@ -610,7 +671,9 @@ function mapTaskRecord(record) {
   return {
     id: record.id,
     title: record.title,
-    done: record.done,
+    done: record.done ?? record.status === "done",
+    status: record.status || (record.done ? "done" : "todo"),
+    priority: record.priority || "medium",
     category,
     client: record.client,
     description: record.description,
@@ -619,7 +682,87 @@ function mapTaskRecord(record) {
   };
 }
 
+function getVisibleTasks() {
+  return state.tasks.filter((task) => {
+    if (state.taskFilter === "active" && task.status !== "todo") {
+      return false;
+    }
+    if (state.taskFilter === "paused" && task.status !== "paused") {
+      return false;
+    }
+    if (state.taskFilter === "done" && task.status !== "done") {
+      return false;
+    }
+    if (state.clientFilter !== "all" && task.client !== state.clientFilter) {
+      return false;
+    }
+    return true;
+  });
+}
+
+function renderClientFilterOptions() {
+  const clients = Array.from(new Set(state.tasks.map((task) => task.client).filter(Boolean))).sort((a, b) =>
+    a.localeCompare(b, "ko")
+  );
+  const currentValue = state.clientFilter;
+  clientFilterSelect.innerHTML = [
+    `<option value="all">${text.clientFilterAll}</option>`,
+    ...clients.map((client) => `<option value="${escapeHtml(client)}">${escapeHtml(client)}</option>`),
+  ].join("");
+  clientFilterSelect.value = clients.includes(currentValue) || currentValue === "all" ? currentValue : "all";
+  state.clientFilter = clientFilterSelect.value;
+}
+
+function getStatusLabel(status) {
+  if (status === "done") {
+    return text.taskStatusDone;
+  }
+  if (status === "paused") {
+    return text.taskStatusPaused;
+  }
+  return text.taskStatusTodo;
+}
+
+function getPriorityLabel(priority) {
+  if (priority === "high") {
+    return text.priorityHigh;
+  }
+  if (priority === "low") {
+    return text.priorityLow;
+  }
+  return text.priorityMedium;
+}
+
+function priorityWeight(priority) {
+  if (priority === "high") {
+    return 0;
+  }
+  if (priority === "medium") {
+    return 1;
+  }
+  return 2;
+}
+
+function isTodayTask(task) {
+  return task.status !== "done" && task.dueDate === formatDateKey(today);
+}
+
+function isOverdue(task) {
+  return task.status !== "done" && task.dueDate < formatDateKey(today);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 taskReceivedDateInput.value = formatDateKey(today);
 taskDueDateInput.value = formatDateKey(today);
+taskStatusInput.value = "todo";
+taskPriorityInput.value = "medium";
 syncFormMode();
 loadTasks();
