@@ -25,7 +25,7 @@ const focusInputBtn = document.getElementById("focusInputBtn");
 
 const supabaseUrl = "https://nmnycqaufrpcgdanmpsj.supabase.co";
 const supabaseKey = "sb_publishable_a_WFRivMBscLCg-IPkFcZA_LqpStADT";
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabase = window.supabase?.createClient ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
 
 const text = {
   readyToAdd: "\uc0c8 \uc5c5\ubb34\ub97c \ubc14\ub85c \ucd94\uac00\ud560 \uc218 \uc788\uc5b4\uc694.",
@@ -40,6 +40,9 @@ const text = {
   connectionChecking: "Supabase \uc5f0\uacb0 \uc0c1\ud0dc\ub97c \ud655\uc778\ud558\ub294 \uc911\uc785\ub2c8\ub2e4.",
   connectionReady: "Supabase \uc5f0\uacb0\uc740 \uc815\uc0c1\uc785\ub2c8\ub2e4. \ub2e4\ub978 \uc7a5\uce58\uc5d0\uc11c\ub3c4 \uac19\uc740 \ub370\uc774\ud130\ub97c \ubd88\ub7ec\uc62c \uc218 \uc788\uc5b4\uc694.",
   connectionErrorPrefix: "Supabase \uc5f0\uacb0 \uc2e4\ud328:",
+  scriptLoadError: "Supabase \ub77c\uc774\ube0c\ub7ec\ub9ac\ub97c \ubd88\ub7ec\uc624\uc9c0 \ubabb\ud588\uc2b5\ub2c8\ub2e4. CDN \ucc28\ub2e8 \ub610\ub294 \ub124\ud2b8\uc6cc\ud06c \uc0c1\ud0dc\ub97c \ud655\uc778\ud574 \uc8fc\uc138\uc694.",
+  timeoutError: "Supabase \uc751\ub2f5\uc774 \uc9c0\uc5f0\ub418\uace0 \uc788\uc2b5\ub2c8\ub2e4. \ub124\ud2b8\uc6cc\ud06c \uc0c1\ud0dc \ub610\ub294 \ube0c\ub77c\uc6b0\uc800 \ucc28\ub2e8 \ud655\uc7a5 \ud504\ub85c\uadf8\ub7a8\uc744 \ud655\uc778\ud574 \uc8fc\uc138\uc694.",
+  clientInitError: "Supabase \ud074\ub77c\uc774\uc5b8\ud2b8 \uc0dd\uc131\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4. \uc2a4\ud06c\ub9bd\ud2b8 \ub85c\ub4dc \uc5ec\ubd80\ub97c \ud655\uc778\ud574 \uc8fc\uc138\uc694.",
   noTasks:
     "\ud45c\uc2dc\ud560 \ud560 \uc77c\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \uc0c8 \uc5c5\ubb34\ub97c \ucd94\uac00\ud574 \ubcf4\uc138\uc694.",
   noDone: "\uc644\ub8cc\ub41c \uc5c5\ubb34\uac00 \uc544\uc9c1 \uc5c6\uc2b5\ub2c8\ub2e4.",
@@ -379,10 +382,41 @@ async function loadTasks() {
   setConnectionState("checking", text.connectionChecking);
   renderAll();
 
-  const { data, error } = await supabase.from("tasks").select("*").order("created_at", { ascending: false });
+  if (window.__supabaseScriptFailed) {
+    state.isLoading = false;
+    setConnectionState("error", text.scriptLoadError);
+    renderAll();
+    showToast(text.scriptLoadError);
+    return;
+  }
+
+  if (!supabase) {
+    state.isLoading = false;
+    setConnectionState("error", text.clientInitError);
+    renderAll();
+    showToast(text.clientInitError);
+    return;
+  }
+
+  let response;
+
+  try {
+    response = await Promise.race([
+      supabase.from("tasks").select("*").order("created_at", { ascending: false }),
+      new Promise((_, reject) => {
+        window.setTimeout(() => reject(new Error(text.timeoutError)), 5000);
+      }),
+    ]);
+  } catch (error) {
+    state.isLoading = false;
+    renderAll();
+    handleSupabaseError("Failed to load tasks:", error);
+    return;
+  }
+
+  const { data, error } = response;
 
   if (error) {
-    console.error("Failed to load tasks:", error);
     state.isLoading = false;
     renderAll();
     handleSupabaseError("Failed to load tasks:", error);
