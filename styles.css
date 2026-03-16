@@ -100,8 +100,7 @@ input:focus-visible {
 .hero-copy-wrap,
 .metric-card,
 .panel,
-.schedule-card,
-.modal-dialog {
+.schedule-card {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 255, 0.96)),
     rgba(255, 255, 255, 0.96);
@@ -343,8 +342,6 @@ h2 {
 .schedule-head,
 .calendar-topline,
 .task-toolbar,
-.modal-head,
-.modal-actions,
 .field-row,
 .schedule-actions {
   display: flex;
@@ -549,15 +546,32 @@ h2 {
 }
 
 .task-toolbar {
-  align-items: end;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   margin-bottom: 18px;
+  gap: 14px;
 }
 
 .task-form {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: end;
+  padding: 18px;
+  border: 1px solid rgba(47, 99, 233, 0.08);
+  border-radius: 24px;
+  background: linear-gradient(180deg, #fbfdff, #f5f9ff);
+}
+
+.task-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
   flex: 1;
+}
+
+.task-form-wide {
+  grid-column: 1 / -1;
 }
 
 .task-form input,
@@ -589,15 +603,30 @@ h2 {
   box-shadow: 0 12px 24px rgba(47, 99, 233, 0.2);
 }
 
-.task-summary {
-  min-width: 180px;
+.task-summary-card {
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff, #f5f9ff);
+  border: 1px solid rgba(47, 99, 233, 0.08);
 }
 
-.task-summary span {
-  display: block;
-  margin-bottom: 8px;
+.task-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.task-summary-label,
+.task-summary-head span {
   color: var(--muted);
   font-size: 0.88rem;
+}
+
+.task-summary-head span:last-child {
+  font-weight: 700;
+  color: var(--accent-strong);
 }
 
 .progress-track {
@@ -667,6 +696,50 @@ h2 {
   line-height: 1.4;
 }
 
+.task-client {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 8px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.task-description {
+  margin-top: 8px;
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.task-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.task-date-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f6f9ff;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.task-submit {
+  min-height: 56px;
+  min-width: 110px;
+}
+
 .task-item.is-done .task-title {
   color: #7b8aaa;
   text-decoration: line-through;
@@ -692,50 +765,6 @@ h2 {
   line-height: 1.65;
 }
 
-.modal {
-  position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  z-index: 30;
-  padding: 20px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 220ms ease;
-}
-
-.modal.is-open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(20, 34, 67, 0.22);
-  backdrop-filter: blur(8px);
-}
-
-.modal-dialog {
-  position: relative;
-  width: min(100%, 560px);
-  padding: 24px;
-  border-radius: 30px;
-  transform: translateY(18px) scale(0.98);
-  transition: transform 220ms ease;
-  box-shadow: var(--shadow-strong);
-}
-
-.modal.is-open .modal-dialog {
-  transform: translateY(0) scale(1);
-}
-
-.event-form {
-  display: grid;
-  gap: 16px;
-  margin-top: 18px;
-}
-
 .field {
   display: grid;
   gap: 8px;
@@ -752,15 +781,6 @@ h2 {
 
 .field-row .field {
   flex: 1;
-}
-
-.modal-submit-group {
-  display: flex;
-  gap: 10px;
-}
-
-.hidden {
-  display: none;
 }
 
 .ghost-btn.danger {
@@ -885,14 +905,12 @@ h2 {
   .task-toolbar,
   .panel-head,
   .schedule-head,
-  .field-row,
-  .modal-actions {
+  .field-row {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .task-summary,
-  .modal-submit-group {
+  .task-summary-card {
     width: 100%;
     min-width: 0;
   }
@@ -904,8 +922,7 @@ h2 {
   }
 
   .hero-copy-wrap,
-  .panel,
-  .modal-dialog {
+  .panel {
     padding: 18px;
     border-radius: 26px;
   }
@@ -927,6 +944,15 @@ h2 {
   .task-form {
     width: 100%;
     grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .task-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .task-submit {
+    width: 100%;
   }
 
   .task-item {
