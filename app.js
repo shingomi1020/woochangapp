@@ -25,7 +25,6 @@ const focusInputBtn = document.getElementById("focusInputBtn");
 
 const supabaseUrl = "https://nmnycqaufrpcgdanmpsj.supabase.co";
 const supabaseKey = "sb_publishable_a_WFRivMBscLCg-IPkFcZA_LqpStADT";
-const supabase = window.supabase?.createClient ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
 
 const text = {
   booting: "\uc571 \uc2e4\ud589\uc744 \uc2dc\uc791\ud558\ub294 \uc911\uc785\ub2c8\ub2e4.",
@@ -41,9 +40,7 @@ const text = {
   connectionChecking: "Supabase \uc5f0\uacb0 \uc0c1\ud0dc\ub97c \ud655\uc778\ud558\ub294 \uc911\uc785\ub2c8\ub2e4.",
   connectionReady: "Supabase \uc5f0\uacb0\uc740 \uc815\uc0c1\uc785\ub2c8\ub2e4. \ub2e4\ub978 \uc7a5\uce58\uc5d0\uc11c\ub3c4 \uac19\uc740 \ub370\uc774\ud130\ub97c \ubd88\ub7ec\uc62c \uc218 \uc788\uc5b4\uc694.",
   connectionErrorPrefix: "Supabase \uc5f0\uacb0 \uc2e4\ud328:",
-  scriptLoadError: "Supabase \ub77c\uc774\ube0c\ub7ec\ub9ac\ub97c \ubd88\ub7ec\uc624\uc9c0 \ubabb\ud588\uc2b5\ub2c8\ub2e4. CDN \ucc28\ub2e8 \ub610\ub294 \ub124\ud2b8\uc6cc\ud06c \uc0c1\ud0dc\ub97c \ud655\uc778\ud574 \uc8fc\uc138\uc694.",
   timeoutError: "Supabase \uc751\ub2f5\uc774 \uc9c0\uc5f0\ub418\uace0 \uc788\uc2b5\ub2c8\ub2e4. \ub124\ud2b8\uc6cc\ud06c \uc0c1\ud0dc \ub610\ub294 \ube0c\ub77c\uc6b0\uc800 \ucc28\ub2e8 \ud655\uc7a5 \ud504\ub85c\uadf8\ub7a8\uc744 \ud655\uc778\ud574 \uc8fc\uc138\uc694.",
-  clientInitError: "Supabase \ud074\ub77c\uc774\uc5b8\ud2b8 \uc0dd\uc131\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4. \uc2a4\ud06c\ub9bd\ud2b8 \ub85c\ub4dc \uc5ec\ubd80\ub97c \ud655\uc778\ud574 \uc8fc\uc138\uc694.",
   runtimeErrorPrefix: "\ub7f0\ud0c0\uc784 \uc624\ub958:",
   noTasks:
     "\ud45c\uc2dc\ud560 \ud560 \uc77c\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \uc0c8 \uc5c5\ubb34\ub97c \ucd94\uac00\ud574 \ubcf4\uc138\uc694.",
@@ -131,9 +128,12 @@ taskForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  const { data, error } = await supabase
-    .from("tasks")
-    .insert({
+  const { data, error } = await requestTasks("/rest/v1/tasks", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
       title: value,
       done: false,
       category: "New Task",
@@ -141,16 +141,15 @@ taskForm.addEventListener("submit", async (event) => {
       description,
       received_date: receivedDate,
       due_date: dueDate,
-    })
-    .select()
-    .single();
+    }),
+  });
 
   if (error) {
     handleSupabaseError("Failed to insert task:", error);
     return;
   }
 
-  state.tasks.unshift(mapTaskRecord(data));
+  state.tasks.unshift(mapTaskRecord(Array.isArray(data) ? data[0] : data));
   taskForm.reset();
   taskReceivedDateInput.value = formatDateKey(today);
   taskDueDateInput.value = formatDateKey(today);
@@ -332,7 +331,10 @@ function renderTasks() {
       if (action === "toggle") {
         const toggledTask = state.tasks.find((task) => task.id === taskId);
         const nextDone = !toggledTask?.done;
-        const { error } = await supabase.from("tasks").update({ done: nextDone }).eq("id", taskId);
+        const { error } = await requestTasks(`/rest/v1/tasks?id=eq.${taskId}`, {
+          method: "PATCH",
+          body: JSON.stringify({ done: nextDone }),
+        });
 
         if (error) {
           handleSupabaseError("Failed to toggle task:", error);
@@ -344,7 +346,9 @@ function renderTasks() {
       }
 
       if (action === "remove") {
-        const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+        const { error } = await requestTasks(`/rest/v1/tasks?id=eq.${taskId}`, {
+          method: "DELETE",
+        });
 
         if (error) {
           handleSupabaseError("Failed to delete task:", error);
@@ -397,39 +401,7 @@ async function loadTasks() {
   setConnectionState("checking", text.connectionChecking);
   renderAll();
 
-  if (window.__supabaseScriptFailed) {
-    state.isLoading = false;
-    setConnectionState("error", text.scriptLoadError);
-    renderAll();
-    showToast(text.scriptLoadError);
-    return;
-  }
-
-  if (!supabase) {
-    state.isLoading = false;
-    setConnectionState("error", text.clientInitError);
-    renderAll();
-    showToast(text.clientInitError);
-    return;
-  }
-
-  let response;
-
-  try {
-    response = await Promise.race([
-      supabase.from("tasks").select("*").order("created_at", { ascending: false }),
-      new Promise((_, reject) => {
-        window.setTimeout(() => reject(new Error(text.timeoutError)), 5000);
-      }),
-    ]);
-  } catch (error) {
-    state.isLoading = false;
-    renderAll();
-    handleSupabaseError("Failed to load tasks:", error);
-    return;
-  }
-
-  const { data, error } = response;
+  const { data, error } = await requestTasks("/rest/v1/tasks?select=*&order=created_at.desc");
 
   if (error) {
     state.isLoading = false;
@@ -512,6 +484,55 @@ function handleSupabaseError(prefix, error) {
   console.error(prefix, error);
   setConnectionState("error", `${text.connectionErrorPrefix} ${detail}`);
   showToast(`${text.syncError} (${detail})`);
+}
+
+async function requestTasks(path, options = {}) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+
+  try {
+    const response = await fetch(`${supabaseUrl}${path}`, {
+      method: options.method || "GET",
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+      body: options.body,
+      signal: controller.signal,
+    });
+
+    const raw = await response.text();
+    const parsed = raw ? JSON.parse(raw) : null;
+
+    if (!response.ok) {
+      return {
+        data: null,
+        error: {
+          message: parsed?.message || parsed?.error || `${response.status} ${response.statusText}`,
+          details: parsed?.details || raw,
+          hint: parsed?.hint || "",
+        },
+      };
+    }
+
+    return {
+      data: parsed,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      data: null,
+      error: {
+        message: error?.name === "AbortError" ? text.timeoutError : error?.message || String(error),
+        details: "",
+        hint: "",
+      },
+    };
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
 }
 
 function mapTaskRecord(record) {
