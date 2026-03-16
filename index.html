@@ -10,12 +10,35 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260317-16" />
+    <link rel="stylesheet" href="styles.css?v=20260317-17" />
   </head>
   <body>
     <div class="app-shell">
       <div class="ambient ambient-a"></div>
       <div class="ambient ambient-b"></div>
+
+      <header class="site-nav reveal">
+        <div class="site-nav-inner">
+          <div class="site-brand">
+            <span class="icon-chip">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 3h10v2h3a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1h3V3Zm2 2h6V5H9v0Zm10 2H5v12h14V7ZM7 10h10v2H7v-2Zm0 4h7v2H7v-2Z" />
+              </svg>
+            </span>
+            <div>
+              <strong>FlowBoard</strong>
+              <p>업무와 인사를 한 곳에서</p>
+            </div>
+          </div>
+          <nav class="site-menu" aria-label="상단 메뉴">
+            <button class="site-menu-link active" type="button" data-view="tasks">업무 보드</button>
+            <button class="site-menu-link" type="button" data-view="hr">인사 관리</button>
+            <button class="site-menu-link is-disabled" type="button">견적서</button>
+            <button class="site-menu-link is-disabled" type="button">거래명세서</button>
+            <button class="site-menu-link is-disabled" type="button">급여 관리</button>
+          </nav>
+        </div>
+      </header>
 
       <header class="hero reveal">
         <div class="hero-copy-wrap">
@@ -50,7 +73,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 16</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 17</p>
           </div>
         </div>
 
@@ -87,11 +110,6 @@
           </div>
         </div>
       </header>
-
-      <nav class="workspace-nav reveal delay-1" aria-label="주요 메뉴">
-        <button class="workspace-tab active" type="button" data-view="tasks">업무 보드</button>
-        <button class="workspace-tab" type="button" data-view="hr">인사 관리</button>
-      </nav>
 
       <main id="tasksView" class="dashboard app-view">
         <section class="panel panel-calendar reveal delay-1">
@@ -406,6 +424,6 @@
     <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-16"></script>
+    <script src="app.js?v=20260317-17"></script>
   </body>
 </html>

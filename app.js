@@ -41,6 +41,7 @@ const connectionMessage = document.getElementById("connectionMessage");
 const filterButtons = document.querySelectorAll("[data-filter]");
 const focusTodayBtn = document.getElementById("focusTodayBtn");
 const focusInputBtn = document.getElementById("focusInputBtn");
+const pageHero = document.querySelector(".hero");
 const workspaceTabs = document.querySelectorAll("[data-view]");
 const tasksView = document.getElementById("tasksView");
 const hrView = document.getElementById("hrView");
@@ -171,6 +172,13 @@ workspaceTabs.forEach((tab) => {
   tab.addEventListener("click", () => {
     switchView(tab.dataset.view);
   });
+});
+
+window.addEventListener("hashchange", () => {
+  const nextView = window.location.hash.replace("#", "") || "tasks";
+  if (nextView === "tasks" || nextView === "hr") {
+    switchView(nextView, false);
+  }
 });
 
 taskForm.addEventListener("submit", async (event) => {
@@ -871,12 +879,19 @@ function closeEditModal() {
   clearEditingState();
 }
 
-function switchView(view) {
+function switchView(view, shouldSyncHash = true) {
   state.currentView = view;
   const isTasks = view === "tasks";
+  pageHero.hidden = !isTasks;
   tasksView.hidden = !isTasks;
   hrView.hidden = isTasks;
   workspaceTabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.view === view));
+  if (shouldSyncHash) {
+    const nextHash = `#${view}`;
+    if (window.location.hash !== nextHash) {
+      window.location.hash = nextHash;
+    }
+  }
 }
 
 async function requestTasks(path, options = {}) {
@@ -1182,5 +1197,5 @@ employeeTypeInput.value = "insured";
 syncFormMode();
 loadHrState();
 renderHrWorkspace();
-switchView("tasks");
+switchView(window.location.hash.replace("#", "") || "tasks", false);
 loadTasks();
