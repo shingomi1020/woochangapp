@@ -21,6 +21,10 @@ const filterButtons = document.querySelectorAll("[data-filter]");
 const focusTodayBtn = document.getElementById("focusTodayBtn");
 const focusInputBtn = document.getElementById("focusInputBtn");
 
+const supabaseUrl = "https://nmnycqaufrpcgdanmpsj.supabase.co";
+const supabaseKey = "sb_publishable_a_WFRivMBscLCg-IPkFcZA_LqpStADT";
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
 const text = {
   readyToAdd: "\uc0c8 \uc5c5\ubb34\ub97c \ubc14\ub85c \ucd94\uac00\ud560 \uc218 \uc788\uc5b4\uc694.",
   taskAdded: "\uc5c5\ubb34\uac00 \ucd94\uac00\ub418\uc5c8\uc2b5\ub2c8\ub2e4. \ub9c8\uac10 \uce98\ub9b0\ub354\uc5d0\ub3c4 \ubc18\uc601\ub429\ub2c8\ub2e4.",
@@ -29,6 +33,8 @@ const text = {
   taskActive: "\uc5c5\ubb34\uac00 \ub2e4\uc2dc \uc9c4\ud589\uc911 \uc0c1\ud0dc\ub85c \ubcc0\uacbd\ub418\uc5c8\uc2b5\ub2c8\ub2e4.",
   taskDone: "\uc5c5\ubb34\ub97c \uc644\ub8cc\ud588\uc2b5\ub2c8\ub2e4.",
   taskDeleted: "\uc5c5\ubb34\uac00 \uc0ad\uc81c\ub418\uc5c8\uc2b5\ub2c8\ub2e4.",
+  loadingTasks: "\uc5c5\ubb34 \ub370\uc774\ud130\ub97c \ubd88\ub7ec\uc624\ub294 \uc911\uc785\ub2c8\ub2e4.",
+  syncError: "\ub370\uc774\ud130 \uc5f0\uacb0\uc5d0 \ubb38\uc81c\uac00 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \uc7a0\uc2dc \ud6c4 \ub2e4\uc2dc \uc2dc\ub3c4\ud574 \uc8fc\uc138\uc694.",
   noTasks:
     "\ud45c\uc2dc\ud560 \ud560 \uc77c\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \uc0c8 \uc5c5\ubb34\ub97c \ucd94\uac00\ud574 \ubcf4\uc138\uc694.",
   noDone: "\uc644\ub8cc\ub41c \uc5c5\ubb34\uac00 \uc544\uc9c1 \uc5c6\uc2b5\ub2c8\ub2e4.",
@@ -49,10 +55,6 @@ const text = {
   taskStatusTodo: "\uc9c4\ud589\uc911",
 };
 
-const STORAGE_KEYS = {
-  tasks: "flowboard.tasks",
-};
-
 const today = new Date();
 const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
@@ -61,51 +63,9 @@ const state = {
   selectedDateKey: formatDateKey(today),
   taskFilter: "all",
   toastTimer: null,
-  tasks: [
-    {
-      id: 1,
-      title: "\uc624\uc804 \uc77c\uc815 \ud655\uc778 \ubc0f \uc6b0\uc120\uc21c\uc704 \uc815\ub9ac",
-      done: false,
-      category: "Daily Flow",
-      client: "\ub0b4\ubd80 \uc6b4\uc601",
-      description: "\uae08\uc77c \uc9c4\ud589\ud560 \uc5c5\ubb34 \uc21c\uc11c\ub97c \uc815\ub9ac\ud558\uace0 \uc6b0\uc120\uc21c\uc704\ub97c \ud655\uc815\ud569\ub2c8\ub2e4.",
-      receivedDate: formatDateKey(today),
-      dueDate: formatDateKey(today),
-    },
-    {
-      id: 2,
-      title: "\uace0\uac1d \ubbf8\ud305 \uc900\ube44 \uc790\ub8cc \uc815\ub9ac",
-      done: false,
-      category: "Meeting",
-      client: "\uc6b0\ucc3d\ud2b8\ub808\uc774\ub529",
-      description: "\ubbf8\ud305\uc6a9 \uc81c\uc548\uc11c\uc640 \uc608\uc0c1 \ubb38\uc758 \ub0b4\uc6a9\uc744 \uc815\ub9ac\ud569\ub2c8\ub2e4.",
-      receivedDate: formatDateKey(today),
-      dueDate: addDaysToDateKey(today, 2),
-    },
-    {
-      id: 3,
-      title: "\uc5b4\uc81c \uc644\ub8cc \uc5c5\ubb34 \ud53c\ub4dc\ubc31 \ubc18\uc601",
-      done: true,
-      category: "Review",
-      client: "\ube14\ub8e8\uc2a4\ud018\uc5b4",
-      description: "\uc804\ub2ec\ubc1b\uc740 \ud53c\ub4dc\ubc31\uc744 \ubc18\uc601\ud558\uc5ec \uc5c5\ubb34 \ubb38\uc11c\ub97c \uc218\uc815\ud569\ub2c8\ub2e4.",
-      receivedDate: addDaysToDateKey(today, -1),
-      dueDate: formatDateKey(today),
-    },
-    {
-      id: 4,
-      title: "\uc8fc\uac04 \uc77c\uc815\ud45c \uacf5\uc720",
-      done: false,
-      category: "Team",
-      client: "\ub0b4\ubd80 \uc6b4\uc601",
-      description: "\ud300\uc6d0\uc5d0\uac8c \uc8fc\uac04 \uc77c\uc815\uacfc \ub9c8\uac10 \uc77c\uc815\uc744 \uacf5\uc720\ud569\ub2c8\ub2e4.",
-      receivedDate: formatDateKey(today),
-      dueDate: addDaysToDateKey(today, 4),
-    },
-  ],
+  isLoading: true,
+  tasks: [],
 };
-
-loadStoredTasks();
 
 document.getElementById("prevMonthBtn").addEventListener("click", () => {
   state.viewDate = new Date(state.viewDate.getFullYear(), state.viewDate.getMonth() - 1, 1);
@@ -131,7 +91,7 @@ focusInputBtn.addEventListener("click", () => {
   showToast(text.readyToAdd);
 });
 
-taskForm.addEventListener("submit", (event) => {
+taskForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const value = taskInput.value.trim();
   const client = taskClientInput.value.trim();
@@ -148,18 +108,27 @@ taskForm.addEventListener("submit", (event) => {
     return;
   }
 
-  state.tasks.unshift({
-    id: Date.now(),
-    title: value,
-    done: false,
-    category: "New Task",
-    client,
-    description,
-    receivedDate,
-    dueDate,
-  });
+  const { data, error } = await supabase
+    .from("tasks")
+    .insert({
+      title: value,
+      done: false,
+      category: "New Task",
+      client,
+      description,
+      received_date: receivedDate,
+      due_date: dueDate,
+    })
+    .select()
+    .single();
 
-  persistTasks();
+  if (error) {
+    console.error("Failed to insert task:", error);
+    showToast(text.syncError);
+    return;
+  }
+
+  state.tasks.unshift(mapTaskRecord(data));
   taskForm.reset();
   taskReceivedDateInput.value = formatDateKey(today);
   taskDueDateInput.value = formatDateKey(today);
@@ -286,6 +255,11 @@ function renderSelectedDate() {
 }
 
 function renderTasks() {
+  if (state.isLoading) {
+    taskList.innerHTML = `<div class="empty-state">${text.loadingTasks}</div>`;
+    return;
+  }
+
   const filteredTasks = state.tasks.filter((task) => {
     if (state.taskFilter === "todo") {
       return !task.done;
@@ -329,20 +303,35 @@ function renderTasks() {
     .join("");
 
   taskList.querySelectorAll("[data-action]").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const taskId = Number(button.dataset.id);
       const action = button.dataset.action;
 
       if (action === "toggle") {
         const toggledTask = state.tasks.find((task) => task.id === taskId);
-        state.tasks = state.tasks.map((task) => (task.id === taskId ? { ...task, done: !task.done } : task));
-        persistTasks();
+        const nextDone = !toggledTask?.done;
+        const { error } = await supabase.from("tasks").update({ done: nextDone }).eq("id", taskId);
+
+        if (error) {
+          console.error("Failed to toggle task:", error);
+          showToast(text.syncError);
+          return;
+        }
+
+        state.tasks = state.tasks.map((task) => (task.id === taskId ? { ...task, done: nextDone } : task));
         showToast(toggledTask?.done ? text.taskActive : text.taskDone);
       }
 
       if (action === "remove") {
+        const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+
+        if (error) {
+          console.error("Failed to delete task:", error);
+          showToast(text.syncError);
+          return;
+        }
+
         state.tasks = state.tasks.filter((task) => task.id !== taskId);
-        persistTasks();
         showToast(text.taskDeleted);
       }
 
@@ -383,26 +372,23 @@ function createDayConfig(date, isOutside) {
   };
 }
 
-function loadStoredTasks() {
-  try {
-    const storedTasks = window.localStorage.getItem(STORAGE_KEYS.tasks);
-    if (storedTasks) {
-      const parsedTasks = JSON.parse(storedTasks);
-      if (Array.isArray(parsedTasks)) {
-        state.tasks = parsedTasks;
-      }
-    }
-  } catch (error) {
-    console.error("Failed to load local tasks:", error);
-  }
-}
+async function loadTasks() {
+  state.isLoading = true;
+  renderAll();
 
-function persistTasks() {
-  try {
-    window.localStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(state.tasks));
-  } catch (error) {
-    console.error("Failed to save tasks:", error);
+  const { data, error } = await supabase.from("tasks").select("*").order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to load tasks:", error);
+    state.isLoading = false;
+    renderAll();
+    showToast(text.syncError);
+    return;
   }
+
+  state.tasks = (data ?? []).map(mapTaskRecord);
+  state.isLoading = false;
+  renderAll();
 }
 
 function focusToday() {
@@ -451,7 +437,19 @@ function showToast(message) {
   state.toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
 }
 
+function mapTaskRecord(record) {
+  return {
+    id: record.id,
+    title: record.title,
+    done: record.done,
+    category: record.category,
+    client: record.client,
+    description: record.description,
+    receivedDate: record.received_date,
+    dueDate: record.due_date,
+  };
+}
+
 taskReceivedDateInput.value = formatDateKey(today);
 taskDueDateInput.value = formatDateKey(today);
-
-renderAll();
+loadTasks();
