@@ -43,6 +43,10 @@ body {
   overflow-x: hidden;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 button,
 input,
 select {
@@ -1030,6 +1034,58 @@ h2 {
   opacity: 1;
 }
 
+.modal[hidden] {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 34, 78, 0.28);
+  backdrop-filter: blur(10px);
+}
+
+.modal-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(760px, 100%);
+  padding: 24px;
+  border-radius: 30px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 255, 0.96));
+  border: 1px solid rgba(47, 99, 233, 0.12);
+  box-shadow: 0 26px 60px rgba(35, 76, 164, 0.2);
+}
+
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.modal-subtitle {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.modal-task-form {
+  grid-template-columns: 1fr;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -1360,6 +1416,15 @@ h2 {
   .calendar-nav,
   .task-filter {
     width: 100%;
+  }
+
+  .modal {
+    padding: 14px;
+  }
+
+  .modal-dialog {
+    padding: 18px;
+    border-radius: 24px;
   }
 
   .hero-btn,

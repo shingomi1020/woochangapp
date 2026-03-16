@@ -19,6 +19,20 @@ const taskPriorityInput = document.getElementById("taskPriorityInput");
 const taskSubmitBtn = document.getElementById("taskSubmitBtn");
 const taskCancelBtn = document.getElementById("taskCancelBtn");
 const clientFilterSelect = document.getElementById("clientFilterSelect");
+const editModal = document.getElementById("editModal");
+const editModalBackdrop = document.getElementById("editModalBackdrop");
+const editModalCloseBtn = document.getElementById("editModalCloseBtn");
+const editModalTitle = document.getElementById("editModalTitle");
+const editModalSubtitle = document.getElementById("editModalSubtitle");
+const editTaskForm = document.getElementById("editTaskForm");
+const editTaskClientInput = document.getElementById("editTaskClientInput");
+const editTaskInput = document.getElementById("editTaskInput");
+const editTaskDescriptionInput = document.getElementById("editTaskDescriptionInput");
+const editTaskReceivedDateInput = document.getElementById("editTaskReceivedDateInput");
+const editTaskDueDateInput = document.getElementById("editTaskDueDateInput");
+const editTaskStatusInput = document.getElementById("editTaskStatusInput");
+const editTaskPriorityInput = document.getElementById("editTaskPriorityInput");
+const editTaskCancelBtn = document.getElementById("editTaskCancelBtn");
 const taskProgressLabel = document.getElementById("taskProgressLabel");
 const taskProgressBar = document.getElementById("taskProgressBar");
 const toast = document.getElementById("toast");
@@ -230,6 +244,89 @@ taskCancelBtn.addEventListener("click", () => {
   taskDueDateInput.value = formatDateKey(today);
   taskClientInput.focus();
   showToast(text.cancelEditLabel);
+});
+
+editTaskForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (state.editingTaskId === null) {
+    return;
+  }
+
+  const value = editTaskInput.value.trim();
+  const client = editTaskClientInput.value.trim();
+  const description = editTaskDescriptionInput.value.trim();
+  const receivedDate = editTaskReceivedDateInput.value;
+  const dueDate = editTaskDueDateInput.value;
+
+  if (!value || !client || !description || !receivedDate || !dueDate) {
+    return;
+  }
+
+  if (dueDate < receivedDate) {
+    showToast(text.invalidTaskDate);
+    return;
+  }
+
+  const payload = {
+    title: value,
+    client,
+    description,
+    received_date: receivedDate,
+    due_date: dueDate,
+    status: editTaskStatusInput.value,
+    priority: editTaskPriorityInput.value,
+  };
+
+  let { data, error } = await requestTasks(`/rest/v1/tasks?id=eq.${state.editingTaskId}`, {
+    method: "PATCH",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (error && shouldRetryWithoutPriority(error)) {
+    ({ data, error } = await requestTasks(`/rest/v1/tasks?id=eq.${state.editingTaskId}`, {
+      method: "PATCH",
+      headers: {
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify({ ...payload, priority: undefined }),
+    }));
+  }
+
+  if (error) {
+    handleSupabaseError("Failed to update task:", error);
+    return;
+  }
+
+  const savedTask = mapTaskRecord(Array.isArray(data) ? data[0] : data);
+  state.tasks = state.tasks.map((task) => (task.id === savedTask.id ? savedTask : task));
+  state.selectedDateKey = savedTask.dueDate;
+  state.viewDate = new Date(new Date(`${savedTask.dueDate}T00:00:00`).getFullYear(), new Date(`${savedTask.dueDate}T00:00:00`).getMonth(), 1);
+  closeEditModal();
+  renderAll();
+  showToast(text.taskUpdated);
+});
+
+editTaskCancelBtn.addEventListener("click", () => {
+  closeEditModal();
+  showToast(text.cancelEditLabel);
+});
+
+editModalCloseBtn.addEventListener("click", () => {
+  closeEditModal();
+});
+
+editModalBackdrop.addEventListener("click", () => {
+  closeEditModal();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !editModal.hidden) {
+    closeEditModal();
+  }
 });
 
 filterButtons.forEach((button) => {
@@ -497,17 +594,7 @@ function renderTasks() {
           return;
         }
 
-        state.editingTaskId = taskId;
-        taskClientInput.value = currentTask.client || "";
-        taskInput.value = currentTask.title || "";
-        taskDescriptionInput.value = currentTask.description || "";
-        taskReceivedDateInput.value = currentTask.receivedDate || formatDateKey(today);
-        taskDueDateInput.value = currentTask.dueDate || formatDateKey(today);
-        taskStatusInput.value = currentTask.status || "todo";
-        taskPriorityInput.value = currentTask.priority || "medium";
-        syncFormMode();
-        taskForm.scrollIntoView({ behavior: "smooth", block: "center" });
-        taskInput.focus();
+        openEditModal(currentTask);
         return;
       }
 
@@ -670,9 +757,31 @@ function clearEditingState() {
 }
 
 function syncFormMode() {
-  const isEditing = state.editingTaskId !== null;
-  taskSubmitBtn.textContent = isEditing ? text.submitEditLabel : text.submitCreateLabel;
-  taskCancelBtn.hidden = !isEditing;
+  taskSubmitBtn.textContent = text.submitCreateLabel;
+  taskCancelBtn.hidden = true;
+}
+
+function openEditModal(task) {
+  state.editingTaskId = task.id;
+  editModalTitle.textContent = `${task.title} 수정`;
+  editModalSubtitle.textContent = `${task.client} 업무를 수정하는 중입니다.`;
+  editTaskClientInput.value = task.client || "";
+  editTaskInput.value = task.title || "";
+  editTaskDescriptionInput.value = task.description || "";
+  editTaskReceivedDateInput.value = task.receivedDate || formatDateKey(today);
+  editTaskDueDateInput.value = task.dueDate || formatDateKey(today);
+  editTaskStatusInput.value = task.status || "todo";
+  editTaskPriorityInput.value = task.priority || "medium";
+  editModal.hidden = false;
+  document.body.classList.add("modal-open");
+  editTaskInput.focus();
+}
+
+function closeEditModal() {
+  editModal.hidden = true;
+  document.body.classList.remove("modal-open");
+  editTaskForm.reset();
+  clearEditingState();
 }
 
 async function requestTasks(path, options = {}) {

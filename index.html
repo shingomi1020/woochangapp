@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260317-14" />
+    <link rel="stylesheet" href="styles.css?v=20260317-15" />
   </head>
   <body>
     <div class="app-shell">
@@ -53,7 +53,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">&#xc5f0;&#xacb0; &#xd655;&#xc778; &#xc911;</span>
             <p id="connectionMessage" class="connection-message">Supabase &#xc5f0;&#xacb0; &#xc0c1;&#xd0dc;&#xb97c; &#xd655;&#xc778;&#xd558;&#xb294; &#xc911;&#xc785;&#xb2c8;&#xb2e4;.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 14</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 15</p>
           </div>
         </div>
 
@@ -235,12 +235,74 @@
       </main>
     </div>
 
+    <div id="editModal" class="modal" hidden>
+      <div id="editModalBackdrop" class="modal-backdrop"></div>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+        <div class="modal-head">
+          <div>
+            <p class="section-label">업무 수정</p>
+            <h3 id="editModalTitle">현재 업무 수정</h3>
+            <p id="editModalSubtitle" class="modal-subtitle">수정 중인 업무 정보를 확인하고 저장하세요.</p>
+          </div>
+          <button id="editModalCloseBtn" type="button" class="ghost-btn icon-only" aria-label="수정 창 닫기">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z" />
+            </svg>
+          </button>
+        </div>
+        <form id="editTaskForm" class="task-form modal-task-form">
+          <div class="task-form-grid">
+            <label class="field">
+              <span>거래처명</span>
+              <input id="editTaskClientInput" type="text" maxlength="40" autocomplete="off" required />
+            </label>
+            <label class="field">
+              <span>업무 제목</span>
+              <input id="editTaskInput" type="text" maxlength="60" autocomplete="off" required />
+            </label>
+            <label class="field task-form-wide">
+              <span>업무 내용</span>
+              <input id="editTaskDescriptionInput" type="text" maxlength="120" autocomplete="off" required />
+            </label>
+            <label class="field">
+              <span>접수일</span>
+              <input id="editTaskReceivedDateInput" type="date" required />
+            </label>
+            <label class="field">
+              <span>마감일</span>
+              <input id="editTaskDueDateInput" type="date" required />
+            </label>
+            <label class="field">
+              <span>진행 상태</span>
+              <select id="editTaskStatusInput">
+                <option value="todo">진행 중</option>
+                <option value="paused">보류</option>
+                <option value="done">완료</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>중요도</span>
+              <select id="editTaskPriorityInput">
+                <option value="high">긴급</option>
+                <option value="medium">보통</option>
+                <option value="low">낮음</option>
+              </select>
+            </label>
+          </div>
+          <div class="task-form-actions">
+            <button id="editTaskCancelBtn" type="button" class="ghost-btn task-cancel">취소</button>
+            <button type="submit" class="submit-btn task-submit">수정 저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
 
     <script
       src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
       onerror="window.__supabaseScriptFailed = true;"
     ></script>
-    <script src="app.js?v=20260317-14"></script>
+    <script src="app.js?v=20260317-15"></script>
   </body>
 </html>
