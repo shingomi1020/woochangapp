@@ -33,9 +33,9 @@
           <nav class="site-menu" aria-label="상단 메뉴">
             <button class="site-menu-link active" type="button" data-view="tasks">업무 보드</button>
             <button class="site-menu-link" type="button" data-view="hr">인사 관리</button>
-            <button class="site-menu-link is-disabled" type="button">견적서</button>
-            <button class="site-menu-link is-disabled" type="button">거래명세서</button>
-            <button class="site-menu-link is-disabled" type="button">급여 관리</button>
+            <button class="site-menu-link" type="button" data-view="estimate">견적서</button>
+            <button class="site-menu-link" type="button" data-view="statement">거래명세서</button>
+            <button class="site-menu-link" type="button" data-view="payroll">급여 관리</button>
           </nav>
         </div>
       </header>
@@ -73,7 +73,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 17</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 18</p>
           </div>
         </div>
 
@@ -357,6 +357,42 @@
           </section>
         </section>
       </section>
+
+      <section id="estimateView" class="hr-workspace app-view" hidden>
+        <section class="panel hr-hero reveal">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">견적서</p>
+              <h2>견적서 페이지 준비 중</h2>
+            </div>
+          </div>
+          <div class="empty-state">견적서 기능은 다음 단계에서 추가할 수 있도록 페이지 구조를 먼저 열어두었습니다.</div>
+        </section>
+      </section>
+
+      <section id="statementView" class="hr-workspace app-view" hidden>
+        <section class="panel hr-hero reveal">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">거래명세서</p>
+              <h2>거래명세서 페이지 준비 중</h2>
+            </div>
+          </div>
+          <div class="empty-state">거래명세서 기능은 같은 메뉴 구조 안에서 이어서 확장할 수 있게 준비했습니다.</div>
+        </section>
+      </section>
+
+      <section id="payrollView" class="hr-workspace app-view" hidden>
+        <section class="panel hr-hero reveal">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">급여 관리</p>
+              <h2>급여 페이지 준비 중</h2>
+            </div>
+          </div>
+          <div class="empty-state">직원별 급여 계산과 월별 정산 화면은 이 메뉴에서 이어서 확장할 수 있습니다.</div>
+        </section>
+      </section>
     </div>
 
     <div id="editModal" class="modal" hidden>
@@ -424,6 +460,6 @@
     <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-17"></script>
+    <script src="app.js?v=20260317-18"></script>
   </body>
 </html>

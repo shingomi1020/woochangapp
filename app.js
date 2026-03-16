@@ -43,6 +43,7 @@ const focusTodayBtn = document.getElementById("focusTodayBtn");
 const focusInputBtn = document.getElementById("focusInputBtn");
 const pageHero = document.querySelector(".hero");
 const workspaceTabs = document.querySelectorAll("[data-view]");
+const pageViews = document.querySelectorAll(".app-view");
 const tasksView = document.getElementById("tasksView");
 const hrView = document.getElementById("hrView");
 const employeeCount = document.getElementById("employeeCount");
@@ -176,7 +177,7 @@ workspaceTabs.forEach((tab) => {
 
 window.addEventListener("hashchange", () => {
   const nextView = window.location.hash.replace("#", "") || "tasks";
-  if (nextView === "tasks" || nextView === "hr") {
+  if (["tasks", "hr", "estimate", "statement", "payroll"].includes(nextView)) {
     switchView(nextView, false);
   }
 });
@@ -883,8 +884,9 @@ function switchView(view, shouldSyncHash = true) {
   state.currentView = view;
   const isTasks = view === "tasks";
   pageHero.hidden = !isTasks;
-  tasksView.hidden = !isTasks;
-  hrView.hidden = isTasks;
+  pageViews.forEach((section) => {
+    section.hidden = section.id !== `${view}View`;
+  });
   workspaceTabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.view === view));
   if (shouldSyncHash) {
     const nextHash = `#${view}`;
@@ -1197,5 +1199,10 @@ employeeTypeInput.value = "insured";
 syncFormMode();
 loadHrState();
 renderHrWorkspace();
-switchView(window.location.hash.replace("#", "") || "tasks", false);
+switchView(
+  ["tasks", "hr", "estimate", "statement", "payroll"].includes(window.location.hash.replace("#", ""))
+    ? window.location.hash.replace("#", "")
+    : "tasks",
+  false
+);
 loadTasks();

@@ -171,15 +171,9 @@ select:focus-visible {
   box-shadow: 0 14px 30px rgba(47, 99, 233, 0.24);
 }
 
-.site-menu-link.is-disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.site-menu-link.is-disabled:hover {
-  transform: none;
-  background: transparent;
-  color: var(--muted);
+.app-view[hidden],
+.hero[hidden] {
+  display: none !important;
 }
 
 .hero {
