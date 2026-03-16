@@ -1064,27 +1064,25 @@ h2 {
   }
 
   .calendar-grid {
-    gap: 6px;
+    gap: 4px;
   }
 
   .day-card {
-    min-height: 76px;
-    padding: 8px;
-    border-radius: 18px;
+    min-height: 0;
+    padding: 6px 5px 8px;
+    border-radius: 14px;
+    aspect-ratio: 0.56 / 1;
   }
 
   .day-number {
-    font-size: 1rem;
-  }
-
-  .mini-event {
-    display: none;
+    font-size: 0.88rem;
   }
 
   .weekdays {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     padding: 0;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
+    font-weight: 700;
   }
 
   .weekdays span {
@@ -1094,18 +1092,35 @@ h2 {
 
   .day-top {
     align-items: flex-start;
-    margin-bottom: 0;
+    margin-bottom: 6px;
   }
 
   .day-count {
-    padding: 4px 6px;
-    font-size: 0.66rem;
+    padding: 3px 5px;
+    font-size: 0.58rem;
   }
 
   .day-events {
     gap: 4px;
-    margin-top: 4px;
-    min-height: 0;
+    margin-top: 0;
+    min-height: 24px;
+    align-content: start;
+  }
+
+  .mini-event {
+    display: block;
+    width: 100%;
+    padding: 3px 4px;
+    border-radius: 8px;
+    font-size: 0.58rem;
+    line-height: 1.35;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+  .mini-event::before {
+    display: none;
   }
 
   .task-form {
@@ -1186,23 +1201,29 @@ h2 {
   }
 
   .day-card {
-    min-height: 64px;
-    padding: 7px;
-    border-radius: 16px;
+    padding: 5px 4px 7px;
+    border-radius: 12px;
+    aspect-ratio: 0.54 / 1;
   }
 
   .day-number {
-    font-size: 0.92rem;
+    font-size: 0.82rem;
   }
 
   .day-count {
     min-width: auto;
-    padding: 3px 5px;
-    font-size: 0.6rem;
+    padding: 2px 4px;
+    font-size: 0.54rem;
   }
 
   .schedule-card {
     padding: 16px;
+  }
+
+  .mini-event {
+    font-size: 0.54rem;
+    padding: 2px 3px;
+    border-radius: 7px;
   }
 
   .hero-actions,
