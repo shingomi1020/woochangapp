@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260317-15" />
+    <link rel="stylesheet" href="styles.css?v=20260317-16" />
   </head>
   <body>
     <div class="app-shell">
@@ -25,13 +25,10 @@
                 <path d="M7 3h10v2h3a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1h3V3Zm2 2h6V5H9v0Zm10 2H5v12h14V7ZM7 10h10v2H7v-2Zm0 4h7v2H7v-2Z" />
               </svg>
             </span>
-            <p class="eyebrow">&#xc5c5;&#xbb34; + &#xb9c8;&#xac10; &#xce98;&#xb9b0;&#xb354;</p>
+            <p class="eyebrow">업무 + 마감 캘린더</p>
           </div>
           <h1>FlowBoard</h1>
-          <p class="hero-copy">
-            &#xd22c;&#xb450;&#xb9ac;&#xc2a4;&#xd2b8;&#xb97c; &#xae30;&#xc900;&#xc73c;&#xb85c; &#xb9c8;&#xac10; &#xc77c;&#xc815;&#xae4c;&#xc9c0; &#xd55c; &#xbc88;&#xc5d0;
-            &#xbcf4;&#xb294; &#xc5c5;&#xbb34; &#xbcf4;&#xb4dc;
-          </p>
+          <p class="hero-copy">투두리스트를 기준으로 마감 일정까지 한 번에 보는 업무 보드</p>
           <div class="hero-actions">
             <button id="focusTodayBtn" class="hero-btn primary" type="button">
               <span class="btn-icon">
@@ -39,7 +36,7 @@
                   <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2h3V2Zm13 8H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM6 8h12V6H6v2Zm5 4h2v4h-2v-4Z" />
                 </svg>
               </span>
-              &#xc624;&#xb298; &#xbcf4;&#xae30;
+              오늘 보기
             </button>
             <button id="focusInputBtn" class="hero-btn secondary" type="button">
               <span class="btn-icon">
@@ -47,13 +44,13 @@
                   <path d="M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7V4Z" />
                 </svg>
               </span>
-              &#xbe60;&#xb978; &#xc5c5;&#xbb34; &#xcd94;&#xac00;
+              빠른 업무 추가
             </button>
           </div>
           <div class="connection-strip">
-            <span id="connectionBadge" class="connection-badge is-checking">&#xc5f0;&#xacb0; &#xd655;&#xc778; &#xc911;</span>
-            <p id="connectionMessage" class="connection-message">Supabase &#xc5f0;&#xacb0; &#xc0c1;&#xd0dc;&#xb97c; &#xd655;&#xc778;&#xd558;&#xb294; &#xc911;&#xc785;&#xb2c8;&#xb2e4;.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 15</p>
+            <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
+            <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 16</p>
           </div>
         </div>
 
@@ -64,9 +61,9 @@
                 <path d="M5 3h11l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm10 1.5V8h3.5L15 4.5ZM7 11h10v1.8H7V11Zm0 4h10v1.8H7V15Z" />
               </svg>
             </span>
-            <span class="metric-label">&#xb0a8;&#xc740; &#xc5c5;&#xbb34;</span>
+            <span class="metric-label">남은 업무</span>
             <strong id="remainingCount">0</strong>
-            <small>&#xc624;&#xb298; &#xcc98;&#xb9ac;&#xd574;&#xc57c; &#xd560; &#xd575;&#xc2ec; &#xc791;&#xc5c5;</small>
+            <small>오늘 처리해야 할 핵심 작업</small>
           </div>
           <div class="metric-card float-card delay-1">
             <span class="metric-icon">
@@ -74,9 +71,9 @@
                 <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2h3V2Zm13 8H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM6 8h12V6H6v2Z" />
               </svg>
             </span>
-            <span class="metric-label">&#xc774;&#xbc88; &#xb2ec; &#xb9c8;&#xac10; &#xc5c5;&#xbb34;</span>
+            <span class="metric-label">이번 달 마감 업무</span>
             <strong id="monthEventCount">0</strong>
-            <small>&#xd604;&#xc7ac; &#xbcf4;&#xb294; &#xb2ec;&#xc5d0; &#xb9c8;&#xac10;&#xc774; &#xc788;&#xb294; &#xc5c5;&#xbb34; &#xc218;</small>
+            <small>현재 보는 달에 마감이 있는 업무 수</small>
           </div>
           <div class="metric-card float-card delay-2">
             <span class="metric-icon">
@@ -84,49 +81,54 @@
                 <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 4a1 1 0 0 0-1 1v5.4c0 .3.12.58.33.79l3.6 3.6 1.41-1.42L13 11.99V7a1 1 0 0 0-1-1Z" />
               </svg>
             </span>
-            <span class="metric-label">&#xc120;&#xd0dd;&#xd55c; &#xb0a0;&#xc9dc;</span>
+            <span class="metric-label">선택한 날짜</span>
             <strong id="selectedDaySummary">0</strong>
-            <small>&#xd574;&#xb2f9; &#xb0a0;&#xc9dc;&#xc5d0; &#xb9c8;&#xac10;&#xc778; &#xc5c5;&#xbb34; &#xc218;</small>
+            <small>해당 날짜에 마감인 업무 수</small>
           </div>
         </div>
       </header>
 
-      <main class="dashboard">
+      <nav class="workspace-nav reveal delay-1" aria-label="주요 메뉴">
+        <button class="workspace-tab active" type="button" data-view="tasks">업무 보드</button>
+        <button class="workspace-tab" type="button" data-view="hr">인사 관리</button>
+      </nav>
+
+      <main id="tasksView" class="dashboard app-view">
         <section class="panel panel-calendar reveal delay-1">
           <div class="panel-head">
             <div>
-              <p class="section-label">&#xb9c8;&#xac10; &#xce98;&#xb9b0;&#xb354;</p>
-              <h2 id="monthLabel">2026&#xb144; 3&#xc6d4;</h2>
+              <p class="section-label">마감 캘린더</p>
+              <h2 id="monthLabel">2026년 3월</h2>
             </div>
             <div class="calendar-nav">
-              <button id="prevMonthBtn" class="ghost-btn" type="button">&#xc774;&#xc804;</button>
-              <button id="todayBtn" class="ghost-btn primary" type="button">&#xc624;&#xb298;</button>
-              <button id="nextMonthBtn" class="ghost-btn" type="button">&#xb2e4;&#xc74c;</button>
+              <button id="prevMonthBtn" class="ghost-btn" type="button">이전</button>
+              <button id="todayBtn" class="ghost-btn primary" type="button">오늘</button>
+              <button id="nextMonthBtn" class="ghost-btn" type="button">다음</button>
             </div>
           </div>
 
           <div class="calendar-topline">
-            <p id="calendarHint" class="calendar-hint">&#xc624;&#xb298; &#xb9c8;&#xac10; &#xc5c5;&#xbb34;&#xb97c; &#xba3c;&#xc800; &#xd655;&#xc778;&#xd574; &#xbcf4;&#xc138;&#xc694;.</p>
+            <p id="calendarHint" class="calendar-hint">오늘 마감 업무를 먼저 확인해 보세요.</p>
           </div>
 
           <div class="calendar-scroll">
             <div class="weekdays" aria-hidden="true">
-              <span>&#xc77c;</span>
-              <span>&#xc6d4;</span>
-              <span>&#xd654;</span>
-              <span>&#xc218;</span>
-              <span>&#xbaa9;</span>
-              <span>&#xae08;</span>
-              <span>&#xd1a0;</span>
+              <span>일</span>
+              <span>월</span>
+              <span>화</span>
+              <span>수</span>
+              <span>목</span>
+              <span>금</span>
+              <span>토</span>
             </div>
 
-            <div id="calendarGrid" class="calendar-grid" aria-label="&#xc6d4;&#xac04; &#xb9c8;&#xac10; &#xce98;&#xb9b0;&#xb354;"></div>
+            <div id="calendarGrid" class="calendar-grid" aria-label="월간 마감 캘린더"></div>
           </div>
 
           <div class="schedule-card">
             <div class="schedule-head">
               <div>
-                <p class="section-label">&#xc120;&#xd0dd;&#xd55c; &#xb0a0;</p>
+                <p class="section-label">선택한 날</p>
                 <h3 id="selectedDateLabel"></h3>
               </div>
               <div class="schedule-actions">
@@ -140,22 +142,22 @@
         <section class="panel panel-tasks reveal delay-2">
           <div class="panel-head">
             <div>
-              <p class="section-label">&#xd22c;&#xb450;&#xb9ac;&#xc2a4;&#xd2b8;</p>
-              <h2>&#xc624;&#xb298;&#xc758; &#xd560; &#xc77c;</h2>
+              <p class="section-label">투두리스트</p>
+              <h2>오늘의 할 일</h2>
             </div>
-            <div class="task-filter" role="tablist" aria-label="&#xd560; &#xc77c; &#xd544;&#xd130;">
-              <button class="chip active" data-filter="all" type="button">&#xc804;&#xccb4;</button>
-              <button class="chip" data-filter="active" type="button">&#xc9c4;&#xd589; &#xc911;</button>
-              <button class="chip" data-filter="paused" type="button">&#xbcf4;&#xb958;</button>
-              <button class="chip" data-filter="done" type="button">&#xc644;&#xb8cc;</button>
+            <div class="task-filter" role="tablist" aria-label="할 일 필터">
+              <button class="chip active" data-filter="all" type="button">전체</button>
+              <button class="chip" data-filter="active" type="button">진행 중</button>
+              <button class="chip" data-filter="paused" type="button">보류</button>
+              <button class="chip" data-filter="done" type="button">완료</button>
             </div>
           </div>
 
           <div class="task-controls">
             <label class="field filter-field">
-              <span>&#xac70;&#xb798;&#xcc98; &#xd544;&#xd130;</span>
+              <span>거래처 필터</span>
               <select id="clientFilterSelect">
-                <option value="all">&#xc804;&#xccb4; &#xac70;&#xb798;&#xcc98;</option>
+                <option value="all">전체 거래처</option>
               </select>
             </label>
           </div>
@@ -164,65 +166,51 @@
             <form id="taskForm" class="task-form">
               <div class="task-form-grid">
                 <label class="field">
-                  <span>&#xac70;&#xb798;&#xcc98;&#xba85;</span>
+                  <span>거래처명</span>
                   <input id="taskClientInput" type="text" maxlength="40" autocomplete="off" required />
                 </label>
                 <label class="field">
-                  <span>&#xc5c5;&#xbb34; &#xc81c;&#xbaa9;</span>
-                  <input
-                    id="taskInput"
-                    type="text"
-                    placeholder="&#xc0c8; &#xc5c5;&#xbb34;&#xb97c; &#xc785;&#xb825;&#xd558;&#xc138;&#xc694;"
-                    maxlength="60"
-                    autocomplete="off"
-                    required
-                  />
+                  <span>업무 제목</span>
+                  <input id="taskInput" type="text" placeholder="새 업무를 입력하세요" maxlength="60" autocomplete="off" required />
                 </label>
                 <label class="field task-form-wide">
-                  <span>&#xc5c5;&#xbb34; &#xb0b4;&#xc6a9;</span>
-                  <input
-                    id="taskDescriptionInput"
-                    type="text"
-                    placeholder="&#xc9c4;&#xd589;&#xd560; &#xc5c5;&#xbb34; &#xb0b4;&#xc6a9;&#xc744; &#xc785;&#xb825;&#xd558;&#xc138;&#xc694;"
-                    maxlength="120"
-                    autocomplete="off"
-                    required
-                  />
+                  <span>업무 내용</span>
+                  <input id="taskDescriptionInput" type="text" placeholder="진행할 업무 내용을 입력하세요" maxlength="120" autocomplete="off" required />
                 </label>
                 <label class="field">
-                  <span>&#xc811;&#xc218;&#xc77c;</span>
+                  <span>접수일</span>
                   <input id="taskReceivedDateInput" type="date" required />
                 </label>
                 <label class="field">
-                  <span>&#xb9c8;&#xac10;&#xc77c;</span>
+                  <span>마감일</span>
                   <input id="taskDueDateInput" type="date" required />
                 </label>
                 <label class="field">
-                  <span>&#xc9c4;&#xd589; &#xc0c1;&#xd0dc;</span>
+                  <span>진행 상태</span>
                   <select id="taskStatusInput">
-                    <option value="todo">&#xc9c4;&#xd589; &#xc911;</option>
-                    <option value="paused">&#xbcf4;&#xb958;</option>
-                    <option value="done">&#xc644;&#xb8cc;</option>
+                    <option value="todo">진행 중</option>
+                    <option value="paused">보류</option>
+                    <option value="done">완료</option>
                   </select>
                 </label>
                 <label class="field">
-                  <span>&#xc911;&#xc694;&#xb3c4;</span>
+                  <span>중요도</span>
                   <select id="taskPriorityInput">
-                    <option value="high">&#xae34;&#xae09;</option>
-                    <option value="medium" selected>&#xbcf4;&#xd1b5;</option>
-                    <option value="low">&#xb0ae;&#xc74c;</option>
+                    <option value="high">긴급</option>
+                    <option value="medium" selected>보통</option>
+                    <option value="low">낮음</option>
                   </select>
                 </label>
               </div>
               <div class="task-form-actions">
-                <button id="taskCancelBtn" type="button" class="ghost-btn task-cancel" hidden>&#xcde8;&#xc18c;</button>
-                <button id="taskSubmitBtn" type="submit" class="submit-btn task-submit">&#xcd94;&#xac00;</button>
+                <button id="taskCancelBtn" type="button" class="ghost-btn task-cancel" hidden>취소</button>
+                <button id="taskSubmitBtn" type="submit" class="submit-btn task-submit">추가</button>
               </div>
             </form>
             <div class="task-summary-card">
               <div class="task-summary-head">
-                <span class="task-summary-label">&#xc9c4;&#xd589; &#xd604;&#xd669;</span>
-                <span id="taskProgressLabel">0 / 0 &#xc644;&#xb8cc;</span>
+                <span class="task-summary-label">진행 현황</span>
+                <span id="taskProgressLabel">0 / 0 완료</span>
               </div>
               <div class="progress-track" aria-hidden="true">
                 <div id="taskProgressBar" class="progress-fill"></div>
@@ -233,6 +221,124 @@
           <div id="taskList" class="task-list"></div>
         </section>
       </main>
+
+      <section id="hrView" class="hr-workspace app-view" hidden>
+        <section class="panel hr-hero reveal">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">인사 관리</p>
+              <h2>출근기록부와 급여 기준</h2>
+            </div>
+            <div class="hr-policy">
+              <span class="task-date-chip">야근 기준 18:00 이후</span>
+              <span class="task-date-chip">주말 수당 별도 관리</span>
+            </div>
+          </div>
+          <div class="hr-metrics">
+            <article class="metric-card">
+              <span class="metric-label">등록 직원</span>
+              <strong id="employeeCount">0</strong>
+              <small>4대보험 직원과 프리랜서를 함께 관리</small>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">오늘 출근 기록</span>
+              <strong id="attendanceTodayCount">0</strong>
+              <small>오늘 날짜 기준 출퇴근 입력 건수</small>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">이번 달 야근 시간</span>
+              <strong id="monthlyOvertimeHours">0h</strong>
+              <small>18시 이후 누적 시간</small>
+            </article>
+          </div>
+        </section>
+
+        <section class="hr-grid">
+          <section class="panel reveal delay-1">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">직원 등록</p>
+                <h3>직원별 기본급과 수당 기준</h3>
+              </div>
+            </div>
+            <form id="employeeForm" class="hr-form">
+              <div class="task-form-grid hr-form-grid">
+                <label class="field">
+                  <span>직원명</span>
+                  <input id="employeeNameInput" type="text" maxlength="30" autocomplete="off" required />
+                </label>
+                <label class="field">
+                  <span>구분</span>
+                  <select id="employeeTypeInput">
+                    <option value="insured">4대보험 적용 직원</option>
+                    <option value="freelancer">프리랜서</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>기본급</span>
+                  <input id="employeeBaseSalaryInput" type="number" min="0" step="10000" required />
+                </label>
+                <label class="field">
+                  <span>야근 수당 (시간당)</span>
+                  <input id="employeeOvertimeRateInput" type="number" min="0" step="1000" required />
+                </label>
+                <label class="field">
+                  <span>주말 수당 (시간당)</span>
+                  <input id="employeeWeekendRateInput" type="number" min="0" step="1000" required />
+                </label>
+              </div>
+              <div class="task-form-actions">
+                <button type="submit" class="submit-btn task-submit">직원 등록</button>
+              </div>
+            </form>
+            <div id="employeeList" class="employee-list"></div>
+          </section>
+
+          <section class="panel reveal delay-2">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">출퇴근 기록</p>
+                <h3>직원별 출근기록부 입력</h3>
+              </div>
+            </div>
+            <form id="attendanceForm" class="hr-form">
+              <div class="task-form-grid hr-form-grid">
+                <label class="field task-form-wide">
+                  <span>직원 선택</span>
+                  <select id="attendanceEmployeeSelect" required>
+                    <option value="">직원을 먼저 등록해 주세요</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>근무일</span>
+                  <input id="attendanceDateInput" type="date" required />
+                </label>
+                <label class="field">
+                  <span>출근 시간</span>
+                  <input id="attendanceClockInInput" type="time" required />
+                </label>
+                <label class="field">
+                  <span>퇴근 시간</span>
+                  <input id="attendanceClockOutInput" type="time" required />
+                </label>
+              </div>
+              <div class="task-form-actions">
+                <button type="submit" class="submit-btn task-submit">출퇴근 기록 저장</button>
+              </div>
+            </form>
+
+            <div class="attendance-ledger">
+              <div class="schedule-head">
+                <div>
+                  <p class="section-label">출근기록부</p>
+                  <h3>직원별 근무 요약</h3>
+                </div>
+              </div>
+              <div id="attendanceList" class="attendance-list"></div>
+            </div>
+          </section>
+        </section>
+      </section>
     </div>
 
     <div id="editModal" class="modal" hidden>
@@ -299,10 +405,7 @@
 
     <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-      onerror="window.__supabaseScriptFailed = true;"
-    ></script>
-    <script src="app.js?v=20260317-15"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
+    <script src="app.js?v=20260317-16"></script>
   </body>
 </html>

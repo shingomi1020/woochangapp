@@ -394,6 +394,139 @@ h2 {
   margin: 0 auto;
 }
 
+.workspace-nav,
+.app-view,
+.hr-workspace,
+.hr-grid,
+.hr-metrics {
+  max-width: 1380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.workspace-nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.workspace-tab {
+  border: 0;
+  padding: 13px 18px;
+  border-radius: 999px;
+  background: var(--accent-soft-2);
+  color: var(--accent-strong);
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(47, 99, 233, 0.08);
+}
+
+.workspace-tab.active {
+  background: linear-gradient(135deg, var(--accent), #6c9aff);
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(47, 99, 233, 0.24);
+}
+
+.hr-workspace {
+  display: grid;
+  gap: 24px;
+}
+
+.hr-hero {
+  display: grid;
+  gap: 18px;
+}
+
+.hr-policy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hr-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.hr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.hr-form,
+.attendance-ledger {
+  display: grid;
+  gap: 16px;
+}
+
+.hr-form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.employee-list,
+.attendance-list {
+  display: grid;
+  gap: 12px;
+}
+
+.employee-card,
+.attendance-card {
+  padding: 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff, #f7fbff);
+  border: 1px solid rgba(47, 99, 233, 0.08);
+}
+
+.employee-card-head,
+.attendance-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.employee-card-head strong,
+.attendance-card-head strong {
+  font-size: 1rem;
+}
+
+.attendance-card-head p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.employee-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.employee-type.insured {
+  background: #e8f0ff;
+  color: var(--accent-strong);
+}
+
+.employee-type.freelancer {
+  background: #fff3e5;
+  color: #b06a18;
+}
+
+.employee-pay-grid,
+.attendance-times,
+.attendance-pay-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+  color: var(--muted);
+}
+
 .panel {
   border-radius: var(--radius-xl);
   padding: 24px;
@@ -1164,7 +1297,8 @@ h2 {
 
 @media (max-width: 1180px) {
   .hero,
-  .dashboard {
+  .dashboard,
+  .hr-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1175,6 +1309,10 @@ h2 {
 
 @media (max-width: 860px) {
   .hero-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .hr-metrics {
     grid-template-columns: 1fr;
   }
 
@@ -1194,6 +1332,10 @@ h2 {
   .filter-field {
     max-width: none;
     width: 100%;
+  }
+
+  .workspace-nav {
+    flex-wrap: wrap;
   }
 }
 
@@ -1414,7 +1556,8 @@ h2 {
 
   .hero-actions,
   .calendar-nav,
-  .task-filter {
+  .task-filter,
+  .workspace-nav {
     width: 100%;
   }
 

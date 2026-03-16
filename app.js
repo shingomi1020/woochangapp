@@ -41,6 +41,25 @@ const connectionMessage = document.getElementById("connectionMessage");
 const filterButtons = document.querySelectorAll("[data-filter]");
 const focusTodayBtn = document.getElementById("focusTodayBtn");
 const focusInputBtn = document.getElementById("focusInputBtn");
+const workspaceTabs = document.querySelectorAll("[data-view]");
+const tasksView = document.getElementById("tasksView");
+const hrView = document.getElementById("hrView");
+const employeeCount = document.getElementById("employeeCount");
+const attendanceTodayCount = document.getElementById("attendanceTodayCount");
+const monthlyOvertimeHours = document.getElementById("monthlyOvertimeHours");
+const employeeForm = document.getElementById("employeeForm");
+const employeeNameInput = document.getElementById("employeeNameInput");
+const employeeTypeInput = document.getElementById("employeeTypeInput");
+const employeeBaseSalaryInput = document.getElementById("employeeBaseSalaryInput");
+const employeeOvertimeRateInput = document.getElementById("employeeOvertimeRateInput");
+const employeeWeekendRateInput = document.getElementById("employeeWeekendRateInput");
+const employeeList = document.getElementById("employeeList");
+const attendanceForm = document.getElementById("attendanceForm");
+const attendanceEmployeeSelect = document.getElementById("attendanceEmployeeSelect");
+const attendanceDateInput = document.getElementById("attendanceDateInput");
+const attendanceClockInInput = document.getElementById("attendanceClockInInput");
+const attendanceClockOutInput = document.getElementById("attendanceClockOutInput");
+const attendanceList = document.getElementById("attendanceList");
 
 const supabaseUrl = "https://nmnycqaufrpcgdanmpsj.supabase.co";
 const supabaseKey = "sb_publishable_a_WFRivMBscLCg-IPkFcZA_LqpStADT";
@@ -100,10 +119,13 @@ const state = {
   selectedDateKey: formatDateKey(today),
   taskFilter: "all",
   clientFilter: "all",
+  currentView: "tasks",
   editingTaskId: null,
   toastTimer: null,
   isLoading: true,
   tasks: [],
+  employees: [],
+  attendanceRecords: [],
 };
 
 setConnectionState("checking", text.booting);
@@ -140,8 +162,15 @@ focusTodayBtn.addEventListener("click", () => {
 
 focusInputBtn.addEventListener("click", () => {
   clearEditingState();
+  switchView("tasks");
   taskClientInput.focus();
   showToast(text.readyToAdd);
+});
+
+workspaceTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    switchView(tab.dataset.view);
+  });
 });
 
 taskForm.addEventListener("submit", async (event) => {
@@ -327,6 +356,64 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !editModal.hidden) {
     closeEditModal();
   }
+});
+
+employeeForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const name = employeeNameInput.value.trim();
+  const employmentType = employeeTypeInput.value;
+  const baseSalary = Number(employeeBaseSalaryInput.value || 0);
+  const overtimeRate = Number(employeeOvertimeRateInput.value || 0);
+  const weekendRate = Number(employeeWeekendRateInput.value || 0);
+
+  if (!name || baseSalary < 0 || overtimeRate < 0 || weekendRate < 0) {
+    return;
+  }
+
+  state.employees.unshift({
+    id: `emp-${Date.now()}`,
+    name,
+    employmentType,
+    baseSalary,
+    overtimeRate,
+    weekendRate,
+    createdAt: new Date().toISOString(),
+  });
+
+  employeeForm.reset();
+  employeeTypeInput.value = "insured";
+  saveHrState();
+  renderHrWorkspace();
+  showToast(`${name} 직원을 등록했습니다.`);
+});
+
+attendanceForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const employeeId = attendanceEmployeeSelect.value;
+  const workDate = attendanceDateInput.value;
+  const clockIn = attendanceClockInInput.value;
+  const clockOut = attendanceClockOutInput.value;
+
+  if (!employeeId || !workDate || !clockIn || !clockOut || clockOut <= clockIn) {
+    return;
+  }
+
+  state.attendanceRecords.unshift({
+    id: `att-${Date.now()}`,
+    employeeId,
+    workDate,
+    clockIn,
+    clockOut,
+    createdAt: new Date().toISOString(),
+  });
+
+  attendanceForm.reset();
+  attendanceDateInput.value = formatDateKey(today);
+  attendanceClockInInput.value = "09:00";
+  attendanceClockOutInput.value = "18:00";
+  saveHrState();
+  renderHrWorkspace();
+  showToast("출퇴근 기록을 저장했습니다.");
 });
 
 filterButtons.forEach((button) => {
@@ -784,6 +871,14 @@ function closeEditModal() {
   clearEditingState();
 }
 
+function switchView(view) {
+  state.currentView = view;
+  const isTasks = view === "tasks";
+  tasksView.hidden = !isTasks;
+  hrView.hidden = isTasks;
+  workspaceTabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.view === view));
+}
+
 async function requestTasks(path, options = {}) {
   const controller = new AbortController();
   const timeoutId = window.setTimeout(() => controller.abort(), 5000);
@@ -886,6 +981,149 @@ function renderChoiceButton(kind, task, value, label) {
   return `<button class="task-choice-btn ${tone} ${isActive ? "is-active" : ""}" type="button" data-action="${kind}" data-id="${task.id}" data-value="${value}">${label}</button>`;
 }
 
+function loadHrState() {
+  try {
+    state.employees = JSON.parse(window.localStorage.getItem("flowboard-employees") || "[]");
+    state.attendanceRecords = JSON.parse(window.localStorage.getItem("flowboard-attendance") || "[]");
+  } catch (error) {
+    state.employees = [];
+    state.attendanceRecords = [];
+  }
+}
+
+function saveHrState() {
+  window.localStorage.setItem("flowboard-employees", JSON.stringify(state.employees));
+  window.localStorage.setItem("flowboard-attendance", JSON.stringify(state.attendanceRecords));
+}
+
+function renderHrWorkspace() {
+  renderEmployeeSelect();
+  renderEmployees();
+  renderAttendanceList();
+  updateHrMetrics();
+}
+
+function renderEmployeeSelect() {
+  if (!state.employees.length) {
+    attendanceEmployeeSelect.innerHTML = `<option value="">직원을 먼저 등록해 주세요</option>`;
+    return;
+  }
+
+  attendanceEmployeeSelect.innerHTML = [
+    `<option value="">직원을 선택하세요</option>`,
+    ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
+  ].join("");
+}
+
+function renderEmployees() {
+  if (!state.employees.length) {
+    employeeList.innerHTML = `<div class="empty-state">등록된 직원이 없습니다. 기본급과 수당 기준을 먼저 입력해 주세요.</div>`;
+    return;
+  }
+
+  employeeList.innerHTML = state.employees
+    .map(
+      (employee) => `
+        <article class="employee-card">
+          <div class="employee-card-head">
+            <strong>${employee.name}</strong>
+            <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4대보험 적용" : "프리랜서"}</span>
+          </div>
+          <div class="employee-pay-grid">
+            <span>기본급 ${formatCurrency(employee.baseSalary)}</span>
+            <span>야근 수당 ${formatCurrency(employee.overtimeRate)}/h</span>
+            <span>주말 수당 ${formatCurrency(employee.weekendRate)}/h</span>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderAttendanceList() {
+  if (!state.attendanceRecords.length) {
+    attendanceList.innerHTML = `<div class="empty-state">출근기록부가 비어 있습니다. 직원과 출퇴근 시간을 입력해 주세요.</div>`;
+    return;
+  }
+
+  attendanceList.innerHTML = state.attendanceRecords
+    .slice()
+    .sort((a, b) => `${b.workDate}${b.clockIn}`.localeCompare(`${a.workDate}${a.clockIn}`))
+    .map((record) => {
+      const employee = state.employees.find((item) => item.id === record.employeeId);
+      const summary = calculateAttendance(record, employee);
+      return `
+        <article class="attendance-card">
+          <div class="attendance-card-head">
+            <div>
+              <strong>${employee?.name || "삭제된 직원"}</strong>
+              <p>${formatLongDate(new Date(`${record.workDate}T00:00:00`))}</p>
+            </div>
+            <span class="task-date-chip">${employee?.employmentType === "freelancer" ? "프리랜서" : "4대보험 적용"}</span>
+          </div>
+          <div class="attendance-times">
+            <span>출근 ${record.clockIn}</span>
+            <span>퇴근 ${record.clockOut}</span>
+            <span>총 ${summary.totalHours.toFixed(1)}시간</span>
+          </div>
+          <div class="attendance-pay-grid">
+            <span>야근 ${summary.overtimeHours.toFixed(1)}시간 / ${formatCurrency(summary.overtimePay)}</span>
+            <span>주말 ${summary.weekendHours.toFixed(1)}시간 / ${formatCurrency(summary.weekendPay)}</span>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function updateHrMetrics() {
+  employeeCount.textContent = `${state.employees.length}`;
+  attendanceTodayCount.textContent = `${state.attendanceRecords.filter((item) => item.workDate === formatDateKey(today)).length}`;
+
+  const currentMonthKey = formatDateKey(today).slice(0, 7);
+  const overtimeHours = state.attendanceRecords.reduce((total, record) => {
+    if (!record.workDate.startsWith(currentMonthKey)) {
+      return total;
+    }
+    const employee = state.employees.find((item) => item.id === record.employeeId);
+    return total + calculateAttendance(record, employee).overtimeHours;
+  }, 0);
+
+  monthlyOvertimeHours.textContent = `${overtimeHours.toFixed(1)}h`;
+}
+
+function calculateAttendance(record, employee) {
+  const startMinutes = timeToMinutes(record.clockIn);
+  const endMinutes = timeToMinutes(record.clockOut);
+  const totalMinutes = Math.max(endMinutes - startMinutes, 0);
+  const workDate = new Date(`${record.workDate}T00:00:00`);
+  const isWeekend = workDate.getDay() === 0 || workDate.getDay() === 6;
+  const overtimeStart = 18 * 60;
+  const overtimeMinutes = isWeekend ? 0 : Math.max(endMinutes - Math.max(startMinutes, overtimeStart), 0);
+  const weekendMinutes = isWeekend ? totalMinutes : 0;
+  const overtimeHours = overtimeMinutes / 60;
+  const weekendHours = weekendMinutes / 60;
+
+  return {
+    totalHours: totalMinutes / 60,
+    overtimeHours,
+    weekendHours,
+    overtimePay: Math.round(overtimeHours * Number(employee?.overtimeRate || 0)),
+    weekendPay: Math.round(weekendHours * Number(employee?.weekendRate || 0)),
+  };
+}
+
+function timeToMinutes(value) {
+  const [hour, minute] = value.split(":").map(Number);
+  return hour * 60 + minute;
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat("ko-KR", { style: "currency", currency: "KRW", maximumFractionDigits: 0 }).format(
+    Number(value || 0)
+  );
+}
+
 function getStatusLabel(status) {
   if (status === "done") {
     return text.taskStatusDone;
@@ -937,5 +1175,12 @@ taskReceivedDateInput.value = formatDateKey(today);
 taskDueDateInput.value = formatDateKey(today);
 taskStatusInput.value = "todo";
 taskPriorityInput.value = "medium";
+attendanceDateInput.value = formatDateKey(today);
+attendanceClockInInput.value = "09:00";
+attendanceClockOutInput.value = "18:00";
+employeeTypeInput.value = "insured";
 syncFormMode();
+loadHrState();
+renderHrWorkspace();
+switchView("tasks");
 loadTasks();
