@@ -1629,7 +1629,7 @@ function renderMembers() {
               <option value="employee" ${member.role === "employee" ? "selected" : ""}>직원</option>
               <option value="freelancer" ${member.role === "freelancer" ? "selected" : ""}>프리랜서</option>
             </select>
-            <button class="ghost-btn" type="button" data-member-toggle="${member.id}">
+            <button class="ghost-btn" type="button" data-member-toggle="${member.id}" ${member.loginId === "admin" ? "disabled" : ""}>
               ${member.isActive === false ? "활성화" : "비활성화"}
             </button>
             ${
@@ -1676,6 +1676,10 @@ function renderMembers() {
     button.addEventListener("click", () => {
       const member = state.members.find((item) => item.id === button.dataset.memberToggle);
       if (!member) {
+        return;
+      }
+      if (member.loginId === "admin") {
+        showToast("기본 관리자 계정은 비활성화할 수 없습니다.");
         return;
       }
       member.isActive = member.isActive === false;

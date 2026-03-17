@@ -560,6 +560,15 @@ h2 {
   transform: translateY(-2px);
 }
 
+.ghost-btn:disabled,
+.chip:disabled,
+.submit-btn:disabled,
+.remove-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .hero-btn.primary,
 .ghost-btn.primary,
 .submit-btn {
