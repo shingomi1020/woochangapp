@@ -4148,3 +4148,301 @@ body[data-device="mobile"] .calendar-view-switch .chip {
   padding: 0 12px;
   font-size: 0.95rem;
 }
+
+/* Product-style refinement */
+body[data-device] {
+  --radius-xl: 24px;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --shadow: 0 6px 18px rgba(17, 24, 39, 0.04);
+  --shadow-strong: 0 10px 24px rgba(17, 24, 39, 0.06);
+}
+
+body[data-device="desktop"] .app-shell {
+  padding-top: 14px;
+}
+
+body[data-device] .site-nav {
+  margin-bottom: 14px;
+}
+
+body[data-device] .site-nav-inner {
+  padding: 12px 16px !important;
+  border-radius: 20px !important;
+}
+
+body[data-device] .site-brand strong {
+  font-size: 1rem;
+}
+
+body[data-device] .site-brand p {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+body[data-device] .site-menu {
+  padding: 4px !important;
+  gap: 4px !important;
+  border-radius: 16px !important;
+}
+
+body[data-device] .site-menu-link {
+  padding: 10px 14px !important;
+  border-radius: 12px !important;
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+}
+
+body[data-device] .site-menu-link.active {
+  background: #eef2ff !important;
+  box-shadow: none !important;
+}
+
+body[data-device] .session-badge,
+body[data-device] .role-switcher,
+body[data-device] #logoutBtn {
+  border-radius: 14px !important;
+}
+
+body[data-device] .hero {
+  gap: 14px;
+  margin-bottom: 16px !important;
+}
+
+body[data-device] .hero-copy-wrap {
+  min-height: 0 !important;
+  padding: 22px 24px !important;
+  border-radius: 20px !important;
+}
+
+body[data-device] .hero-badge {
+  margin-bottom: 10px;
+}
+
+body[data-device] .hero-copy-wrap h1 {
+  margin: 0 0 8px;
+  font-size: clamp(2rem, 4vw, 3.2rem) !important;
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+}
+
+body[data-device] .hero-copy {
+  max-width: 620px;
+  margin: 0;
+  font-size: 0.95rem !important;
+  line-height: 1.6;
+}
+
+body[data-device] .hero-actions {
+  margin-top: 14px !important;
+  gap: 10px;
+}
+
+body[data-device] .hero-btn,
+body[data-device] .ghost-btn,
+body[data-device] .submit-btn,
+body[data-device] .chip {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 12px !important;
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+}
+
+body[data-device] .hero-btn .btn-icon,
+body[data-device] .ghost-btn .btn-icon {
+  width: 18px;
+  height: 18px;
+}
+
+body[data-device] .connection-strip {
+  margin-top: 14px;
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+}
+
+body[data-device] .connection-badge {
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+body[data-device] .connection-message,
+body[data-device] .build-stamp {
+  font-size: 0.82rem !important;
+  line-height: 1.5;
+}
+
+body[data-device] .hero-meta {
+  gap: 12px !important;
+}
+
+body[data-device] .metric-card {
+  padding: 16px !important;
+  border-radius: 18px !important;
+}
+
+body[data-device] .metric-card strong {
+  font-size: 1.5rem !important;
+  margin-top: 6px !important;
+}
+
+body[data-device] .metric-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+body[data-device] .metric-card small {
+  font-size: 0.78rem !important;
+  line-height: 1.45;
+}
+
+body[data-device] .dashboard,
+body[data-device] .hr-workspace,
+body[data-device] .employee-info-view {
+  gap: 18px !important;
+}
+
+body[data-device] .panel,
+body[data-device] .schedule-card,
+body[data-device] .archive-panel,
+body[data-device] .attendance-calendar-panel {
+  padding: 18px !important;
+  border-radius: 20px !important;
+}
+
+body[data-device] .panel-head,
+body[data-device] .schedule-head {
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+body[data-device] .panel-head h2,
+body[data-device] .panel-head h3,
+body[data-device] .schedule-head h3 {
+  margin: 4px 0 0;
+  font-size: clamp(1.3rem, 2vw, 1.9rem);
+  line-height: 1.15;
+}
+
+body[data-device] .section-label,
+body[data-device] .eyebrow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+body[data-device] .task-filter,
+body[data-device] .calendar-nav,
+body[data-device] .calendar-view-switch {
+  gap: 6px;
+}
+
+body[data-device] .task-filter .chip,
+body[data-device] .calendar-view-switch .chip {
+  min-width: 0;
+}
+
+body[data-device] .field span,
+body[data-device] label > span {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #6a7892;
+}
+
+body[data-device] input,
+body[data-device] select,
+body[data-device] textarea {
+  min-height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(21, 36, 67, 0.1);
+  background: #ffffff;
+  box-shadow: none !important;
+}
+
+body[data-device] textarea {
+  min-height: 112px;
+}
+
+body[data-device] .day-card {
+  min-height: 132px;
+  padding: 12px 12px 10px;
+  border-radius: 16px !important;
+}
+
+body[data-device] .day-number {
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+body[data-device] .mini-event {
+  padding: 8px 10px;
+  border-radius: 12px;
+  line-height: 1.35;
+}
+
+body[data-device] .schedule-list,
+body[data-device] .task-list,
+body[data-device] .employee-list,
+body[data-device] .attendance-list {
+  gap: 12px;
+}
+
+body[data-device="desktop"] .site-nav,
+body[data-device="desktop"] .hero,
+body[data-device="desktop"] .dashboard,
+body[data-device="desktop"] .hr-workspace,
+body[data-device="desktop"] .employee-info-view {
+  width: 1360px;
+  min-width: 1360px;
+  max-width: 1360px;
+}
+
+body[data-device="desktop"] .app-shell {
+  width: 1400px;
+  min-width: 1400px;
+  max-width: 1400px;
+}
+
+body[data-device="desktop"] .dashboard {
+  grid-template-columns: 1fr 1fr !important;
+}
+
+body[data-device="desktop"] .hero {
+  grid-template-columns: minmax(0, 1.4fr) minmax(360px, 0.8fr) !important;
+}
+
+body[data-device="desktop"] .task-controls-grid {
+  grid-template-columns: 220px 1fr auto !important;
+}
+
+body[data-device="mobile"] .site-nav-inner {
+  padding: 12px !important;
+  border-radius: 18px !important;
+}
+
+body[data-device="mobile"] .hero-copy-wrap {
+  padding: 18px 18px !important;
+}
+
+body[data-device="mobile"] .hero-copy-wrap h1 {
+  font-size: 2rem !important;
+}
+
+body[data-device="mobile"] .panel,
+body[data-device="mobile"] .schedule-card,
+body[data-device="mobile"] .archive-panel {
+  padding: 16px !important;
+  border-radius: 18px !important;
+}
+
+body[data-device="mobile"] .metric-card {
+  padding: 14px !important;
+}
+
+body[data-device="mobile"] .panel-head h2,
+body[data-device="mobile"] .panel-head h3 {
+  font-size: 1.2rem;
+}
