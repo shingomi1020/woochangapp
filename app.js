@@ -51,8 +51,8 @@ const roleSensitiveTabs = document.querySelectorAll("[data-role-visible]");
 const authSensitiveTabs = document.querySelectorAll("[data-auth-visible]");
 const pageViews = document.querySelectorAll(".app-view");
 const roleSections = document.querySelectorAll("[data-role-section]");
-const roleSelect = document.getElementById("roleSelect");
-const roleSwitcher = roleSelect?.closest(".role-switcher");
+const roleSwitcher = document.querySelector(".role-switcher");
+const roleValue = document.getElementById("roleValue");
 const sessionBadge = document.getElementById("sessionBadge");
 const sessionUserName = document.getElementById("sessionUserName");
 const sessionUserMeta = document.getElementById("sessionUserMeta");
@@ -258,14 +258,6 @@ function loadPayrollStatusMap() {
   }
 }
 
-function loadCurrentRole() {
-  try {
-    return window.localStorage.getItem("flowboard-role") || "admin";
-  } catch (error) {
-    return "admin";
-  }
-}
-
 function loadMembers() {
   try {
     const raw = JSON.parse(window.localStorage.getItem("flowboard-members") || "[]");
@@ -292,7 +284,7 @@ const state = {
   calendarMode: "month",
   currentView: "calendar",
   selectedClient: "",
-  currentRole: loadCurrentRole(),
+  currentRole: loadCurrentUser()?.role || "employee",
   editingTaskId: null,
   toastTimer: null,
   isLoading: true,
@@ -382,13 +374,6 @@ openArchiveBtn.addEventListener("click", () => {
 
 clientBackBtn.addEventListener("click", () => {
   switchView("calendar");
-});
-
-roleSelect.addEventListener("change", () => {
-  state.currentRole = roleSelect.value;
-  window.localStorage.setItem("flowboard-role", state.currentRole);
-  applyRoleAccess();
-  showToast(`${getRoleLabel(state.currentRole)} 화면으로 전환했습니다.`);
 });
 
 logoutBtn?.addEventListener("click", () => {
@@ -1582,8 +1567,6 @@ function syncRoleWithCurrentUser() {
     return;
   }
   state.currentRole = state.currentUser.role || "employee";
-  roleSelect.value = state.currentRole;
-  window.localStorage.setItem("flowboard-role", state.currentRole);
 }
 
 function renderSessionUi() {
@@ -1596,7 +1579,6 @@ function renderSessionUi() {
     logoutBtn.hidden = true;
     sessionUserName.textContent = "게스트";
     sessionUserMeta.textContent = "로그인이 필요합니다";
-    roleSelect.disabled = true;
     if (roleSwitcher) {
       roleSwitcher.hidden = true;
     }
@@ -1607,9 +1589,11 @@ function renderSessionUi() {
   logoutBtn.hidden = false;
   sessionUserName.textContent = state.currentUser.name;
   sessionUserMeta.textContent = `${getRoleLabel(state.currentUser.role)} · ${state.currentUser.loginId}`;
-  roleSelect.disabled = state.currentUser.role !== "admin";
   if (roleSwitcher) {
     roleSwitcher.hidden = false;
+  }
+  if (roleValue) {
+    roleValue.textContent = getRoleLabel(state.currentRole);
   }
 }
 
@@ -1882,7 +1866,6 @@ function applyRoleAccess() {
   ensureDefaultAdmin();
   syncRoleWithCurrentUser();
   renderSessionUi();
-  roleSelect.value = state.currentRole;
 
   authSensitiveTabs.forEach((tab) => {
     tab.hidden = tab.dataset.authVisible === "guest" ? isAuthenticated() : !isAuthenticated();
@@ -3772,7 +3755,6 @@ attendanceClockInInput.value = "09:00";
 attendanceClockOutInput.value = "18:00";
 attendanceBatchDateInput.value = formatDateKey(today);
 employeeTypeInput.value = "insured";
-roleSelect.value = state.currentRole;
 attendanceMonthFilterInput.value = state.attendanceMonthFilter;
 if (attendanceCalendarMonthInput) {
   attendanceCalendarMonthInput.value = state.attendanceMonthFilter;
