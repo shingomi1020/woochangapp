@@ -71,6 +71,7 @@ const signupNameInput = document.getElementById("signupNameInput");
 const signupIdInput = document.getElementById("signupIdInput");
 const signupPasswordInput = document.getElementById("signupPasswordInput");
 const signupRoleInput = document.getElementById("signupRoleInput");
+const signupGuideText = document.getElementById("signupGuideText");
 const moveSignupBtn = document.getElementById("moveSignupBtn");
 const moveLoginBtn = document.getElementById("moveLoginBtn");
 const memberCount = document.getElementById("memberCount");
@@ -384,7 +385,7 @@ editMemberCancelBtn?.addEventListener("click", () => {
 });
 
 moveSignupBtn?.addEventListener("click", () => {
-  signupRoleInput.value = state.members.length === 0 ? "admin" : "employee";
+  syncSignupRoleUi();
   switchView("signup");
 });
 
@@ -403,7 +404,7 @@ signupForm?.addEventListener("submit", (event) => {
   const name = signupNameInput.value.trim();
   const loginId = signupIdInput.value.trim();
   const password = signupPasswordInput.value.trim();
-  const role = signupRoleInput.value;
+  const role = state.members.length === 0 ? "admin" : signupRoleInput.value;
 
   if (!name || !loginId || !password) {
     showToast("회원 정보를 모두 입력해 주세요.");
@@ -427,7 +428,7 @@ signupForm?.addEventListener("submit", (event) => {
   saveMembers();
   renderMembers();
   signupForm.reset();
-  signupRoleInput.value = state.members.length === 0 ? "admin" : "employee";
+  syncSignupRoleUi();
   showToast("회원 계정을 등록했습니다.");
   switchView("login");
 });
@@ -1570,6 +1571,25 @@ function renderSessionUi() {
 
 function getViewForUnauthenticated(view) {
   return ["login", "signup"].includes(view) ? view : "login";
+}
+
+function syncSignupRoleUi() {
+  if (!signupRoleInput || !signupGuideText) {
+    return;
+  }
+
+  if (state.members.length === 0) {
+    signupRoleInput.value = "employee";
+    signupRoleInput.disabled = true;
+    signupGuideText.textContent = "첫 가입 계정은 보안을 위해 자동으로 관리자 권한으로 생성됩니다. 이후 관리자만 다른 관리자 권한을 부여할 수 있습니다.";
+    return;
+  }
+
+  signupRoleInput.disabled = false;
+  if (!["employee", "freelancer"].includes(signupRoleInput.value)) {
+    signupRoleInput.value = "employee";
+  }
+  signupGuideText.textContent = "내부용이라 필수 정보만 받습니다. 이름, 아이디, 비밀번호와 직원/프리랜서 구분만 입력하면 됩니다.";
 }
 
 function renderMembers() {
@@ -3194,9 +3214,7 @@ if (attendanceCalendarMonthInput) {
   attendanceCalendarMonthInput.value = state.attendanceMonthFilter;
 }
 payrollMonthInput.value = state.payrollMonth;
-if (signupRoleInput) {
-  signupRoleInput.value = state.members.length === 0 ? "admin" : "employee";
-}
+syncSignupRoleUi();
 syncFormMode();
 loadHrState();
 applyRoleAccess();
