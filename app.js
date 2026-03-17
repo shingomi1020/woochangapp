@@ -1792,6 +1792,29 @@ function logoutCurrentUser(skipToast = false) {
   }
 }
 
+function renderStandaloneViews(activeView) {
+  pageViews.forEach((section) => {
+    section.hidden = true;
+  });
+
+  if (tasksView && boardViews.includes(activeView)) {
+    tasksView.hidden = false;
+    tasksView.dataset.boardView = activeView === "todos" ? "todos" : "calendar";
+  }
+
+  const targetView = document.getElementById(`${activeView}View`);
+  if (targetView) {
+    targetView.hidden = false;
+  }
+
+  if (loginView) {
+    loginView.hidden = activeView !== "login";
+  }
+  if (signupView) {
+    signupView.hidden = activeView !== "signup";
+  }
+}
+
 function switchView(view, shouldSyncHash = true) {
   if (view === "tasks") {
     view = "calendar";
@@ -1805,16 +1828,7 @@ function switchView(view, shouldSyncHash = true) {
   state.currentView = view;
   const isBoardView = boardViews.includes(view);
   pageHero.hidden = !isBoardView;
-  pageViews.forEach((section) => {
-    if (section.id === "tasksView") {
-      section.hidden = !isBoardView;
-      return;
-    }
-    section.hidden = section.id !== `${view}View`;
-  });
-  if (tasksView) {
-    tasksView.dataset.boardView = view === "todos" ? "todos" : "calendar";
-  }
+  renderStandaloneViews(view);
   workspaceTabs.forEach((tab) => {
     const isActive =
       (view === "client" && tab.dataset.view === "calendar") ||
@@ -1878,11 +1892,7 @@ function applyRoleAccess() {
 
   if (!isAuthenticated()) {
     pageHero.hidden = true;
-    if (!["login", "signup"].includes(state.currentView)) {
-      switchView(getViewForUnauthenticated(state.currentView));
-    } else {
-      switchView(getViewForUnauthenticated(state.currentView));
-    }
+    switchView(getViewForUnauthenticated(state.currentView));
   } else if (!isViewAllowedForRole(state.currentView)) {
     switchView(state.currentRole === "admin" ? "calendar" : "hr");
   }

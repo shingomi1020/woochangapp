@@ -219,6 +219,10 @@ select:focus-visible {
   padding: 8px 12px;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .app-view[hidden],
 .hero[hidden] {
   display: none !important;
