@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-  <link rel="stylesheet" href="styles.css?v=20260317-47" />
+  <link rel="stylesheet" href="styles.css?v=20260317-48" />
   </head>
   <body>
     <div class="app-shell">
@@ -93,7 +93,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-          <p id="buildStamp" class="build-stamp">Build 2026-03-17 47</p>
+          <p id="buildStamp" class="build-stamp">Build 2026-03-17 48</p>
           </div>
         </div>
 
@@ -138,20 +138,22 @@
               <p class="section-label">마감 캘린더</p>
               <h2 id="monthLabel">2026년 3월</h2>
             </div>
-            <div class="calendar-nav">
-              <button id="prevMonthBtn" class="ghost-btn" type="button">이전</button>
-              <button id="todayBtn" class="ghost-btn primary" type="button">오늘</button>
-              <button id="nextMonthBtn" class="ghost-btn" type="button">다음</button>
+            <div class="calendar-toolbar">
+              <div class="calendar-nav">
+                <button id="prevMonthBtn" class="ghost-btn" type="button">이전</button>
+                <button id="todayBtn" class="ghost-btn primary" type="button">오늘</button>
+                <button id="nextMonthBtn" class="ghost-btn" type="button">다음</button>
+              </div>
+              <div class="calendar-view-switch" role="tablist" aria-label="캘린더 보기 전환">
+                <button class="chip active" type="button" data-calendar-view="month">월간</button>
+                <button class="chip" type="button" data-calendar-view="week">주간</button>
+                <button class="chip" type="button" data-calendar-view="list">리스트</button>
+              </div>
             </div>
           </div>
 
           <div class="calendar-topline">
             <p id="calendarHint" class="calendar-hint">오늘 마감 업무를 먼저 확인해 보세요.</p>
-            <div class="calendar-view-switch" role="tablist" aria-label="캘린더 보기 전환">
-              <button class="chip active" type="button" data-calendar-view="month">월간</button>
-              <button class="chip" type="button" data-calendar-view="week">주간</button>
-              <button class="chip" type="button" data-calendar-view="list">리스트</button>
-            </div>
           </div>
 
           <div class="calendar-scroll">
@@ -1035,6 +1037,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-47"></script>
+    <script src="app.js?v=20260317-48"></script>
   </body>
 </html>

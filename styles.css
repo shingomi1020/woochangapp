@@ -1671,6 +1671,13 @@ h2 {
   gap: 10px;
 }
 
+.calendar-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
 .calendar-scroll {
   overflow-x: visible;
   padding-bottom: 6px;
@@ -4133,6 +4140,13 @@ body[data-device="desktop"] .panel-calendar .panel-head > div:last-child {
   flex-wrap: nowrap;
 }
 
+body[data-device="desktop"] .calendar-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
 body[data-device="desktop"] .calendar-nav .ghost-btn,
 body[data-device="desktop"] .calendar-view-switch .chip {
   min-width: 74px;
@@ -4144,6 +4158,12 @@ body[data-device="mobile"] .calendar-nav,
 body[data-device="mobile"] .calendar-view-switch {
   width: 100%;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body[data-device="mobile"] .calendar-toolbar {
+  width: 100%;
+  display: grid;
+  gap: 10px;
 }
 
 body[data-device="mobile"] .calendar-topline {
