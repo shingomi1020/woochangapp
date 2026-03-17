@@ -1943,6 +1943,7 @@ function logoutCurrentUser(skipToast = false) {
 function renderStandaloneViews(activeView) {
   pageViews.forEach((section) => {
     section.hidden = true;
+    section.style.removeProperty("display");
   });
 
   if (tasksView && boardViews.includes(activeView)) {
@@ -1953,13 +1954,22 @@ function renderStandaloneViews(activeView) {
   const targetView = document.getElementById(`${activeView}View`);
   if (targetView) {
     targetView.hidden = false;
+    if (["login", "signup"].includes(activeView)) {
+      targetView.style.display = "grid";
+    }
   }
 
   if (loginView) {
     loginView.hidden = activeView !== "login";
+    if (activeView === "login") {
+      loginView.style.display = "grid";
+    }
   }
   if (signupView) {
     signupView.hidden = activeView !== "signup";
+    if (activeView === "signup") {
+      signupView.style.display = "grid";
+    }
   }
 }
 

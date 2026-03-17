@@ -231,6 +231,16 @@ select:focus-visible {
   margin: 0 auto;
 }
 
+.auth-view:not([hidden]) {
+  display: grid !important;
+  width: min(100%, 760px);
+  margin: 0 auto;
+}
+
+.auth-view:not([hidden]) .auth-panel {
+  display: block !important;
+}
+
 .auth-panel {
   max-width: 760px;
   margin: 0 auto 28px;
