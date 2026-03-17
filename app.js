@@ -542,9 +542,13 @@ editMemberDeleteBtn?.addEventListener("click", () => {
 
 window.addEventListener("hashchange", () => {
   const nextView = window.location.hash.replace("#", "") || "calendar";
-  if (["tasks", "calendar", "todos", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"].includes(nextView)) {
+  if (["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "estimate", "statement", "payroll", "members", "login", "signup"].includes(nextView)) {
     switchView(nextView, false);
   }
+});
+
+window.addEventListener("resize", () => {
+  syncDeviceMode();
 });
 
 taskForm.addEventListener("submit", async (event) => {
@@ -1815,6 +1819,13 @@ function renderStandaloneViews(activeView) {
   }
 }
 
+function syncDeviceMode() {
+  if (!document.body) {
+    return;
+  }
+  document.body.dataset.device = window.innerWidth <= 760 ? "mobile" : "desktop";
+}
+
 function switchView(view, shouldSyncHash = true) {
   if (view === "tasks") {
     view = "calendar";
@@ -1826,6 +1837,9 @@ function switchView(view, shouldSyncHash = true) {
   }
 
   state.currentView = view;
+  if (document.body) {
+    document.body.dataset.view = view;
+  }
   const isBoardView = boardViews.includes(view);
   pageHero.hidden = !isBoardView;
   renderStandaloneViews(view);
@@ -3764,6 +3778,7 @@ if (attendanceCalendarMonthInput) {
   attendanceCalendarMonthInput.value = state.attendanceMonthFilter;
 }
 payrollMonthInput.value = state.payrollMonth;
+syncDeviceMode();
 syncSignupRoleUi();
 syncFormMode();
 loadHrState();
