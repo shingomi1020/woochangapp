@@ -62,6 +62,17 @@ const attendanceDateInput = document.getElementById("attendanceDateInput");
 const attendanceClockInInput = document.getElementById("attendanceClockInInput");
 const attendanceClockOutInput = document.getElementById("attendanceClockOutInput");
 const attendanceList = document.getElementById("attendanceList");
+const attendanceModal = document.getElementById("attendanceModal");
+const attendanceModalBackdrop = document.getElementById("attendanceModalBackdrop");
+const attendanceModalCloseBtn = document.getElementById("attendanceModalCloseBtn");
+const attendanceModalTitle = document.getElementById("attendanceModalTitle");
+const attendanceModalSubtitle = document.getElementById("attendanceModalSubtitle");
+const editAttendanceForm = document.getElementById("editAttendanceForm");
+const editAttendanceEmployeeSelect = document.getElementById("editAttendanceEmployeeSelect");
+const editAttendanceDateInput = document.getElementById("editAttendanceDateInput");
+const editAttendanceClockInInput = document.getElementById("editAttendanceClockInInput");
+const editAttendanceClockOutInput = document.getElementById("editAttendanceClockOutInput");
+const editAttendanceDeleteBtn = document.getElementById("editAttendanceDeleteBtn");
 
 const supabaseUrl = "https://nmnycqaufrpcgdanmpsj.supabase.co";
 const supabaseKey = "sb_publishable_a_WFRivMBscLCg-IPkFcZA_LqpStADT";
@@ -128,6 +139,7 @@ const state = {
   tasks: [],
   employees: [],
   attendanceRecords: [],
+  editingAttendanceId: null,
 };
 
 setConnectionState("checking", text.booting);
@@ -361,9 +373,20 @@ editModalBackdrop.addEventListener("click", () => {
   closeEditModal();
 });
 
+attendanceModalCloseBtn.addEventListener("click", () => {
+  closeAttendanceModal();
+});
+
+attendanceModalBackdrop.addEventListener("click", () => {
+  closeAttendanceModal();
+});
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !editModal.hidden) {
     closeEditModal();
+  }
+  if (event.key === "Escape" && !attendanceModal.hidden) {
+    closeAttendanceModal();
   }
 });
 
@@ -880,6 +903,28 @@ function closeEditModal() {
   clearEditingState();
 }
 
+function openAttendanceModal(record) {
+  state.editingAttendanceId = record.id;
+  const employee = state.employees.find((item) => String(item.id) === String(record.employeeId));
+  attendanceModalTitle.textContent = `${employee?.name || "직원"} 출퇴근 기록 수정`;
+  attendanceModalSubtitle.textContent = `${formatLongDate(new Date(`${record.workDate}T00:00:00`))} 기록을 수정하거나 삭제할 수 있습니다.`;
+  renderEditAttendanceEmployeeSelect();
+  editAttendanceEmployeeSelect.value = String(record.employeeId);
+  editAttendanceDateInput.value = record.workDate;
+  editAttendanceClockInInput.value = record.clockIn;
+  editAttendanceClockOutInput.value = record.clockOut;
+  attendanceModal.hidden = false;
+  document.body.classList.add("modal-open");
+  editAttendanceEmployeeSelect.focus();
+}
+
+function closeAttendanceModal() {
+  state.editingAttendanceId = null;
+  attendanceModal.hidden = true;
+  document.body.classList.remove("modal-open");
+  editAttendanceForm.reset();
+}
+
 function switchView(view, shouldSyncHash = true) {
   state.currentView = view;
   const isTasks = view === "tasks";
@@ -1015,6 +1060,7 @@ function saveHrState() {
 
 function renderHrWorkspace() {
   renderEmployeeSelect();
+  renderEditAttendanceEmployeeSelect();
   renderEmployees();
   renderAttendanceList();
   updateHrMetrics();
@@ -1027,6 +1073,18 @@ function renderEmployeeSelect() {
   }
 
   attendanceEmployeeSelect.innerHTML = [
+    `<option value="">직원을 선택하세요</option>`,
+    ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
+  ].join("");
+}
+
+function renderEditAttendanceEmployeeSelect() {
+  if (!state.employees.length) {
+    editAttendanceEmployeeSelect.innerHTML = `<option value="">직원을 먼저 등록해 주세요</option>`;
+    return;
+  }
+
+  editAttendanceEmployeeSelect.innerHTML = [
     `<option value="">직원을 선택하세요</option>`,
     ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
   ].join("");
@@ -1308,6 +1366,69 @@ async function saveAttendance() {
   showToast("출퇴근 기록을 저장했습니다.");
 }
 
+async function updateAttendance() {
+  if (state.editingAttendanceId === null) {
+    return;
+  }
+
+  const employeeId = editAttendanceEmployeeSelect.value;
+  const workDate = editAttendanceDateInput.value;
+  const clockIn = editAttendanceClockInInput.value;
+  const clockOut = editAttendanceClockOutInput.value;
+
+  if (!employeeId || !workDate || !clockIn || !clockOut || clockOut <= clockIn) {
+    return;
+  }
+
+  const { data, error } = await requestTasks(`/rest/v1/attendance_records?id=eq.${state.editingAttendanceId}`, {
+    method: "PATCH",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
+      employee_id: employeeId,
+      work_date: workDate,
+      clock_in: clockIn,
+      clock_out: clockOut,
+    }),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to update attendance:", error);
+    return;
+  }
+
+  const savedRecord = mapAttendanceRecord(Array.isArray(data) ? data[0] : data);
+  state.attendanceRecords = state.attendanceRecords.map((record) =>
+    String(record.id) === String(savedRecord.id) ? savedRecord : record
+  );
+  closeAttendanceModal();
+  renderHrWorkspace();
+  showToast("출퇴근 기록을 수정했습니다.");
+}
+
+async function deleteAttendance() {
+  if (state.editingAttendanceId === null) {
+    return;
+  }
+
+  const { error } = await requestTasks(`/rest/v1/attendance_records?id=eq.${state.editingAttendanceId}`, {
+    method: "DELETE",
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to delete attendance:", error);
+    return;
+  }
+
+  state.attendanceRecords = state.attendanceRecords.filter(
+    (record) => String(record.id) !== String(state.editingAttendanceId)
+  );
+  closeAttendanceModal();
+  renderHrWorkspace();
+  showToast("출퇴근 기록을 삭제했습니다.");
+}
+
 function renderEmployeeSelect() {
   if (!state.employees.length) {
     attendanceEmployeeSelect.innerHTML = `<option value="">직원을 먼저 등록해 주세요</option>`;
@@ -1364,7 +1485,10 @@ function renderAttendanceList() {
               <strong>${employee?.name || "알 수 없는 직원"}</strong>
               <p>${formatLongDate(new Date(`${record.workDate}T00:00:00`))}</p>
             </div>
-            <span class="task-date-chip">${employee?.employmentType === "freelancer" ? "프리랜서" : "4대보험 적용 직원"}</span>
+            <div class="attendance-card-tools">
+              <span class="task-date-chip">${employee?.employmentType === "freelancer" ? "프리랜서" : "4대보험 적용 직원"}</span>
+              <button class="ghost-btn attendance-edit-btn" type="button" data-attendance-action="edit" data-id="${record.id}">수정</button>
+            </div>
           </div>
           <div class="attendance-times">
             <span>출근 ${record.clockIn}</span>
@@ -1375,10 +1499,23 @@ function renderAttendanceList() {
             <span>야근 ${summary.overtimeHours.toFixed(1)}시간 / ${formatCurrency(summary.overtimePay)}</span>
             <span>주말 ${summary.weekendHours.toFixed(1)}시간 / ${formatCurrency(summary.weekendPay)}</span>
           </div>
+          <div class="attendance-insight">
+            <span class="task-date-chip">${summary.overtimeHours > 0 ? `야근 ${summary.overtimeHours.toFixed(1)}시간` : "정규 근무"}</span>
+            <span class="task-date-chip">${summary.weekendHours > 0 ? `주말 ${summary.weekendHours.toFixed(1)}시간` : "평일 기준"}</span>
+          </div>
         </article>
       `;
     })
     .join("");
+
+  attendanceList.querySelectorAll("[data-attendance-action='edit']").forEach((button) => {
+    button.addEventListener("click", () => {
+      const record = state.attendanceRecords.find((item) => String(item.id) === String(button.dataset.id));
+      if (record) {
+        openAttendanceModal(record);
+      }
+    });
+  });
 }
 
 taskReceivedDateInput.value = formatDateKey(today);
@@ -1410,6 +1547,13 @@ attendanceForm.addEventListener(
   },
   true
 );
+editAttendanceForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  void updateAttendance();
+});
+editAttendanceDeleteBtn.addEventListener("click", () => {
+  void deleteAttendance();
+});
 switchView(
   ["tasks", "hr", "estimate", "statement", "payroll"].includes(window.location.hash.replace("#", ""))
     ? window.location.hash.replace("#", "")

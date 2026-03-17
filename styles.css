@@ -547,12 +547,24 @@ h2 {
   gap: 12px;
 }
 
+.attendance-ledger-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
 .employee-card,
 .attendance-card {
   padding: 18px;
   border-radius: 22px;
   background: linear-gradient(180deg, #ffffff, #f7fbff);
   border: 1px solid rgba(47, 99, 233, 0.08);
+}
+
+.attendance-card {
+  display: grid;
+  gap: 14px;
 }
 
 .employee-card-head,
@@ -572,6 +584,17 @@ h2 {
   margin: 6px 0 0;
   color: var(--muted);
   font-size: 0.88rem;
+}
+
+.attendance-card-tools {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+}
+
+.attendance-edit-btn {
+  min-height: 42px;
+  padding-inline: 16px;
 }
 
 .employee-type {
@@ -601,6 +624,22 @@ h2 {
   gap: 10px;
   margin-top: 12px;
   color: var(--muted);
+}
+
+.attendance-times span,
+.attendance-pay-grid span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(233, 241, 255, 0.74);
+}
+
+.attendance-insight {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .panel {
@@ -1295,6 +1334,20 @@ h2 {
   background: transparent;
 }
 
+.attendance-modal-dialog {
+  width: min(620px, 100%);
+}
+
+.attendance-modal-actions {
+  justify-content: space-between;
+}
+
+.danger-soft {
+  color: #d45d5d;
+  border-color: rgba(214, 108, 108, 0.18);
+  background: rgba(255, 241, 241, 0.92);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -1403,6 +1456,16 @@ h2 {
   .field-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .attendance-card-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .attendance-card-tools {
+    width: 100%;
+    justify-items: stretch;
   }
 
   .task-summary-card {
@@ -1551,6 +1614,10 @@ h2 {
 
   .task-form-actions {
     width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .attendance-modal-actions {
     grid-template-columns: 1fr;
   }
 

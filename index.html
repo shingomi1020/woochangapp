@@ -73,7 +73,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 19</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 20</p>
           </div>
         </div>
 
@@ -351,6 +351,7 @@
                   <p class="section-label">출근기록부</p>
                   <h3>직원별 근무 요약</h3>
                 </div>
+                <p class="attendance-ledger-hint">기록 카드에서 바로 수정 버튼을 눌러 시간을 고칠 수 있습니다.</p>
               </div>
               <div id="attendanceList" class="attendance-list"></div>
             </div>
@@ -459,7 +460,51 @@
 
     <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
 
+    <div id="attendanceModal" class="modal" hidden>
+      <div id="attendanceModalBackdrop" class="modal-backdrop"></div>
+      <div class="modal-dialog attendance-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="attendanceModalTitle">
+        <div class="modal-head">
+          <div>
+            <p class="section-label">출퇴근 기록 수정</p>
+            <h3 id="attendanceModalTitle">직원 출퇴근 기록 수정</h3>
+            <p id="attendanceModalSubtitle" class="modal-subtitle">현재 기록을 수정하거나 삭제할 수 있습니다.</p>
+          </div>
+          <button id="attendanceModalCloseBtn" type="button" class="ghost-btn icon-only" aria-label="출퇴근 수정 창 닫기">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z" />
+            </svg>
+          </button>
+        </div>
+        <form id="editAttendanceForm" class="task-form modal-task-form">
+          <div class="task-form-grid hr-form-grid">
+            <label class="field task-form-wide">
+              <span>직원 선택</span>
+              <select id="editAttendanceEmployeeSelect" required>
+                <option value="">직원을 선택하세요</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>근무일</span>
+              <input id="editAttendanceDateInput" type="date" required />
+            </label>
+            <label class="field">
+              <span>출근 시간</span>
+              <input id="editAttendanceClockInInput" type="time" required />
+            </label>
+            <label class="field">
+              <span>퇴근 시간</span>
+              <input id="editAttendanceClockOutInput" type="time" required />
+            </label>
+          </div>
+          <div class="task-form-actions attendance-modal-actions">
+            <button id="editAttendanceDeleteBtn" type="button" class="ghost-btn danger-soft">기록 삭제</button>
+            <button type="submit" class="submit-btn task-submit">수정 저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-19"></script>
+    <script src="app.js?v=20260317-20"></script>
   </body>
 </html>
