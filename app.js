@@ -3529,7 +3529,7 @@ function renderAttendanceCalendar() {
           recordInfo
             ? `
               <span class="attendance-calendar-status">${getAttendanceStatusLabel(recordInfo.summary.attendanceStatus)}</span>
-              <span class="attendance-calendar-time">${recordInfo.record.clockIn} - ${recordInfo.record.clockOut}</span>
+              <span class="attendance-calendar-time">${recordInfo.record.clockIn}-${recordInfo.record.clockOut}</span>
             `
             : `<span class="attendance-calendar-status empty">${isCurrentMonth ? "기록 없음" : ""}</span>`
         }
