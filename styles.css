@@ -3240,8 +3240,8 @@ body[data-device="desktop"] .app-shell {
 
 body[data-device="desktop"] .site-nav {
   top: 10px;
-  width: 1400px;
-  max-width: 1400px;
+  width: 1360px;
+  max-width: 1360px;
   margin-bottom: 20px;
 }
 
@@ -3301,8 +3301,8 @@ body[data-device="desktop"] .session-badge {
 }
 
 body[data-device="desktop"] .hero {
-  width: 1400px;
-  max-width: 1400px;
+  width: 1360px;
+  max-width: 1360px;
   margin: 0 auto 22px;
   grid-template-columns: 940px 420px;
   gap: 20px;
@@ -4571,9 +4571,9 @@ body[data-device="desktop"] .employee-info-view {
 }
 
 body[data-device="desktop"] .app-shell {
-  width: 1400px;
-  min-width: 1400px;
-  max-width: 1400px;
+  width: 1360px;
+  min-width: 1360px;
+  max-width: 1360px;
 }
 
 body[data-device="desktop"] .dashboard {
