@@ -1302,7 +1302,7 @@ h2 {
   position: fixed;
   left: 50%;
   bottom: 24px;
-  z-index: 40;
+  z-index: 120;
   padding: 14px 18px;
   border-radius: 999px;
   background: rgba(22, 53, 137, 0.96);
@@ -1313,6 +1313,9 @@ h2 {
   opacity: 0;
   pointer-events: none;
   transition: transform 220ms ease, opacity 220ms ease;
+  max-width: min(88vw, 640px);
+  text-align: center;
+  line-height: 1.55;
 }
 
 .toast.is-visible {

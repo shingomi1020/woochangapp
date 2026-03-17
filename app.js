@@ -890,7 +890,8 @@ function showToast(message) {
   window.clearTimeout(state.toastTimer);
   toast.textContent = message;
   toast.classList.add("is-visible");
-  state.toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
+  const duration = message.includes("실패") || message.includes("문제") || message.includes("오류") ? 5200 : 3600;
+  state.toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), duration);
 }
 
 function setConnectionState(status, message) {
