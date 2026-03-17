@@ -4538,3 +4538,395 @@ body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-tasks {
   width: 100%;
   max-width: 100%;
 }
+
+/* Calendar app style */
+.panel-calendar {
+  padding: 20px 20px 18px !important;
+}
+
+.panel-calendar .panel-head {
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+.panel-calendar .panel-head h2 {
+  font-size: 1.05rem !important;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.panel-calendar .section-label {
+  font-size: 0.74rem;
+  color: #7f8ba1;
+}
+
+.calendar-topline {
+  margin-bottom: 10px;
+}
+
+.calendar-hint {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.weekdays {
+  margin-bottom: 0;
+  padding: 0;
+  border-bottom: 1px solid rgba(21, 36, 67, 0.08);
+}
+
+.weekdays span {
+  padding: 10px 12px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #8a97ac;
+}
+
+.calendar-grid {
+  gap: 0;
+  border-left: 1px solid rgba(21, 36, 67, 0.08);
+  border-top: 1px solid rgba(21, 36, 67, 0.08);
+}
+
+.day-card {
+  min-height: 148px;
+  padding: 10px 10px 8px;
+  border: 0 !important;
+  border-right: 1px solid rgba(21, 36, 67, 0.08) !important;
+  border-bottom: 1px solid rgba(21, 36, 67, 0.08) !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+.day-card:hover {
+  transform: none;
+  background: #fafcff !important;
+  border-color: rgba(21, 36, 67, 0.08) !important;
+}
+
+.day-card.is-selected {
+  background: #f6f9ff !important;
+  box-shadow: inset 0 0 0 1px rgba(47, 99, 233, 0.12) !important;
+}
+
+.day-card.is-today .day-number {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #2f63e9;
+  color: #ffffff;
+}
+
+.day-card.is-outside {
+  background: #fbfcfe !important;
+}
+
+.day-top {
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.day-number {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.day-count {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #eef3fb !important;
+  color: #64758f !important;
+  border: 0 !important;
+  font-size: 0.74rem;
+}
+
+.day-events {
+  display: grid;
+  gap: 4px;
+}
+
+.mini-event {
+  display: grid;
+  gap: 1px;
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 0 !important;
+  border-left: 3px solid #2f63e9 !important;
+  border-radius: 8px !important;
+  background: #f5f7fb !important;
+  line-height: 1.25;
+}
+
+.mini-event strong {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #1f4ebf;
+}
+
+.mini-event span {
+  font-size: 0.72rem;
+  color: #33415c;
+}
+
+body[data-device="mobile"] .weekdays span {
+  padding: 8px 6px 10px;
+  font-size: 0.74rem;
+}
+
+body[data-device="mobile"] .day-card {
+  min-height: 92px;
+  padding: 8px 6px 6px;
+}
+
+body[data-device="mobile"] .day-number {
+  font-size: 0.82rem;
+}
+
+body[data-device="mobile"] .day-count {
+  min-width: 22px;
+  height: 22px;
+  font-size: 0.68rem;
+}
+
+body[data-device="mobile"] .mini-event {
+  min-height: 22px;
+  padding: 3px 5px;
+  border-left-width: 2px !important;
+  border-radius: 6px !important;
+}
+
+body[data-device="mobile"] .mini-event strong {
+  font-size: 0.64rem;
+}
+
+body[data-device="mobile"] .mini-event span {
+  font-size: 0.62rem;
+}
+
+/* Native calendar style refresh */
+body[data-device="desktop"] .panel-calendar {
+  padding: 18px 18px 16px !important;
+}
+
+body[data-device="desktop"] .panel-calendar .panel-head {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end !important;
+  gap: 18px;
+}
+
+body[data-device="desktop"] .panel-calendar .panel-head > div:first-child {
+  min-width: 0;
+}
+
+body[data-device="desktop"] .panel-calendar .panel-head h2 {
+  font-size: 1.08rem !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+body[data-device="desktop"] .panel-calendar .calendar-toolbar {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: nowrap !important;
+  width: auto !important;
+}
+
+body[data-device="desktop"] .panel-calendar .calendar-nav,
+body[data-device="desktop"] .panel-calendar .calendar-view-switch {
+  display: inline-grid !important;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(72px, auto);
+  align-items: center;
+  gap: 0;
+  width: auto !important;
+  padding: 4px;
+  border: 1px solid #dde4ef;
+  border-radius: 14px;
+  background: #f5f7fb;
+  box-shadow: none;
+}
+
+body[data-device="desktop"] .panel-calendar .calendar-view-switch {
+  margin-top: 0 !important;
+}
+
+body[data-device="desktop"] .panel-calendar .calendar-nav .ghost-btn,
+body[data-device="desktop"] .panel-calendar .calendar-view-switch .chip {
+  min-width: 72px;
+  height: 42px;
+  padding: 0 16px;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: #73829b !important;
+  box-shadow: none !important;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+body[data-device="desktop"] .panel-calendar .calendar-nav .ghost-btn.primary,
+body[data-device="desktop"] .panel-calendar .calendar-view-switch .chip.active {
+  background: #ffffff !important;
+  color: #2452cc !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(36, 82, 204, 0.08) inset !important;
+}
+
+body[data-device="desktop"] .panel-calendar .calendar-topline {
+  margin-bottom: 14px;
+}
+
+body[data-device="desktop"] .panel-calendar .calendar-scroll {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+body[data-device="desktop"] .panel-calendar .weekdays {
+  border-bottom: 1px solid #e2e8f0;
+  background: #fafbfc;
+}
+
+body[data-device="desktop"] .panel-calendar .weekdays span {
+  padding: 11px 10px;
+  font-size: 0.78rem;
+  color: #7a879d;
+}
+
+body[data-device="desktop"] .panel-calendar .calendar-grid {
+  border: 0;
+  background: #e9edf3;
+}
+
+body[data-device="desktop"] .panel-calendar .day-card {
+  min-height: 132px;
+  padding: 8px 8px 6px;
+  border-right: 1px solid #e9edf3 !important;
+  border-bottom: 1px solid #e9edf3 !important;
+  background: #ffffff !important;
+}
+
+body[data-device="desktop"] .panel-calendar .day-card:hover {
+  background: #f9fbff !important;
+}
+
+body[data-device="desktop"] .panel-calendar .day-card.is-selected {
+  background: #f4f8ff !important;
+  box-shadow: inset 0 0 0 1px rgba(47, 99, 233, 0.16) !important;
+}
+
+body[data-device="desktop"] .panel-calendar .day-top {
+  margin-bottom: 6px;
+}
+
+body[data-device="desktop"] .panel-calendar .day-number {
+  font-size: 0.9rem;
+}
+
+body[data-device="desktop"] .panel-calendar .day-count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  font-size: 0.7rem;
+}
+
+body[data-device="desktop"] .panel-calendar .day-events {
+  gap: 3px;
+}
+
+body[data-device="desktop"] .panel-calendar .mini-event {
+  min-height: 24px;
+  padding: 4px 6px 4px 8px;
+  border-left: 3px solid #4f7df0 !important;
+  border-radius: 7px !important;
+  background: #f5f7fb !important;
+}
+
+body[data-device="desktop"] .panel-calendar .mini-event strong {
+  font-size: 0.69rem;
+  line-height: 1.15;
+}
+
+body[data-device="desktop"] .panel-calendar .mini-event span {
+  font-size: 0.67rem;
+  line-height: 1.2;
+}
+
+body[data-device="desktop"] .panel-calendar .day-empty {
+  font-size: 0.73rem;
+  color: #98a4b8;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-toolbar {
+  display: grid !important;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-nav,
+body[data-device="mobile"] .panel-calendar .calendar-view-switch {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #dde4ef;
+  border-radius: 14px;
+  background: #f5f7fb;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-nav .ghost-btn,
+body[data-device="mobile"] .panel-calendar .calendar-view-switch .chip {
+  min-width: 0;
+  height: 40px;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: #73829b !important;
+  font-weight: 700;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-nav .ghost-btn.primary,
+body[data-device="mobile"] .panel-calendar .calendar-view-switch .chip.active {
+  background: #ffffff !important;
+  color: #2452cc !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(36, 82, 204, 0.08) inset !important;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-scroll {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+body[data-device="mobile"] .panel-calendar .weekdays {
+  border-bottom: 1px solid #e2e8f0;
+  background: #fafbfc;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-grid {
+  background: #e9edf3;
+}
+
+body[data-device="mobile"] .panel-calendar .day-card {
+  min-height: 88px;
+  border-right: 1px solid #e9edf3 !important;
+  border-bottom: 1px solid #e9edf3 !important;
+  background: #ffffff !important;
+}
+
+body[data-device="mobile"] .panel-calendar .mini-event {
+  background: #f5f7fb !important;
+}
