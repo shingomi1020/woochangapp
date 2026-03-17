@@ -57,6 +57,7 @@ const sessionUserName = document.getElementById("sessionUserName");
 const sessionUserMeta = document.getElementById("sessionUserMeta");
 const logoutBtn = document.getElementById("logoutBtn");
 const tasksView = document.getElementById("tasksView");
+const boardViews = ["calendar", "todos"];
 const clientView = document.getElementById("clientView");
 const hrView = document.getElementById("hrView");
 const loginView = document.getElementById("loginView");
@@ -76,6 +77,21 @@ const memberCount = document.getElementById("memberCount");
 const activeMemberCount = document.getElementById("activeMemberCount");
 const adminMemberCount = document.getElementById("adminMemberCount");
 const memberList = document.getElementById("memberList");
+const memberModal = document.getElementById("memberModal");
+const memberModalBackdrop = document.getElementById("memberModalBackdrop");
+const memberModalCloseBtn = document.getElementById("memberModalCloseBtn");
+const editMemberForm = document.getElementById("editMemberForm");
+const editMemberNameInput = document.getElementById("editMemberNameInput");
+const editMemberLoginIdInput = document.getElementById("editMemberLoginIdInput");
+const editMemberPasswordInput = document.getElementById("editMemberPasswordInput");
+const editMemberRoleInput = document.getElementById("editMemberRoleInput");
+const editMemberDepartmentInput = document.getElementById("editMemberDepartmentInput");
+const editMemberTitleInput = document.getElementById("editMemberTitleInput");
+const editMemberPhoneInput = document.getElementById("editMemberPhoneInput");
+const editMemberActiveInput = document.getElementById("editMemberActiveInput");
+const editMemberNoteInput = document.getElementById("editMemberNoteInput");
+const editMemberDeleteBtn = document.getElementById("editMemberDeleteBtn");
+const editMemberCancelBtn = document.getElementById("editMemberCancelBtn");
 const clientDetailTitle = document.getElementById("clientDetailTitle");
 const clientDetailSubtitle = document.getElementById("clientDetailSubtitle");
 const clientDetailMetrics = document.getElementById("clientDetailMetrics");
@@ -252,7 +268,7 @@ const state = {
   clientFilter: "all",
   taskSearch: "",
   calendarMode: "month",
-  currentView: "tasks",
+  currentView: "calendar",
   selectedClient: "",
   currentRole: loadCurrentRole(),
   editingTaskId: null,
@@ -264,6 +280,7 @@ const state = {
   attendanceRecords: [],
   editingEmployeeId: null,
   editingAttendanceId: null,
+  editingMemberId: null,
   members: loadMembers(),
   currentUser: loadCurrentUser(),
   payrollMonth: formatDateKey(today).slice(0, 7),
@@ -302,13 +319,16 @@ document.getElementById("todayBtn").addEventListener("click", () => {
 });
 
 focusTodayBtn.addEventListener("click", () => {
+  if (state.currentView !== "calendar") {
+    switchView("calendar");
+  }
   focusToday();
   document.querySelector(".panel-calendar").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
 focusInputBtn.addEventListener("click", () => {
   clearEditingState();
-  switchView("tasks");
+  switchView("todos");
   taskClientInput.focus();
   showToast(text.readyToAdd);
 });
@@ -337,7 +357,7 @@ openArchiveBtn.addEventListener("click", () => {
 });
 
 clientBackBtn.addEventListener("click", () => {
-  switchView("tasks");
+  switchView("calendar");
 });
 
 roleSelect.addEventListener("change", () => {
@@ -351,7 +371,20 @@ logoutBtn?.addEventListener("click", () => {
   logoutCurrentUser();
 });
 
+memberModalCloseBtn?.addEventListener("click", () => {
+  closeMemberModal();
+});
+
+memberModalBackdrop?.addEventListener("click", () => {
+  closeMemberModal();
+});
+
+editMemberCancelBtn?.addEventListener("click", () => {
+  closeMemberModal();
+});
+
 moveSignupBtn?.addEventListener("click", () => {
+  signupRoleInput.value = state.members.length === 0 ? "admin" : "employee";
   switchView("signup");
 });
 
@@ -394,14 +427,98 @@ signupForm?.addEventListener("submit", (event) => {
   saveMembers();
   renderMembers();
   signupForm.reset();
-  signupRoleInput.value = "employee";
+  signupRoleInput.value = state.members.length === 0 ? "admin" : "employee";
   showToast("회원 계정을 등록했습니다.");
   switchView("login");
 });
 
+editMemberForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  if (!state.editingMemberId) {
+    return;
+  }
+
+  const member = state.members.find((item) => item.id === state.editingMemberId);
+  if (!member) {
+    return;
+  }
+
+  const nextName = editMemberNameInput.value.trim();
+  const nextLoginId = editMemberLoginIdInput.value.trim();
+  const nextPassword = editMemberPasswordInput.value.trim();
+
+  if (!nextName || !nextLoginId) {
+    showToast("회원 이름과 아이디를 입력해 주세요.");
+    return;
+  }
+
+  const duplicateMember = state.members.find(
+    (item) => item.id !== member.id && item.loginId === nextLoginId
+  );
+  if (duplicateMember) {
+    showToast("이미 사용 중인 아이디입니다.");
+    return;
+  }
+
+  member.name = nextName;
+  member.loginId = nextLoginId;
+  member.role = editMemberRoleInput.value;
+  member.department = editMemberDepartmentInput.value.trim();
+  member.title = editMemberTitleInput.value.trim();
+  member.phone = editMemberPhoneInput.value.trim();
+  member.note = editMemberNoteInput.value.trim();
+  member.isActive = editMemberActiveInput.value === "true";
+  if (nextPassword) {
+    member.password = nextPassword;
+  }
+
+  if (state.currentUser?.id === member.id) {
+    state.currentUser = {
+      ...state.currentUser,
+      name: member.name,
+      loginId: member.loginId,
+      role: member.role,
+    };
+    saveSessionUser();
+  }
+
+  saveMembers();
+  renderMembers();
+  applyRoleAccess();
+  closeMemberModal();
+  if (state.currentUser?.id === member.id && member.isActive === false) {
+    logoutCurrentUser(true);
+    showToast("현재 계정을 비활성화해서 다시 로그인해야 합니다.");
+    return;
+  }
+  showToast("회원 정보를 수정했습니다.");
+});
+
+editMemberDeleteBtn?.addEventListener("click", () => {
+  if (!state.editingMemberId) {
+    return;
+  }
+  const member = state.members.find((item) => item.id === state.editingMemberId);
+  if (!member || member.loginId === "admin") {
+    return;
+  }
+
+  state.members = state.members.filter((item) => item.id !== state.editingMemberId);
+  saveMembers();
+  renderMembers();
+  closeMemberModal();
+  if (state.currentUser?.id === member.id) {
+    logoutCurrentUser(true);
+    showToast("현재 로그인한 계정을 삭제했습니다.");
+    return;
+  }
+  showToast("회원 계정을 삭제했습니다.");
+});
+
 window.addEventListener("hashchange", () => {
-  const nextView = window.location.hash.replace("#", "") || "tasks";
-  if (["tasks", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"].includes(nextView)) {
+  const nextView = window.location.hash.replace("#", "") || "calendar";
+  if (["tasks", "calendar", "todos", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"].includes(nextView)) {
     switchView(nextView, false);
   }
 });
@@ -619,6 +736,9 @@ document.addEventListener("keydown", (event) => {
   }
   if (event.key === "Escape" && !employeeModal.hidden) {
     closeEmployeeModal();
+  }
+  if (event.key === "Escape" && memberModal && !memberModal.hidden) {
+    closeMemberModal();
   }
 });
 
@@ -1367,6 +1487,35 @@ function closeAttendanceModal() {
   editAttendanceForm.reset();
 }
 
+function openMemberModal(member) {
+  if (!memberModal || !member) {
+    return;
+  }
+  state.editingMemberId = member.id;
+  editMemberNameInput.value = member.name || "";
+  editMemberLoginIdInput.value = member.loginId || "";
+  editMemberPasswordInput.value = "";
+  editMemberRoleInput.value = member.role || "employee";
+  editMemberDepartmentInput.value = member.department || "";
+  editMemberTitleInput.value = member.title || "";
+  editMemberPhoneInput.value = member.phone || "";
+  editMemberActiveInput.value = member.isActive === false ? "false" : "true";
+  editMemberNoteInput.value = member.note || "";
+  editMemberDeleteBtn.hidden = member.loginId === "admin";
+  memberModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeMemberModal() {
+  if (!memberModal) {
+    return;
+  }
+  state.editingMemberId = null;
+  memberModal.hidden = true;
+  document.body.classList.remove("modal-open");
+  editMemberForm?.reset();
+}
+
 function saveMembers() {
   window.localStorage.setItem("flowboard-members", JSON.stringify(state.members));
 }
@@ -1376,27 +1525,13 @@ function saveSessionUser() {
 }
 
 function ensureDefaultAdmin() {
-  if (state.members.some((member) => member.loginId === "admin")) {
-    const sessionExists = state.currentUser && state.members.some(
-      (member) => member.id === state.currentUser.id && member.isActive !== false
-    );
-    if (!sessionExists) {
-      state.currentUser = null;
-      window.localStorage.removeItem("flowboard-session-user");
-    }
-    return;
+  const sessionExists = state.currentUser && state.members.some(
+    (member) => member.id === state.currentUser.id && member.isActive !== false
+  );
+  if (!sessionExists) {
+    state.currentUser = null;
+    window.localStorage.removeItem("flowboard-session-user");
   }
-
-  state.members.unshift({
-    id: `member-${Date.now()}`,
-    name: "기본 관리자",
-    loginId: "admin",
-    password: "1234",
-    role: "admin",
-    isActive: true,
-    createdAt: new Date().toISOString(),
-  });
-  saveMembers();
 }
 
 function isAuthenticated() {
@@ -1460,10 +1595,15 @@ function renderMembers() {
             <div class="member-meta">
               <span>${escapeHtml(member.loginId)}</span>
               <span>${getRoleLabel(member.role)}</span>
+              <span>${member.department ? escapeHtml(member.department) : "부서 미지정"}</span>
+              <span>${member.title ? escapeHtml(member.title) : "직책 미지정"}</span>
               <span>${member.isActive === false ? "비활성" : "활성"}</span>
             </div>
+            <p class="member-profile-line">${member.phone ? escapeHtml(member.phone) : "연락처 미등록"}</p>
+            ${member.note ? `<p class="member-profile-note">${escapeHtml(member.note)}</p>` : ""}
           </div>
           <div class="member-actions">
+            <button class="ghost-btn" type="button" data-member-edit="${member.id}">수정</button>
             <select class="member-role-select" data-member-role="${member.id}">
               <option value="admin" ${member.role === "admin" ? "selected" : ""}>관리자</option>
               <option value="employee" ${member.role === "employee" ? "selected" : ""}>직원</option>
@@ -1482,6 +1622,16 @@ function renderMembers() {
       `
     )
     .join("");
+
+  memberList.querySelectorAll("[data-member-edit]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const member = state.members.find((item) => item.id === button.dataset.memberEdit);
+      if (!member) {
+        return;
+      }
+      openMemberModal(member);
+    });
+  });
 
   memberList.querySelectorAll("[data-member-role]").forEach((select) => {
     select.addEventListener("change", () => {
@@ -1547,7 +1697,7 @@ function loginMember(loginId, password) {
   saveSessionUser();
   syncRoleWithCurrentUser();
   applyRoleAccess();
-  switchView(member.role === "admin" ? "tasks" : "hr");
+  switchView(member.role === "admin" ? "calendar" : "hr");
   showToast(`${member.name} 님으로 로그인했습니다.`);
   return true;
 }
@@ -1563,20 +1713,34 @@ function logoutCurrentUser(skipToast = false) {
 }
 
 function switchView(view, shouldSyncHash = true) {
+  if (view === "tasks") {
+    view = "calendar";
+  }
   if (!isAuthenticated()) {
     view = getViewForUnauthenticated(view);
   } else if (!isViewAllowedForRole(view)) {
-    view = state.currentRole === "admin" ? "tasks" : "hr";
+    view = state.currentRole === "admin" ? "calendar" : "hr";
   }
 
   state.currentView = view;
-  const isTasks = view === "tasks";
-  pageHero.hidden = !isTasks;
+  const isBoardView = boardViews.includes(view);
+  pageHero.hidden = !isBoardView;
   pageViews.forEach((section) => {
+    if (section.id === "tasksView") {
+      section.hidden = !isBoardView;
+      return;
+    }
     section.hidden = section.id !== `${view}View`;
   });
+  if (tasksView) {
+    tasksView.dataset.boardView = view === "todos" ? "todos" : "calendar";
+  }
   workspaceTabs.forEach((tab) => {
-    const isActive = view === "client" ? tab.dataset.view === "tasks" : tab.dataset.view === view;
+    const isActive =
+      (view === "client" && tab.dataset.view === "calendar") ||
+      (view === "calendar" && tab.dataset.view === "calendar") ||
+      (view === "todos" && tab.dataset.view === "todos") ||
+      tab.dataset.view === view;
     tab.classList.toggle("active", isActive);
   });
   if (shouldSyncHash) {
@@ -1599,9 +1763,9 @@ function getRoleLabel(role) {
 
 function isViewAllowedForRole(view) {
   const allowed = {
-    admin: ["tasks", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"],
-    employee: ["tasks", "client", "hr", "payroll", "login", "signup"],
-    freelancer: ["tasks", "client", "hr", "payroll", "login", "signup"],
+    admin: ["tasks", "calendar", "todos", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"],
+    employee: ["tasks", "calendar", "todos", "client", "hr", "payroll", "login", "signup"],
+    freelancer: ["tasks", "calendar", "todos", "client", "hr", "payroll", "login", "signup"],
   };
   return allowed[state.currentRole]?.includes(view);
 }
@@ -1632,7 +1796,7 @@ function applyRoleAccess() {
       switchView(getViewForUnauthenticated(state.currentView));
     }
   } else if (!isViewAllowedForRole(state.currentView)) {
-    switchView(state.currentRole === "admin" ? "tasks" : "hr");
+    switchView(state.currentRole === "admin" ? "calendar" : "hr");
   }
 
   renderMembers();
@@ -3030,6 +3194,9 @@ if (attendanceCalendarMonthInput) {
   attendanceCalendarMonthInput.value = state.attendanceMonthFilter;
 }
 payrollMonthInput.value = state.payrollMonth;
+if (signupRoleInput) {
+  signupRoleInput.value = state.members.length === 0 ? "admin" : "employee";
+}
 syncFormMode();
 loadHrState();
 applyRoleAccess();
@@ -3073,12 +3240,12 @@ printPayrollBtn.addEventListener("click", () => {
   printPayrollView();
 });
 const initialHashView = window.location.hash.replace("#", "");
-const initialView = ["tasks", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"].includes(
+const initialView = ["tasks", "calendar", "todos", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"].includes(
   initialHashView
 )
   ? initialHashView
   : isAuthenticated()
-    ? "tasks"
+    ? "calendar"
     : "login";
 switchView(isAuthenticated() ? initialView : getViewForUnauthenticated(initialView), false);
 loadHrData();

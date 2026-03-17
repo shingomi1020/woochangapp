@@ -289,6 +289,17 @@ select:focus-visible {
   font-size: 1.05rem;
 }
 
+.member-profile-line,
+.member-profile-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.member-profile-note {
+  line-height: 1.5;
+}
+
 .member-meta {
   display: flex;
   flex-wrap: wrap;
@@ -307,6 +318,24 @@ select:focus-visible {
 
 .member-role-select {
   min-width: 128px;
+}
+
+#tasksView[data-board-view="calendar"] {
+  grid-template-columns: 1fr;
+  max-width: 1180px;
+}
+
+#tasksView[data-board-view="calendar"] .panel-tasks {
+  display: none;
+}
+
+#tasksView[data-board-view="todos"] {
+  grid-template-columns: 1fr;
+  max-width: 1180px;
+}
+
+#tasksView[data-board-view="todos"] .panel-calendar {
+  display: none;
 }
 
 .member-status {
