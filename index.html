@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260317-24" />
+    <link rel="stylesheet" href="styles.css?v=20260317-25" />
   </head>
   <body>
     <div class="app-shell">
@@ -73,7 +73,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 24</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 25</p>
           </div>
         </div>
 
@@ -265,12 +265,12 @@
             </article>
             <article class="metric-card">
               <span class="metric-label">이번 달 야근 시간</span>
-              <strong id="monthlyOvertimeHours">0h</strong>
+              <strong id="hrMonthlyOvertimeHours">0h</strong>
               <small>18시 이후 누적 시간</small>
             </article>
             <article class="metric-card">
               <span class="metric-label">이번 달 예상 급여</span>
-              <strong id="monthlyPayrollTotal">₩0</strong>
+              <strong id="hrMonthlyPayrollTotal">₩0</strong>
               <small>기본급 + 야근 + 주말 수당 합산</small>
             </article>
           </div>
@@ -350,6 +350,23 @@
               </div>
             </form>
 
+            <div class="attendance-ledger batch-ledger">
+              <div class="schedule-head">
+                <div>
+                  <p class="section-label">일괄 입력</p>
+                  <h3>같은 날짜에 여러 직원 기록 추가</h3>
+                </div>
+                <label class="field hr-filter-field">
+                  <span>일괄 입력 날짜</span>
+                  <input id="attendanceBatchDateInput" type="date" />
+                </label>
+              </div>
+              <div id="attendanceBatchList" class="attendance-batch-list"></div>
+              <div class="task-form-actions">
+                <button id="saveBatchAttendanceBtn" type="button" class="submit-btn task-submit">일괄 기록 저장</button>
+              </div>
+            </div>
+
             <div class="attendance-ledger">
               <div class="schedule-head">
                 <div>
@@ -418,10 +435,13 @@
               <p class="section-label">급여 관리</p>
               <h2>월별 급여 정산 보드</h2>
             </div>
-            <label class="field hr-filter-field">
-              <span>급여 기준 월</span>
-              <input id="payrollMonthInput" type="month" />
-            </label>
+            <div class="payroll-actions">
+              <label class="field hr-filter-field">
+                <span>급여 기준 월</span>
+                <input id="payrollMonthInput" type="month" />
+              </label>
+              <button id="printPayrollBtn" type="button" class="ghost-btn">월별 출력</button>
+            </div>
           </div>
           <div class="payroll-hero-grid">
             <article class="metric-card">
@@ -617,7 +637,26 @@
       </div>
     </div>
 
+    <div id="employeeDetailModal" class="modal" hidden>
+      <div id="employeeDetailModalBackdrop" class="modal-backdrop"></div>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="employeeDetailTitle">
+        <div class="modal-head">
+          <div>
+            <p class="section-label">직원 상세</p>
+            <h3 id="employeeDetailTitle">직원 근무 상세</h3>
+            <p id="employeeDetailSubtitle" class="modal-subtitle">직원별 근태와 급여 요약을 확인할 수 있습니다.</p>
+          </div>
+          <button id="employeeDetailCloseBtn" type="button" class="ghost-btn icon-only" aria-label="직원 상세 창 닫기">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z" />
+            </svg>
+          </button>
+        </div>
+        <div id="employeeDetailBody" class="employee-detail-body"></div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-24"></script>
+    <script src="app.js?v=20260317-25"></script>
   </body>
 </html>

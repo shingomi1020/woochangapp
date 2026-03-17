@@ -679,6 +679,14 @@ h2 {
   gap: 10px;
 }
 
+.employee-card-actions,
+.payroll-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
 .employee-type {
   display: inline-flex;
   align-items: center;
@@ -729,6 +737,29 @@ h2 {
   gap: 12px;
 }
 
+.attendance-batch-list {
+  display: grid;
+  gap: 12px;
+}
+
+.attendance-batch-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) auto minmax(120px, 0.8fr) minmax(120px, 0.8fr);
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(248, 251, 255, 0.92);
+  border: 1px solid rgba(47, 99, 233, 0.08);
+}
+
+.attendance-batch-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
 .payroll-card {
   background: linear-gradient(180deg, #ffffff, #f4f8ff);
 }
@@ -739,6 +770,12 @@ h2 {
   justify-content: space-between;
   gap: 16px;
   padding: 14px 0 4px;
+}
+
+.employee-detail-body,
+.employee-detail-records {
+  display: grid;
+  gap: 16px;
 }
 
 .attendance-late {
@@ -1593,6 +1630,10 @@ h2 {
     justify-items: stretch;
   }
 
+  .attendance-batch-row {
+    grid-template-columns: 1fr;
+  }
+
   .attendance-filters {
     grid-template-columns: 1fr;
   }
@@ -1615,6 +1656,11 @@ h2 {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .employee-card-actions,
+  .payroll-actions {
+    width: 100%;
+  }
 }
 
 @media (max-width: 980px) {
@@ -1636,6 +1682,36 @@ h2 {
     min-width: 0;
     width: 100%;
     justify-content: center;
+  }
+}
+
+@media print {
+  body.print-payroll .site-nav,
+  body.print-payroll .hero,
+  body.print-payroll #tasksView,
+  body.print-payroll #hrView,
+  body.print-payroll #estimateView,
+  body.print-payroll #statementView,
+  body.print-payroll .ambient,
+  body.print-payroll .toast,
+  body.print-payroll .modal {
+    display: none !important;
+  }
+
+  body.print-payroll #payrollView {
+    display: grid !important;
+  }
+
+  body.print-payroll .panel,
+  body.print-payroll .metric-card,
+  body.print-payroll .employee-card {
+    box-shadow: none !important;
+    background: #fff !important;
+    border-color: rgba(21, 36, 67, 0.15) !important;
+  }
+
+  body.print-payroll {
+    background: #fff !important;
   }
 }
 

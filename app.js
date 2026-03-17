@@ -65,12 +65,18 @@ const attendanceClockInInput = document.getElementById("attendanceClockInInput")
 const attendanceClockOutInput = document.getElementById("attendanceClockOutInput");
 const attendanceList = document.getElementById("attendanceList");
 const attendanceSummaryCards = document.getElementById("attendanceSummaryCards");
+const attendanceBatchDateInput = document.getElementById("attendanceBatchDateInput");
+const attendanceBatchList = document.getElementById("attendanceBatchList");
+const saveBatchAttendanceBtn = document.getElementById("saveBatchAttendanceBtn");
 const attendanceMonthFilterInput = document.getElementById("attendanceMonthFilterInput");
 const attendanceEmployeeFilterSelect = document.getElementById("attendanceEmployeeFilterSelect");
 const attendanceStatusFilterSelect = document.getElementById("attendanceStatusFilterSelect");
 const monthlyPayrollTotal = document.getElementById("monthlyPayrollTotal");
 const payrollEmployeeCount = document.getElementById("payrollEmployeeCount");
 const monthlyWeekendHours = document.getElementById("monthlyWeekendHours");
+const hrMonthlyOvertimeHours = document.getElementById("hrMonthlyOvertimeHours");
+const hrMonthlyPayrollTotal = document.getElementById("hrMonthlyPayrollTotal");
+const printPayrollBtn = document.getElementById("printPayrollBtn");
 const employeeModal = document.getElementById("employeeModal");
 const employeeModalBackdrop = document.getElementById("employeeModalBackdrop");
 const employeeModalCloseBtn = document.getElementById("employeeModalCloseBtn");
@@ -94,6 +100,12 @@ const editAttendanceDateInput = document.getElementById("editAttendanceDateInput
 const editAttendanceClockInInput = document.getElementById("editAttendanceClockInInput");
 const editAttendanceClockOutInput = document.getElementById("editAttendanceClockOutInput");
 const editAttendanceDeleteBtn = document.getElementById("editAttendanceDeleteBtn");
+const employeeDetailModal = document.getElementById("employeeDetailModal");
+const employeeDetailModalBackdrop = document.getElementById("employeeDetailModalBackdrop");
+const employeeDetailCloseBtn = document.getElementById("employeeDetailCloseBtn");
+const employeeDetailTitle = document.getElementById("employeeDetailTitle");
+const employeeDetailSubtitle = document.getElementById("employeeDetailSubtitle");
+const employeeDetailBody = document.getElementById("employeeDetailBody");
 
 const supabaseUrl = "https://nmnycqaufrpcgdanmpsj.supabase.co";
 const supabaseKey = "sb_publishable_a_WFRivMBscLCg-IPkFcZA_LqpStADT";
@@ -166,6 +178,7 @@ const state = {
   attendanceMonthFilter: formatDateKey(today).slice(0, 7),
   attendanceEmployeeFilter: "all",
   attendanceStatusFilter: "all",
+  employeeDetailId: null,
 };
 
 setConnectionState("checking", text.booting);
@@ -407,6 +420,14 @@ attendanceModalBackdrop.addEventListener("click", () => {
   closeAttendanceModal();
 });
 
+employeeDetailCloseBtn.addEventListener("click", () => {
+  closeEmployeeDetailModal();
+});
+
+employeeDetailModalBackdrop.addEventListener("click", () => {
+  closeEmployeeDetailModal();
+});
+
 employeeModalCloseBtn.addEventListener("click", () => {
   closeEmployeeModal();
 });
@@ -421,6 +442,9 @@ document.addEventListener("keydown", (event) => {
   }
   if (event.key === "Escape" && !attendanceModal.hidden) {
     closeAttendanceModal();
+  }
+  if (event.key === "Escape" && !employeeDetailModal.hidden) {
+    closeEmployeeDetailModal();
   }
   if (event.key === "Escape" && !employeeModal.hidden) {
     closeEmployeeModal();
@@ -1124,6 +1148,7 @@ function renderHrWorkspace() {
   renderPayrollSummary();
   renderAttendanceList();
   renderAttendanceSummary();
+  renderAttendanceBatchList();
   updateHrMetrics();
 }
 
@@ -1233,6 +1258,8 @@ function updateHrMetrics() {
   monthlyWeekendHours.textContent = `${payrollSummary.reduce((sum, item) => sum + item.weekendHours, 0).toFixed(1)}h`;
   monthlyPayrollTotal.textContent = formatCurrency(payrollSummary.reduce((sum, item) => sum + item.totalPay, 0));
   payrollEmployeeCount.textContent = `${payrollSummary.length}`;
+  hrMonthlyOvertimeHours.textContent = monthlyOvertimeHours.textContent;
+  hrMonthlyPayrollTotal.textContent = monthlyPayrollTotal.textContent;
 }
 
 function calculateAttendance(record, employee) {
@@ -1283,6 +1310,38 @@ function getAttendanceStatusLabel(status) {
   return "정상";
 }
 
+function calculatePayrollDeductions(employee, grossPay) {
+  const gross = Number(grossPay || 0);
+
+  if (employee?.employmentType === "freelancer") {
+    const withholding = Math.round(gross * 0.033);
+    return {
+      typeLabel: "프리랜서 3.3%",
+      nationalPension: 0,
+      healthInsurance: 0,
+      employmentInsurance: 0,
+      withholding,
+      totalDeduction: withholding,
+      netPay: gross - withholding,
+    };
+  }
+
+  const nationalPension = Math.round(gross * 0.045);
+  const healthInsurance = Math.round(gross * 0.03545);
+  const employmentInsurance = Math.round(gross * 0.009);
+  const totalDeduction = nationalPension + healthInsurance + employmentInsurance;
+
+  return {
+    typeLabel: "4대보험 추정",
+    nationalPension,
+    healthInsurance,
+    employmentInsurance,
+    withholding: 0,
+    totalDeduction,
+    netPay: gross - totalDeduction,
+  };
+}
+
 function buildPayrollSummary() {
   return state.employees.map((employee) => {
     const records = state.attendanceRecords.filter(
@@ -1300,10 +1359,15 @@ function buildPayrollSummary() {
       { overtimeHours: 0, weekendHours: 0, overtimePay: 0, weekendPay: 0 }
     );
 
+    const grossPay = Number(employee.baseSalary || 0) + totals.overtimePay + totals.weekendPay;
+    const deductions = calculatePayrollDeductions(employee, grossPay);
+
     return {
       employee,
       ...totals,
-      totalPay: Number(employee.baseSalary || 0) + totals.overtimePay + totals.weekendPay,
+      totalPay: grossPay,
+      deductions,
+      netPay: deductions.netPay,
     };
   });
 }
@@ -1327,14 +1391,23 @@ function renderPayrollSummary() {
             <span class="task-date-chip">${item.employee.employmentType === "freelancer" ? "프리랜서" : "4대보험 적용 직원"}</span>
           </div>
           <div class="payroll-total-row">
-            <strong>${formatCurrency(item.totalPay)}</strong>
-            <span>${item.overtimeHours.toFixed(1)}h 야근 · ${item.weekendHours.toFixed(1)}h 주말</span>
+            <strong>${formatCurrency(item.netPay)}</strong>
+            <span>예상 실지급 · ${item.overtimeHours.toFixed(1)}h 야근 · ${item.weekendHours.toFixed(1)}h 주말</span>
           </div>
           <div class="employee-pay-grid">
             <span>기본급 ${formatCurrency(item.employee.baseSalary)}</span>
             <span>야근 수당 ${formatCurrency(item.overtimePay)}</span>
             <span>주말 수당 ${formatCurrency(item.weekendPay)}</span>
-            <span>총 예상 ${formatCurrency(item.totalPay)}</span>
+            <span>총 지급 ${formatCurrency(item.totalPay)}</span>
+            <span>${item.deductions.typeLabel} ${formatCurrency(item.deductions.totalDeduction)}</span>
+            <span>실지급 ${formatCurrency(item.netPay)}</span>
+          </div>
+          <div class="attendance-insight">
+            ${item.employee.employmentType === "insured"
+              ? `<span class="task-date-chip">국민연금 ${formatCurrency(item.deductions.nationalPension)}</span>
+                 <span class="task-date-chip">건강보험 ${formatCurrency(item.deductions.healthInsurance)}</span>
+                 <span class="task-date-chip">고용보험 ${formatCurrency(item.deductions.employmentInsurance)}</span>`
+              : `<span class="task-date-chip">원천징수 ${formatCurrency(item.deductions.withholding)}</span>`}
           </div>
         </article>
       `
@@ -1413,6 +1486,162 @@ function getFilteredAttendanceRecords() {
       const summary = calculateAttendance(record, employee);
       return state.attendanceStatusFilter === "all" || summary.attendanceStatus === state.attendanceStatusFilter;
     });
+}
+
+function renderAttendanceBatchList() {
+  if (!attendanceBatchList) {
+    return;
+  }
+
+  if (!state.employees.length) {
+    attendanceBatchList.innerHTML = `<div class="empty-state">직원을 먼저 등록하면 같은 날짜에 여러 명의 출퇴근 기록을 한 번에 입력할 수 있습니다.</div>`;
+    return;
+  }
+
+  attendanceBatchList.innerHTML = state.employees
+    .map(
+      (employee) => `
+        <div class="attendance-batch-row">
+          <label class="attendance-batch-toggle">
+            <input type="checkbox" data-batch-enabled="${employee.id}" />
+            <span>${escapeHtml(employee.name)}</span>
+          </label>
+          <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</span>
+          <input type="time" data-batch-clock-in="${employee.id}" value="09:00" />
+          <input type="time" data-batch-clock-out="${employee.id}" value="18:00" />
+        </div>
+      `
+    )
+    .join("");
+}
+
+async function saveBatchAttendance() {
+  const workDate = attendanceBatchDateInput.value;
+  if (!workDate) {
+    return;
+  }
+
+  const rows = state.employees
+    .map((employee) => {
+      const enabled = document.querySelector(`[data-batch-enabled="${employee.id}"]`);
+      const clockIn = document.querySelector(`[data-batch-clock-in="${employee.id}"]`);
+      const clockOut = document.querySelector(`[data-batch-clock-out="${employee.id}"]`);
+      return {
+        employeeId: employee.id,
+        enabled: enabled?.checked,
+        clockIn: clockIn?.value,
+        clockOut: clockOut?.value,
+      };
+    })
+    .filter((row) => row.enabled && row.clockIn && row.clockOut && row.clockOut > row.clockIn)
+    .map((row) => ({
+      employee_id: Number(row.employeeId),
+      work_date: workDate,
+      clock_in: row.clockIn,
+      clock_out: row.clockOut,
+    }));
+
+  if (!rows.length) {
+    showToast("일괄 저장할 직원과 시간을 먼저 선택해 주세요.");
+    return;
+  }
+
+  const { data, error } = await requestTasks("/rest/v1/attendance_records", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify(rows),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to insert batch attendance:", error);
+    return;
+  }
+
+  state.attendanceRecords = [...(Array.isArray(data) ? data.map(mapAttendanceRecord) : []), ...state.attendanceRecords];
+  renderHrWorkspace();
+  showToast("출퇴근 기록을 일괄 저장했습니다.");
+}
+
+function openEmployeeDetailModal(employee) {
+  state.employeeDetailId = employee.id;
+  const records = state.attendanceRecords
+    .filter((record) => String(record.employeeId) === String(employee.id) && record.workDate.startsWith(state.payrollMonth))
+    .sort((a, b) => `${b.workDate}${b.clockIn}`.localeCompare(`${a.workDate}${a.clockIn}`));
+  const payrollItem = buildPayrollSummary().find((item) => String(item.employee.id) === String(employee.id));
+
+  employeeDetailTitle.textContent = `${employee.name} 상세`;
+  employeeDetailSubtitle.textContent = `${state.payrollMonth} 기준 근태와 급여 요약입니다.`;
+  employeeDetailBody.innerHTML = `
+    <div class="attendance-summary-grid">
+      <article class="attendance-summary-card">
+        <span class="metric-label">고용 형태</span>
+        <strong>${employee.employmentType === "insured" ? "4대보험" : "프리랜서"}</strong>
+        <small>기본급 ${formatCurrency(employee.baseSalary)}</small>
+      </article>
+      <article class="attendance-summary-card">
+        <span class="metric-label">월 근무 기록</span>
+        <strong>${records.length}건</strong>
+        <small>${state.payrollMonth} 기준 입력 건수</small>
+      </article>
+      <article class="attendance-summary-card">
+        <span class="metric-label">예상 총지급</span>
+        <strong>${formatCurrency(payrollItem?.totalPay || 0)}</strong>
+        <small>야근/주말 수당 포함</small>
+      </article>
+      <article class="attendance-summary-card">
+        <span class="metric-label">예상 실지급</span>
+        <strong>${formatCurrency(payrollItem?.netPay || 0)}</strong>
+        <small>공제 추정 반영</small>
+      </article>
+    </div>
+    <div class="employee-detail-records">
+      ${
+        records.length
+          ? records
+              .map((record) => {
+                const summary = calculateAttendance(record, employee);
+                return `
+                  <article class="attendance-card attendance-${summary.attendanceStatus}">
+                    <div class="attendance-card-head">
+                      <div>
+                        <strong>${formatLongDate(new Date(`${record.workDate}T00:00:00`))}</strong>
+                        <p>${getAttendanceStatusLabel(summary.attendanceStatus)}</p>
+                      </div>
+                      <span class="task-date-chip">총 ${summary.totalHours.toFixed(1)}시간</span>
+                    </div>
+                    <div class="attendance-pay-grid">
+                      <span>출근 ${record.clockIn}</span>
+                      <span>퇴근 ${record.clockOut}</span>
+                      <span>야근 ${summary.overtimeHours.toFixed(1)}시간</span>
+                      <span>주말 ${summary.weekendHours.toFixed(1)}시간</span>
+                    </div>
+                  </article>
+                `;
+              })
+              .join("")
+          : `<div class="empty-state">선택한 기준 월에 등록된 출퇴근 기록이 없습니다.</div>`
+      }
+    </div>
+  `;
+  employeeDetailModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeEmployeeDetailModal() {
+  state.employeeDetailId = null;
+  employeeDetailModal.hidden = true;
+  document.body.classList.remove("modal-open");
+  employeeDetailBody.innerHTML = "";
+}
+
+function printPayrollView() {
+  document.body.classList.add("print-payroll");
+  window.print();
+  window.setTimeout(() => {
+    document.body.classList.remove("print-payroll");
+  }, 300);
 }
 
 function timeToMinutes(value) {
@@ -1862,7 +2091,10 @@ function renderEmployees() {
             </div>
             <div class="employee-card-tools">
               <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</span>
-              <button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="edit" data-id="${employee.id}">수정</button>
+              <div class="employee-card-actions">
+                <button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="detail" data-id="${employee.id}">상세</button>
+                <button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="edit" data-id="${employee.id}">수정</button>
+              </div>
             </div>
           </div>
           <div class="employee-pay-grid">
@@ -1880,6 +2112,15 @@ function renderEmployees() {
       const employee = state.employees.find((item) => String(item.id) === String(button.dataset.id));
       if (employee) {
         openEmployeeModal(employee);
+      }
+    });
+  });
+
+  employeeList.querySelectorAll("[data-employee-action='detail']").forEach((button) => {
+    button.addEventListener("click", () => {
+      const employee = state.employees.find((item) => String(item.id) === String(button.dataset.id));
+      if (employee) {
+        openEmployeeDetailModal(employee);
       }
     });
   });
@@ -1965,6 +2206,7 @@ taskPriorityInput.value = "medium";
 attendanceDateInput.value = formatDateKey(today);
 attendanceClockInInput.value = "09:00";
 attendanceClockOutInput.value = "18:00";
+attendanceBatchDateInput.value = formatDateKey(today);
 employeeTypeInput.value = "insured";
 attendanceMonthFilterInput.value = state.attendanceMonthFilter;
 payrollMonthInput.value = state.payrollMonth;
@@ -2002,6 +2244,12 @@ editEmployeeForm.addEventListener("submit", (event) => {
 });
 editEmployeeDeleteBtn.addEventListener("click", () => {
   void deleteEmployee();
+});
+saveBatchAttendanceBtn.addEventListener("click", () => {
+  void saveBatchAttendance();
+});
+printPayrollBtn.addEventListener("click", () => {
+  printPayrollView();
 });
 switchView(
   ["tasks", "hr", "estimate", "statement", "payroll"].includes(window.location.hash.replace("#", ""))
