@@ -4122,6 +4122,17 @@ body[data-device="desktop"] .calendar-view-switch {
   align-self: flex-start;
 }
 
+body[data-device="desktop"] .panel-calendar .panel-head {
+  align-items: flex-start;
+}
+
+body[data-device="desktop"] .panel-calendar .panel-head > div:last-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
 body[data-device="desktop"] .calendar-nav .ghost-btn,
 body[data-device="desktop"] .calendar-view-switch .chip {
   min-width: 74px;
