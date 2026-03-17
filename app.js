@@ -109,6 +109,7 @@ const monthlyOvertimeHours = document.getElementById("monthlyOvertimeHours");
 const employeeForm = document.getElementById("employeeForm");
 const employeeNameInput = document.getElementById("employeeNameInput");
 const employeeTypeInput = document.getElementById("employeeTypeInput");
+const employeeMemberInput = document.getElementById("employeeMemberInput");
 const employeeBaseSalaryInput = document.getElementById("employeeBaseSalaryInput");
 const employeeOvertimeRateInput = document.getElementById("employeeOvertimeRateInput");
 const employeeWeekendRateInput = document.getElementById("employeeWeekendRateInput");
@@ -156,6 +157,7 @@ const employeeModalSubtitle = document.getElementById("employeeModalSubtitle");
 const editEmployeeForm = document.getElementById("editEmployeeForm");
 const editEmployeeNameInput = document.getElementById("editEmployeeNameInput");
 const editEmployeeTypeInput = document.getElementById("editEmployeeTypeInput");
+const editEmployeeMemberInput = document.getElementById("editEmployeeMemberInput");
   const editEmployeeBaseSalaryInput = document.getElementById("editEmployeeBaseSalaryInput");
   const editEmployeeOvertimeRateInput = document.getElementById("editEmployeeOvertimeRateInput");
   const editEmployeeWeekendRateInput = document.getElementById("editEmployeeWeekendRateInput");
@@ -269,6 +271,100 @@ function loadTaskOrderMap() {
 
 function saveTaskOrderMap() {
   window.localStorage.setItem("flowboard-task-order-map", JSON.stringify(state.taskOrderMap));
+}
+
+function getAssignableMembers() {
+  return state.members.filter((member) => member.role === "employee" || member.role === "freelancer");
+}
+
+function getEmploymentTypeForRole(role) {
+  return role === "freelancer" ? "freelancer" : "insured";
+}
+
+function findLinkedEmployeeByMember(member) {
+  if (!member) {
+    return null;
+  }
+
+  return (
+    state.employees.find((employee) => String(employee.memberId || "") === String(member.id)) ||
+    state.employees.find((employee) => String(employee.loginId || "") === String(member.loginId)) ||
+    null
+  );
+}
+
+function renderEmployeeMemberOptions(selectElement, selectedValue = "") {
+  if (!selectElement) {
+    return;
+  }
+
+  const options = [
+    `<option value="">연결 안 함</option>`,
+    ...getAssignableMembers().map(
+      (member) =>
+        `<option value="${member.id}">${escapeHtml(member.name)} · ${escapeHtml(member.loginId)} · ${getRoleLabel(member.role)}</option>`
+    ),
+  ];
+
+  selectElement.innerHTML = options.join("");
+  selectElement.value = getAssignableMembers().some((member) => String(member.id) === String(selectedValue))
+    ? String(selectedValue)
+    : "";
+}
+
+async function upsertLinkedEmployeeForMember(member) {
+  if (!member || (member.role !== "employee" && member.role !== "freelancer")) {
+    return null;
+  }
+
+  const linkedEmployee = findLinkedEmployeeByMember(member);
+  const payload = {
+    name: member.name,
+    employment_type: getEmploymentTypeForRole(member.role),
+    member_id: member.id,
+    login_id: member.loginId,
+    department: member.department || "",
+    title: member.title || "",
+    phone: member.phone || "",
+    note: member.note || "",
+  };
+
+  const { data, error } = await requestTasks(
+    linkedEmployee ? `/rest/v1/employees?id=eq.${linkedEmployee.id}&select=*` : "/rest/v1/employees",
+    {
+      method: linkedEmployee ? "PATCH" : "POST",
+      headers: {
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify(
+        linkedEmployee
+          ? payload
+          : {
+              ...payload,
+              base_salary: 0,
+              overtime_rate: 0,
+              weekend_rate: 0,
+            }
+      ),
+    }
+  );
+
+  if (error) {
+    handleSupabaseError("Failed to sync linked employee:", error);
+    return null;
+  }
+
+  const savedEmployee = mapEmployeeRecord(Array.isArray(data) ? data[0] : data);
+  if (!savedEmployee) {
+    return null;
+  }
+
+  const exists = state.employees.some((employee) => String(employee.id) === String(savedEmployee.id));
+  state.employees = exists
+    ? state.employees.map((employee) => (String(employee.id) === String(savedEmployee.id) ? savedEmployee : employee))
+    : [savedEmployee, ...state.employees];
+
+  return savedEmployee;
 }
 
 function loadMembers() {
@@ -416,12 +512,12 @@ moveLoginBtn?.addEventListener("click", () => {
   switchView("login");
 });
 
-loginForm?.addEventListener("submit", (event) => {
+loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  loginMember(loginIdInput.value.trim(), loginPasswordInput.value);
+  await loginMember(loginIdInput.value.trim(), loginPasswordInput.value);
 });
 
-signupForm?.addEventListener("submit", (event) => {
+signupForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const name = signupNameInput.value.trim();
@@ -449,14 +545,18 @@ signupForm?.addEventListener("submit", (event) => {
     createdAt: new Date().toISOString(),
   });
   saveMembers();
+  if (role === "employee" || role === "freelancer") {
+    await upsertLinkedEmployeeForMember(state.members[0]);
+  }
   renderMembers();
+  renderHrWorkspace();
   signupForm.reset();
   syncSignupRoleUi();
   showToast("회원 계정을 등록했습니다.");
   switchView("login");
 });
 
-editMemberForm?.addEventListener("submit", (event) => {
+editMemberForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!state.editingMemberId) {
@@ -508,7 +608,11 @@ editMemberForm?.addEventListener("submit", (event) => {
   }
 
   saveMembers();
+  if (member.role === "employee" || member.role === "freelancer") {
+    await upsertLinkedEmployeeForMember(member);
+  }
   renderMembers();
+  renderHrWorkspace();
   applyRoleAccess();
   closeMemberModal();
   if (state.currentUser?.id === member.id && member.isActive === false) {
@@ -1794,7 +1898,7 @@ function renderMembers() {
   });
 }
 
-function loginMember(loginId, password) {
+async function loginMember(loginId, password) {
   if (!state.members.length) {
     showToast("등록된 계정이 없습니다. 먼저 회원가입을 진행해 주세요.");
     switchView("signup");
@@ -1816,6 +1920,9 @@ function loginMember(loginId, password) {
     role: member.role,
   };
   saveSessionUser();
+  if (member.role === "employee" || member.role === "freelancer") {
+    await upsertLinkedEmployeeForMember(member);
+  }
   syncRoleWithCurrentUser();
   applyRoleAccess();
   switchView(member.role === "admin" ? "calendar" : "hr");
@@ -3247,6 +3354,8 @@ function mapEmployeeRecord(record) {
     id: record.id,
     name: record.name || "",
     employmentType: record.employment_type || "insured",
+    memberId: record.member_id || "",
+    loginId: record.login_id || "",
     baseSalary: Number(record.base_salary || 0),
     overtimeRate: Number(record.overtime_rate || 0),
     weekendRate: Number(record.weekend_rate || 0),
@@ -3312,7 +3421,8 @@ async function loadHrData() {
 
 async function saveEmployee() {
   const name = employeeNameInput.value.trim();
-  const employmentType = employeeTypeInput.value;
+  const linkedMember = state.members.find((member) => String(member.id) === String(employeeMemberInput?.value || ""));
+  const employmentType = linkedMember ? getEmploymentTypeForRole(linkedMember.role) : employeeTypeInput.value;
   const baseSalary = Number(employeeBaseSalaryInput.value || 0);
   const overtimeRate = Number(employeeOvertimeRateInput.value || 0);
   const weekendRate = Number(employeeWeekendRateInput.value || 0);
@@ -3329,6 +3439,8 @@ async function saveEmployee() {
     body: JSON.stringify({
       name,
       employment_type: employmentType,
+      member_id: linkedMember?.id || null,
+      login_id: linkedMember?.loginId || "",
       base_salary: baseSalary,
       overtime_rate: overtimeRate,
       weekend_rate: weekendRate,
@@ -3344,6 +3456,7 @@ async function saveEmployee() {
   state.employees.unshift(savedEmployee);
   employeeForm.reset();
   employeeTypeInput.value = "insured";
+  renderEmployeeMemberOptions(employeeMemberInput);
   renderHrWorkspace();
   showToast(`${name} 직원을 등록했습니다.`);
 }
@@ -3497,6 +3610,7 @@ function openEmployeeModal(employee) {
   employeeModalSubtitle.textContent = "기본급, 수당, 고용 형태를 수정하거나 직원을 삭제할 수 있습니다.";
   editEmployeeNameInput.value = employee.name || "";
   editEmployeeTypeInput.value = employee.employmentType || "insured";
+  renderEmployeeMemberOptions(editEmployeeMemberInput, employee.memberId || "");
   editEmployeeBaseSalaryInput.value = employee.baseSalary || 0;
   editEmployeeOvertimeRateInput.value = employee.overtimeRate || 0;
   editEmployeeWeekendRateInput.value = employee.weekendRate || 0;
@@ -3528,7 +3642,8 @@ async function updateEmployee() {
   }
 
   const name = editEmployeeNameInput.value.trim();
-  const employmentType = editEmployeeTypeInput.value;
+  const linkedMember = state.members.find((member) => String(member.id) === String(editEmployeeMemberInput?.value || ""));
+  const employmentType = linkedMember ? getEmploymentTypeForRole(linkedMember.role) : editEmployeeTypeInput.value;
   const baseSalary = Number(editEmployeeBaseSalaryInput.value || 0);
   const overtimeRate = Number(editEmployeeOvertimeRateInput.value || 0);
   const weekendRate = Number(editEmployeeWeekendRateInput.value || 0);
@@ -3555,6 +3670,8 @@ async function updateEmployee() {
     body: JSON.stringify({
       name,
         employment_type: employmentType,
+        member_id: linkedMember?.id || null,
+        login_id: linkedMember?.loginId || "",
         base_salary: baseSalary,
         overtime_rate: overtimeRate,
         weekend_rate: weekendRate,
@@ -3764,6 +3881,7 @@ function renderEmployees() {
           <div class="employee-card-head">
             <div>
               <strong>${employee.name}</strong>
+              ${employee.loginId ? `<p class="employee-card-subtitle">怨꾩젙 ${escapeHtml(employee.loginId)}</p>` : ""}
               <p class="employee-card-subtitle">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</p>
             </div>
             <div class="employee-card-tools">
@@ -3907,6 +4025,7 @@ function renderAttendanceList() {
 }
 
 function renderHrWorkspace() {
+  renderEmployeeMemberOptions(employeeMemberInput);
   renderEmployeeSelect();
   renderEditAttendanceEmployeeSelect();
   renderAttendanceFilterOptions();

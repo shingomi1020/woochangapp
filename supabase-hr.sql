@@ -2,6 +2,8 @@ create table if not exists public.employees (
   id bigint generated always as identity primary key,
   name text not null,
   employment_type text not null default 'insured' check (employment_type in ('insured', 'freelancer')),
+  member_id text not null default '',
+  login_id text not null default '',
   base_salary numeric not null default 0,
   overtime_rate numeric not null default 0,
   weekend_rate numeric not null default 0,
@@ -19,6 +21,8 @@ create table if not exists public.employees (
 );
 
 alter table public.employees add column if not exists department text not null default '';
+alter table public.employees add column if not exists member_id text not null default '';
+alter table public.employees add column if not exists login_id text not null default '';
 alter table public.employees add column if not exists title text not null default '';
 alter table public.employees add column if not exists phone text not null default '';
 alter table public.employees add column if not exists email text not null default '';
@@ -40,6 +44,8 @@ create table if not exists public.attendance_records (
 
 create index if not exists attendance_records_employee_id_idx on public.attendance_records(employee_id);
 create index if not exists attendance_records_work_date_idx on public.attendance_records(work_date desc);
+create index if not exists employees_member_id_idx on public.employees(member_id);
+create index if not exists employees_login_id_idx on public.employees(login_id);
 
 create table if not exists public.employee_documents (
   id bigint generated always as identity primary key,
