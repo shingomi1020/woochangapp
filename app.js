@@ -48,12 +48,34 @@ const focusInputBtn = document.getElementById("focusInputBtn");
 const pageHero = document.querySelector(".hero");
 const workspaceTabs = document.querySelectorAll("[data-view]");
 const roleSensitiveTabs = document.querySelectorAll("[data-role-visible]");
+const authSensitiveTabs = document.querySelectorAll("[data-auth-visible]");
 const pageViews = document.querySelectorAll(".app-view");
 const roleSections = document.querySelectorAll("[data-role-section]");
 const roleSelect = document.getElementById("roleSelect");
+const sessionBadge = document.getElementById("sessionBadge");
+const sessionUserName = document.getElementById("sessionUserName");
+const sessionUserMeta = document.getElementById("sessionUserMeta");
+const logoutBtn = document.getElementById("logoutBtn");
 const tasksView = document.getElementById("tasksView");
 const clientView = document.getElementById("clientView");
 const hrView = document.getElementById("hrView");
+const loginView = document.getElementById("loginView");
+const signupView = document.getElementById("signupView");
+const membersView = document.getElementById("membersView");
+const loginForm = document.getElementById("loginForm");
+const loginIdInput = document.getElementById("loginIdInput");
+const loginPasswordInput = document.getElementById("loginPasswordInput");
+const signupForm = document.getElementById("signupForm");
+const signupNameInput = document.getElementById("signupNameInput");
+const signupIdInput = document.getElementById("signupIdInput");
+const signupPasswordInput = document.getElementById("signupPasswordInput");
+const signupRoleInput = document.getElementById("signupRoleInput");
+const moveSignupBtn = document.getElementById("moveSignupBtn");
+const moveLoginBtn = document.getElementById("moveLoginBtn");
+const memberCount = document.getElementById("memberCount");
+const activeMemberCount = document.getElementById("activeMemberCount");
+const adminMemberCount = document.getElementById("adminMemberCount");
+const memberList = document.getElementById("memberList");
 const clientDetailTitle = document.getElementById("clientDetailTitle");
 const clientDetailSubtitle = document.getElementById("clientDetailSubtitle");
 const clientDetailMetrics = document.getElementById("clientDetailMetrics");
@@ -206,6 +228,23 @@ function loadCurrentRole() {
   }
 }
 
+function loadMembers() {
+  try {
+    const raw = JSON.parse(window.localStorage.getItem("flowboard-members") || "[]");
+    return Array.isArray(raw) ? raw : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function loadCurrentUser() {
+  try {
+    return JSON.parse(window.localStorage.getItem("flowboard-session-user") || "null");
+  } catch (error) {
+    return null;
+  }
+}
+
 const state = {
   viewDate: new Date(currentMonth),
   selectedDateKey: formatDateKey(today),
@@ -225,6 +264,8 @@ const state = {
   attendanceRecords: [],
   editingEmployeeId: null,
   editingAttendanceId: null,
+  members: loadMembers(),
+  currentUser: loadCurrentUser(),
   payrollMonth: formatDateKey(today).slice(0, 7),
   attendanceMonthFilter: formatDateKey(today).slice(0, 7),
   attendanceEmployeeFilter: "all",
@@ -306,9 +347,61 @@ roleSelect.addEventListener("change", () => {
   showToast(`${getRoleLabel(state.currentRole)} 화면으로 전환했습니다.`);
 });
 
+logoutBtn?.addEventListener("click", () => {
+  logoutCurrentUser();
+});
+
+moveSignupBtn?.addEventListener("click", () => {
+  switchView("signup");
+});
+
+moveLoginBtn?.addEventListener("click", () => {
+  switchView("login");
+});
+
+loginForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  loginMember(loginIdInput.value.trim(), loginPasswordInput.value);
+});
+
+signupForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const name = signupNameInput.value.trim();
+  const loginId = signupIdInput.value.trim();
+  const password = signupPasswordInput.value.trim();
+  const role = signupRoleInput.value;
+
+  if (!name || !loginId || !password) {
+    showToast("회원 정보를 모두 입력해 주세요.");
+    return;
+  }
+
+  if (state.members.some((member) => member.loginId === loginId)) {
+    showToast("이미 사용 중인 아이디입니다.");
+    return;
+  }
+
+  state.members.unshift({
+    id: `member-${Date.now()}`,
+    name,
+    loginId,
+    password,
+    role,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+  });
+  saveMembers();
+  renderMembers();
+  signupForm.reset();
+  signupRoleInput.value = "employee";
+  showToast("회원 계정을 등록했습니다.");
+  switchView("login");
+});
+
 window.addEventListener("hashchange", () => {
   const nextView = window.location.hash.replace("#", "") || "tasks";
-  if (["tasks", "client", "hr", "estimate", "statement", "payroll"].includes(nextView)) {
+  if (["tasks", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"].includes(nextView)) {
     switchView(nextView, false);
   }
 });
@@ -1274,7 +1367,208 @@ function closeAttendanceModal() {
   editAttendanceForm.reset();
 }
 
+function saveMembers() {
+  window.localStorage.setItem("flowboard-members", JSON.stringify(state.members));
+}
+
+function saveSessionUser() {
+  window.localStorage.setItem("flowboard-session-user", JSON.stringify(state.currentUser));
+}
+
+function ensureDefaultAdmin() {
+  if (state.members.some((member) => member.loginId === "admin")) {
+    const sessionExists = state.currentUser && state.members.some(
+      (member) => member.id === state.currentUser.id && member.isActive !== false
+    );
+    if (!sessionExists) {
+      state.currentUser = null;
+      window.localStorage.removeItem("flowboard-session-user");
+    }
+    return;
+  }
+
+  state.members.unshift({
+    id: `member-${Date.now()}`,
+    name: "기본 관리자",
+    loginId: "admin",
+    password: "1234",
+    role: "admin",
+    isActive: true,
+    createdAt: new Date().toISOString(),
+  });
+  saveMembers();
+}
+
+function isAuthenticated() {
+  return Boolean(state.currentUser);
+}
+
+function syncRoleWithCurrentUser() {
+  if (!state.currentUser) {
+    return;
+  }
+  state.currentRole = state.currentUser.role || "employee";
+  roleSelect.value = state.currentRole;
+  window.localStorage.setItem("flowboard-role", state.currentRole);
+}
+
+function renderSessionUi() {
+  if (!sessionBadge || !sessionUserName || !sessionUserMeta || !logoutBtn) {
+    return;
+  }
+
+  if (!state.currentUser) {
+    sessionBadge.hidden = true;
+    logoutBtn.hidden = true;
+    sessionUserName.textContent = "게스트";
+    sessionUserMeta.textContent = "로그인이 필요합니다";
+    roleSelect.disabled = true;
+    return;
+  }
+
+  sessionBadge.hidden = false;
+  logoutBtn.hidden = false;
+  sessionUserName.textContent = state.currentUser.name;
+  sessionUserMeta.textContent = `${getRoleLabel(state.currentUser.role)} · ${state.currentUser.loginId}`;
+  roleSelect.disabled = state.currentUser.role !== "admin";
+}
+
+function getViewForUnauthenticated(view) {
+  return ["login", "signup"].includes(view) ? view : "login";
+}
+
+function renderMembers() {
+  if (!memberList || !memberCount || !activeMemberCount || !adminMemberCount) {
+    return;
+  }
+
+  memberCount.textContent = String(state.members.length);
+  activeMemberCount.textContent = String(state.members.filter((member) => member.isActive !== false).length);
+  adminMemberCount.textContent = String(state.members.filter((member) => member.role === "admin").length);
+
+  if (!state.members.length) {
+    memberList.innerHTML = `<div class="empty-state">등록된 회원이 없습니다.</div>`;
+    return;
+  }
+
+  memberList.innerHTML = state.members
+    .map(
+      (member) => `
+        <article class="member-card">
+          <div class="member-card-main">
+            <strong>${escapeHtml(member.name)}</strong>
+            <div class="member-meta">
+              <span>${escapeHtml(member.loginId)}</span>
+              <span>${getRoleLabel(member.role)}</span>
+              <span>${member.isActive === false ? "비활성" : "활성"}</span>
+            </div>
+          </div>
+          <div class="member-actions">
+            <select class="member-role-select" data-member-role="${member.id}">
+              <option value="admin" ${member.role === "admin" ? "selected" : ""}>관리자</option>
+              <option value="employee" ${member.role === "employee" ? "selected" : ""}>직원</option>
+              <option value="freelancer" ${member.role === "freelancer" ? "selected" : ""}>프리랜서</option>
+            </select>
+            <button class="ghost-btn" type="button" data-member-toggle="${member.id}">
+              ${member.isActive === false ? "활성화" : "비활성화"}
+            </button>
+            ${
+              member.loginId !== "admin"
+                ? `<button class="remove-btn" type="button" data-member-delete="${member.id}">삭제</button>`
+                : `<span class="member-status">기본 계정</span>`
+            }
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  memberList.querySelectorAll("[data-member-role]").forEach((select) => {
+    select.addEventListener("change", () => {
+      const member = state.members.find((item) => item.id === select.dataset.memberRole);
+      if (!member) {
+        return;
+      }
+      member.role = select.value;
+      if (state.currentUser?.id === member.id) {
+        state.currentUser.role = member.role;
+        saveSessionUser();
+        syncRoleWithCurrentUser();
+      }
+      saveMembers();
+      renderMembers();
+      applyRoleAccess();
+      showToast("회원 권한을 변경했습니다.");
+    });
+  });
+
+  memberList.querySelectorAll("[data-member-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const member = state.members.find((item) => item.id === button.dataset.memberToggle);
+      if (!member) {
+        return;
+      }
+      member.isActive = member.isActive === false;
+      if (state.currentUser?.id === member.id && member.isActive === false) {
+        logoutCurrentUser(true);
+        return;
+      }
+      saveMembers();
+      renderMembers();
+      showToast(member.isActive === false ? "회원 계정을 비활성화했습니다." : "회원 계정을 활성화했습니다.");
+    });
+  });
+
+  memberList.querySelectorAll("[data-member-delete]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.members = state.members.filter((member) => member.id !== button.dataset.memberDelete);
+      saveMembers();
+      renderMembers();
+      showToast("회원 계정을 삭제했습니다.");
+    });
+  });
+}
+
+function loginMember(loginId, password) {
+  const member = state.members.find(
+    (item) => item.loginId === loginId && item.password === password && item.isActive !== false
+  );
+  if (!member) {
+    showToast("로그인 정보를 다시 확인해 주세요.");
+    return false;
+  }
+
+  state.currentUser = {
+    id: member.id,
+    name: member.name,
+    loginId: member.loginId,
+    role: member.role,
+  };
+  saveSessionUser();
+  syncRoleWithCurrentUser();
+  applyRoleAccess();
+  switchView(member.role === "admin" ? "tasks" : "hr");
+  showToast(`${member.name} 님으로 로그인했습니다.`);
+  return true;
+}
+
+function logoutCurrentUser(skipToast = false) {
+  state.currentUser = null;
+  window.localStorage.removeItem("flowboard-session-user");
+  applyRoleAccess();
+  switchView("login");
+  if (!skipToast) {
+    showToast("로그아웃했습니다.");
+  }
+}
+
 function switchView(view, shouldSyncHash = true) {
+  if (!isAuthenticated()) {
+    view = getViewForUnauthenticated(view);
+  } else if (!isViewAllowedForRole(view)) {
+    view = state.currentRole === "admin" ? "tasks" : "hr";
+  }
+
   state.currentView = view;
   const isTasks = view === "tasks";
   pageHero.hidden = !isTasks;
@@ -1305,14 +1599,17 @@ function getRoleLabel(role) {
 
 function isViewAllowedForRole(view) {
   const allowed = {
-    admin: ["tasks", "client", "hr", "estimate", "statement", "payroll"],
-    employee: ["tasks", "client", "hr", "payroll"],
-    freelancer: ["tasks", "client", "hr", "payroll"],
+    admin: ["tasks", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"],
+    employee: ["tasks", "client", "hr", "payroll", "login", "signup"],
+    freelancer: ["tasks", "client", "hr", "payroll", "login", "signup"],
   };
   return allowed[state.currentRole]?.includes(view);
 }
 
 function applyRoleAccess() {
+  ensureDefaultAdmin();
+  syncRoleWithCurrentUser();
+  renderSessionUi();
   roleSelect.value = state.currentRole;
 
   roleSensitiveTabs.forEach((tab) => {
@@ -1320,14 +1617,25 @@ function applyRoleAccess() {
     tab.hidden = !visibleRoles.includes(state.currentRole);
   });
 
+  authSensitiveTabs.forEach((tab) => {
+    tab.hidden = tab.dataset.authVisible === "guest" ? isAuthenticated() : !isAuthenticated();
+  });
+
   roleSections.forEach((section) => {
     const onlyRole = section.dataset.roleSection;
     section.hidden = onlyRole && onlyRole !== state.currentRole;
   });
 
-  if (!isViewAllowedForRole(state.currentView)) {
-    switchView("tasks");
+  if (!isAuthenticated()) {
+    pageHero.hidden = true;
+    if (!["login", "signup"].includes(state.currentView)) {
+      switchView(getViewForUnauthenticated(state.currentView));
+    }
+  } else if (!isViewAllowedForRole(state.currentView)) {
+    switchView(state.currentRole === "admin" ? "tasks" : "hr");
   }
+
+  renderMembers();
 }
 
 async function requestTasks(path, options = {}) {
@@ -2764,11 +3072,14 @@ saveBatchAttendanceBtn.addEventListener("click", () => {
 printPayrollBtn.addEventListener("click", () => {
   printPayrollView();
 });
-switchView(
-  ["tasks", "client", "hr", "estimate", "statement", "payroll"].includes(window.location.hash.replace("#", ""))
-    ? window.location.hash.replace("#", "")
-    : "tasks",
-  false
-);
+const initialHashView = window.location.hash.replace("#", "");
+const initialView = ["tasks", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"].includes(
+  initialHashView
+)
+  ? initialHashView
+  : isAuthenticated()
+    ? "tasks"
+    : "login";
+switchView(isAuthenticated() ? initialView : getViewForUnauthenticated(initialView), false);
 loadHrData();
 loadTasks();

@@ -145,6 +145,34 @@ select:focus-visible {
   gap: 10px;
 }
 
+.site-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.session-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: rgba(47, 99, 233, 0.06);
+  border: 1px solid rgba(47, 99, 233, 0.1);
+  min-width: 150px;
+}
+
+.session-badge strong {
+  font-size: 0.95rem;
+}
+
+.session-badge span {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
 .site-menu-link {
   border: 0;
   padding: 11px 15px;
@@ -194,6 +222,105 @@ select:focus-visible {
 .app-view[hidden],
 .hero[hidden] {
   display: none !important;
+}
+
+.auth-view {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.auth-panel {
+  max-width: 760px;
+  margin: 0 auto 28px;
+}
+
+.auth-form {
+  display: grid;
+  gap: 18px;
+}
+
+.auth-form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.auth-actions {
+  justify-content: flex-start;
+}
+
+.auth-help {
+  margin-top: 18px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: var(--accent-soft-2);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.auth-help p {
+  margin: 0;
+}
+
+.auth-help p + p {
+  margin-top: 8px;
+}
+
+.member-list {
+  display: grid;
+  gap: 14px;
+}
+
+.member-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--line);
+}
+
+.member-card-main {
+  display: grid;
+  gap: 8px;
+}
+
+.member-card-main strong {
+  font-size: 1.05rem;
+}
+
+.member-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.member-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.member-role-select {
+  min-width: 128px;
+}
+
+.member-status {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft-2);
+  color: var(--accent-strong);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.member-status.is-inactive {
+  background: #f4f5f8;
+  color: #7c879d;
 }
 
 .hero {
@@ -2366,6 +2493,21 @@ h2 {
     width: 100%;
     justify-content: center;
   }
+
+  .site-actions,
+  .session-badge,
+  .auth-form-grid,
+  .member-card {
+    width: 100%;
+  }
+
+  .member-card {
+    grid-template-columns: 1fr;
+  }
+
+  .member-actions {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 480px) {
@@ -2436,6 +2578,25 @@ h2 {
   .ghost-btn,
   .chip {
     min-width: 0;
+  }
+
+  .site-actions {
+    gap: 8px;
+  }
+
+  .session-badge,
+  .member-actions,
+  .auth-actions {
+    width: 100%;
+  }
+
+  .member-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .member-role-select {
+    width: 100%;
   }
 }
 
