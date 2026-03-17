@@ -18,6 +18,12 @@ const taskPriorityInput = document.getElementById("taskPriorityInput");
 const taskSubmitBtn = document.getElementById("taskSubmitBtn");
 const taskCancelBtn = document.getElementById("taskCancelBtn");
 const clientFilterSelect = document.getElementById("clientFilterSelect");
+const taskSearchInput = document.getElementById("taskSearchInput");
+const openArchiveBtn = document.getElementById("openArchiveBtn");
+const archivedTaskCount = document.getElementById("archivedTaskCount");
+const archivedTaskSummary = document.getElementById("archivedTaskSummary");
+const archivedTaskList = document.getElementById("archivedTaskList");
+const calendarViewButtons = document.querySelectorAll("[data-calendar-view]");
 const editModal = document.getElementById("editModal");
 const editModalBackdrop = document.getElementById("editModalBackdrop");
 const editModalCloseBtn = document.getElementById("editModalCloseBtn");
@@ -43,7 +49,16 @@ const pageHero = document.querySelector(".hero");
 const workspaceTabs = document.querySelectorAll("[data-view]");
 const pageViews = document.querySelectorAll(".app-view");
 const tasksView = document.getElementById("tasksView");
+const clientView = document.getElementById("clientView");
 const hrView = document.getElementById("hrView");
+const clientDetailTitle = document.getElementById("clientDetailTitle");
+const clientDetailSubtitle = document.getElementById("clientDetailSubtitle");
+const clientDetailMetrics = document.getElementById("clientDetailMetrics");
+const clientTaskHeading = document.getElementById("clientTaskHeading");
+const clientTaskCount = document.getElementById("clientTaskCount");
+const clientTaskList = document.getElementById("clientTaskList");
+const clientDeadlineList = document.getElementById("clientDeadlineList");
+const clientBackBtn = document.getElementById("clientBackBtn");
 const employeeCount = document.getElementById("employeeCount");
 const attendanceTodayCount = document.getElementById("attendanceTodayCount");
 const monthlyOvertimeHours = document.getElementById("monthlyOvertimeHours");
@@ -75,6 +90,7 @@ const monthlyWeekendHours = document.getElementById("monthlyWeekendHours");
 const hrMonthlyOvertimeHours = document.getElementById("hrMonthlyOvertimeHours");
 const hrMonthlyPayrollTotal = document.getElementById("hrMonthlyPayrollTotal");
 const printPayrollBtn = document.getElementById("printPayrollBtn");
+const payrollConfirmedCount = document.getElementById("payrollConfirmedCount");
 const employeeModal = document.getElementById("employeeModal");
 const employeeModalBackdrop = document.getElementById("employeeModalBackdrop");
 const employeeModalCloseBtn = document.getElementById("employeeModalCloseBtn");
@@ -158,16 +174,37 @@ const text = {
 const today = new Date();
 const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
+function loadArchivedTaskIds() {
+  try {
+    const raw = JSON.parse(window.localStorage.getItem("flowboard-archived-task-ids") || "[]");
+    return Array.isArray(raw) ? raw.map(String) : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function loadPayrollStatusMap() {
+  try {
+    return JSON.parse(window.localStorage.getItem("flowboard-payroll-status-map") || "{}");
+  } catch (error) {
+    return {};
+  }
+}
+
 const state = {
   viewDate: new Date(currentMonth),
   selectedDateKey: formatDateKey(today),
   taskFilter: "all",
   clientFilter: "all",
+  taskSearch: "",
+  calendarMode: "month",
   currentView: "tasks",
+  selectedClient: "",
   editingTaskId: null,
   toastTimer: null,
   isLoading: true,
   tasks: [],
+  archivedTaskIds: loadArchivedTaskIds(),
   employees: [],
   attendanceRecords: [],
   editingEmployeeId: null,
@@ -177,6 +214,7 @@ const state = {
   attendanceEmployeeFilter: "all",
   attendanceStatusFilter: "all",
   employeeDetailId: null,
+  payrollStatusMap: loadPayrollStatusMap(),
 };
 
 setConnectionState("checking", text.booting);
@@ -224,9 +262,30 @@ workspaceTabs.forEach((tab) => {
   });
 });
 
+calendarViewButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    state.calendarMode = button.dataset.calendarView;
+    calendarViewButtons.forEach((item) => item.classList.toggle("active", item === button));
+    renderCalendar();
+  });
+});
+
+taskSearchInput.addEventListener("input", () => {
+  state.taskSearch = taskSearchInput.value.trim().toLowerCase();
+  renderTasks();
+});
+
+openArchiveBtn.addEventListener("click", () => {
+  archivedTaskList.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+clientBackBtn.addEventListener("click", () => {
+  switchView("tasks");
+});
+
 window.addEventListener("hashchange", () => {
   const nextView = window.location.hash.replace("#", "") || "tasks";
-  if (["tasks", "hr", "estimate", "statement", "payroll"].includes(nextView)) {
+  if (["tasks", "client", "hr", "estimate", "statement", "payroll"].includes(nextView)) {
     switchView(nextView, false);
   }
 });
@@ -521,32 +580,52 @@ clientFilterSelect.addEventListener("change", () => {
 attendanceMonthFilterInput.addEventListener("change", () => {
   state.attendanceMonthFilter = attendanceMonthFilterInput.value || formatDateKey(today).slice(0, 7);
   renderAttendanceList();
+  renderAttendanceSummary();
 });
 
 attendanceEmployeeFilterSelect.addEventListener("change", () => {
   state.attendanceEmployeeFilter = attendanceEmployeeFilterSelect.value;
   renderAttendanceList();
+  renderAttendanceSummary();
 });
 
 attendanceStatusFilterSelect.addEventListener("change", () => {
   state.attendanceStatusFilter = attendanceStatusFilterSelect.value;
   renderAttendanceList();
+  renderAttendanceSummary();
 });
 
 payrollMonthInput.addEventListener("change", () => {
   state.payrollMonth = payrollMonthInput.value || formatDateKey(today).slice(0, 7);
   renderPayrollSummary();
+  updateHrMetrics();
+  renderClientDetailView();
 });
 
 function renderAll() {
   renderCalendar();
   renderSelectedDate();
-  renderTasks();
-  updateMetrics();
   renderClientFilterOptions();
+  renderTasks();
+  renderArchivedTasks();
+  renderClientDetailView();
+  updateMetrics();
 }
 
 function renderCalendar() {
+  calendarGrid.className = `calendar-grid calendar-mode-${state.calendarMode}`;
+  if (state.calendarMode === "week") {
+    renderWeekCalendar();
+    return;
+  }
+  if (state.calendarMode === "list") {
+    renderListCalendar();
+    return;
+  }
+  renderMonthCalendar();
+}
+
+function renderMonthCalendar() {
   const year = state.viewDate.getFullYear();
   const month = state.viewDate.getMonth();
   const firstDay = new Date(year, month, 1);
@@ -559,8 +638,6 @@ function renderCalendar() {
     year: "numeric",
     month: "long",
   }).format(state.viewDate);
-  calendarGrid.innerHTML = "";
-
   const cells = [];
 
   for (let index = startOffset - 1; index >= 0; index -= 1) {
@@ -575,53 +652,75 @@ function renderCalendar() {
     cells.push(createDayConfig(new Date(year, month, daysInMonth + (cells.length - (startOffset + daysInMonth)) + 1), true));
   }
 
-  cells.forEach((cell, index) => {
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "day-card";
-    card.style.animationDelay = `${index * 16}ms`;
-    card.classList.toggle("is-outside", cell.isOutside);
-    card.classList.toggle("is-selected", cell.dateKey === state.selectedDateKey);
-    card.classList.toggle("is-today", cell.dateKey === formatDateKey(today));
-    card.setAttribute("aria-label", text.ariaDay(formatLongDate(cell.date), cell.tasks.length));
-
-    card.innerHTML = `
-      <div class="day-top">
-        <span class="day-number">${cell.date.getDate()}</span>
-        ${cell.tasks.length ? `<span class="day-count">${text.countDayLabel(cell.tasks.length)}</span>` : ""}
-      </div>
-      <div class="day-events">
-        ${cell.tasks
-          .slice(0, 2)
-          .map(
-            (task) => `
-              <span class="mini-event priority-${task.priority}">
-                <span class="mini-event-client">${task.client}</span>
-                <span class="mini-event-text">${task.description || task.title}</span>
-              </span>
-            `
-          )
-          .join("")}
-      </div>
-    `;
-
-    card.addEventListener("click", () => {
-      state.selectedDateKey = cell.dateKey;
-      if (cell.date.getMonth() !== state.viewDate.getMonth()) {
-        state.viewDate = new Date(cell.date.getFullYear(), cell.date.getMonth(), 1);
-      }
-      renderCalendar();
-      renderSelectedDate();
-    });
-
-    calendarGrid.appendChild(card);
-  });
+  calendarGrid.innerHTML = cells.map((cell) => renderDayCard(cell)).join("");
+  bindCalendarDayCards();
 
   monthEventCount.textContent = state.tasks.filter((task) => {
+    if (isArchivedTask(task.id)) {
+      return false;
+    }
     const dueDate = new Date(`${task.dueDate}T00:00:00`);
     return dueDate.getFullYear() === year && dueDate.getMonth() === month;
   }).length;
 
+  updateCalendarHint();
+}
+
+function renderWeekCalendar() {
+  const selectedDate = new Date(`${state.selectedDateKey}T00:00:00`);
+  const weekStart = new Date(selectedDate);
+  weekStart.setDate(selectedDate.getDate() - selectedDate.getDay());
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(weekStart);
+    date.setDate(weekStart.getDate() + index);
+    return createDayConfig(date, false);
+  });
+
+  monthLabel.textContent = `${selectedDate.getFullYear()}년 ${selectedDate.getMonth() + 1}월 주간`;
+  calendarGrid.innerHTML = days.map((config) => renderDayCard(config)).join("");
+  bindCalendarDayCards();
+  monthEventCount.textContent = days.reduce((sum, day) => sum + day.tasks.length, 0);
+  updateCalendarHint();
+}
+
+function renderListCalendar() {
+  const monthTasks = state.tasks
+    .filter((task) => !isArchivedTask(task.id) && task.dueDate.startsWith(formatMonthPrefix(state.viewDate)))
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate) || priorityWeight(a.priority) - priorityWeight(b.priority));
+
+  monthLabel.textContent = `${state.viewDate.getFullYear()}년 ${state.viewDate.getMonth() + 1}월 리스트`;
+
+  if (!monthTasks.length) {
+    calendarGrid.innerHTML = `<div class="empty-state calendar-list-empty">이번 달 마감 업무가 없습니다.</div>`;
+    monthEventCount.textContent = "0";
+    updateCalendarHint();
+    return;
+  }
+
+  calendarGrid.innerHTML = monthTasks
+    .map(
+      (task) => `
+        <article class="calendar-list-item priority-${task.priority}">
+          <button class="calendar-list-open" type="button" data-date-select="${task.dueDate}">
+            <span class="calendar-list-date">${formatDisplayDate(task.dueDate)}</span>
+            <strong>${escapeHtml(task.client || "거래처 미지정")}</strong>
+            <p>${escapeHtml(task.description || task.title || "")}</p>
+          </button>
+        </article>
+      `
+    )
+    .join("");
+
+  calendarGrid.querySelectorAll("[data-date-select]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedDateKey = button.dataset.dateSelect;
+      renderSelectedDate();
+      updateMetrics();
+      renderCalendar();
+    });
+  });
+
+  monthEventCount.textContent = `${monthTasks.length}`;
   updateCalendarHint();
 }
 
@@ -643,7 +742,9 @@ function renderSelectedDate() {
       (task, index) => `
         <article class="schedule-item schedule-item-detail priority-${task.priority}" style="animation-delay:${index * 70}ms">
           <div class="schedule-item-head">
-            <strong>${task.client}</strong>
+            <button class="client-link-button" type="button" data-client-open="${escapeHtmlAttribute(task.client || "")}">
+              <strong>${task.client}</strong>
+            </button>
             <span class="day-count">${getStatusLabel(task.status)}</span>
           </div>
           <div class="schedule-meta schedule-description-strong">${task.description}</div>
@@ -655,6 +756,12 @@ function renderSelectedDate() {
       `
     )
     .join("");
+
+  selectedDateEvents.querySelectorAll("[data-client-open]").forEach((button) => {
+    button.addEventListener("click", () => {
+      openClientDetail(button.dataset.clientOpen);
+    });
+  });
 }
 
 function renderTasks() {
@@ -688,7 +795,9 @@ function renderTasks() {
             aria-label="${task.done ? text.activeLabel : text.doneLabel}"
           ></button>
           <div class="task-content">
-            <div class="task-client">${task.client ?? task.category}</div>
+            <button class="task-client task-client-link" type="button" data-action="client" data-client="${escapeHtmlAttribute(task.client ?? task.category ?? "")}">
+              ${task.client ?? task.category}
+            </button>
             <div class="task-description task-description-primary">${task.description ?? task.title ?? ""}</div>
             <div class="task-meta">${getStatusLabel(task.status)} · ${getPriorityLabel(task.priority)} · ${task.category}</div>
             <div class="task-inline-controls">
@@ -712,6 +821,7 @@ function renderTasks() {
           </div>
           <div class="task-actions">
             <button class="edit-btn" type="button" data-action="edit" data-id="${task.id}">${text.editLabel}</button>
+            ${task.status === "done" ? `<button class="ghost-btn task-archive-btn" type="button" data-action="archive" data-id="${task.id}">보관</button>` : ""}
             <button class="remove-btn" type="button" data-action="remove" data-id="${task.id}">${text.deleteLabel}</button>
           </div>
         </article>
@@ -742,6 +852,11 @@ function renderTasks() {
           task.id === taskId ? { ...task, done: nextDone, status: nextStatus } : task
         );
         showToast(toggledTask?.done ? text.taskActive : text.taskDone);
+      }
+
+      if (action === "client") {
+        openClientDetail(button.dataset.client);
+        return;
       }
 
       if (action === "status") {
@@ -814,17 +929,72 @@ function renderTasks() {
         showToast(text.taskDeleted);
       }
 
+      if (action === "archive") {
+        toggleArchivedTask(taskId);
+        showToast("완료 업무를 보관함으로 이동했습니다.");
+      }
+
       renderAll();
     });
   });
 }
 
 function updateMetrics() {
-  const total = state.tasks.length;
-  const completed = state.tasks.filter((task) => task.done).length;
+  const activeTasks = getActiveTasks();
+  const total = activeTasks.length;
+  const completed = activeTasks.filter((task) => task.done).length;
   remainingCount.textContent = `${total - completed}`;
   taskProgressLabel.textContent = text.countDone(completed, total);
   taskProgressBar.style.width = `${total ? Math.round((completed / total) * 100) : 0}%`;
+}
+
+function renderArchivedTasks() {
+  const archivedTasks = state.tasks
+    .filter((task) => isArchivedTask(task.id))
+    .sort((a, b) => `${b.dueDate}${b.receivedDate}`.localeCompare(`${a.dueDate}${a.receivedDate}`));
+
+  archivedTaskCount.textContent = `${archivedTasks.length}`;
+  archivedTaskSummary.textContent = `${archivedTasks.length}건 보관`;
+
+  if (!archivedTasks.length) {
+    archivedTaskList.innerHTML = `<div class="empty-state">아직 보관된 완료 업무가 없습니다.</div>`;
+    return;
+  }
+
+  archivedTaskList.innerHTML = archivedTasks
+    .map(
+      (task) => `
+        <article class="task-item archive-task-item">
+          <div class="task-content">
+            <button class="task-client task-client-link" type="button" data-client-open="${escapeHtmlAttribute(task.client || "")}">
+              ${escapeHtml(task.client || "거래처 미지정")}
+            </button>
+            <div class="task-description task-description-primary">${escapeHtml(task.description || task.title || "")}</div>
+            <div class="task-dates">
+              <span class="task-date-chip">마감일 ${formatDisplayDate(task.dueDate)}</span>
+            </div>
+          </div>
+          <div class="task-actions">
+            <button class="ghost-btn task-archive-btn" type="button" data-archive-restore="${task.id}">복원</button>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  archivedTaskList.querySelectorAll("[data-archive-restore]").forEach((button) => {
+    button.addEventListener("click", () => {
+      toggleArchivedTask(button.dataset.archiveRestore);
+      renderAll();
+      showToast("보관함에서 업무를 복원했습니다.");
+    });
+  });
+
+  archivedTaskList.querySelectorAll("[data-client-open]").forEach((button) => {
+    button.addEventListener("click", () => {
+      openClientDetail(button.dataset.clientOpen);
+    });
+  });
 }
 
 function updateCalendarHint() {
@@ -836,7 +1006,7 @@ function updateCalendarHint() {
 }
 
 function getTasksByDate(dateKey) {
-  return state.tasks
+  return getActiveTasks()
     .filter((task) => task.dueDate === dateKey)
     .sort(
       (a, b) =>
@@ -854,6 +1024,62 @@ function createDayConfig(date, isOutside) {
     isOutside,
     tasks: getTasksByDate(dateKey),
   };
+}
+
+function renderDayCard(config) {
+  const taskPreview = config.tasks
+    .slice(0, state.calendarMode === "week" ? 3 : 2)
+    .map(
+      (task) => `
+        <div class="mini-event priority-${task.priority}">
+          <span class="mini-event-client mini-event-link" data-client-open="${escapeHtmlAttribute(task.client || "")}">${escapeHtml(task.client || "거래처 미지정")}</span>
+          <span class="mini-event-text">${escapeHtml(task.description || task.title || "")}</span>
+        </div>
+      `
+    )
+    .join("");
+
+  return `
+    <button
+      class="day-card ${config.isOutside ? "is-outside" : ""} ${config.dateKey === state.selectedDateKey ? "is-selected" : ""}"
+      type="button"
+      data-date="${config.dateKey}"
+      aria-label="${text.ariaDay(config.dateKey, config.tasks.length)}"
+    >
+      <div class="day-top">
+        <span class="day-number">${config.date.getDate()}</span>
+        ${config.tasks.length ? `<span class="day-count">${text.countDayLabel(config.tasks.length)}</span>` : ""}
+      </div>
+      <div class="day-events">
+        ${taskPreview || `<span class="mini-event-text mini-event-empty">일정 없음</span>`}
+      </div>
+    </button>
+  `;
+}
+
+function bindCalendarDayCards() {
+  calendarGrid.querySelectorAll("[data-date]").forEach((card) => {
+    card.addEventListener("click", (event) => {
+      const clientButton = event.target.closest("[data-client-open]");
+      if (clientButton) {
+        event.stopPropagation();
+        openClientDetail(clientButton.dataset.clientOpen);
+        return;
+      }
+      state.selectedDateKey = card.dataset.date;
+      const selectedDate = new Date(`${card.dataset.date}T00:00:00`);
+      if (state.calendarMode === "month" && selectedDate.getMonth() !== state.viewDate.getMonth()) {
+        state.viewDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+      }
+      renderSelectedDate();
+      updateMetrics();
+      renderCalendar();
+    });
+  });
+}
+
+function formatMonthPrefix(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
 async function loadTasks() {
@@ -1015,7 +1241,10 @@ function switchView(view, shouldSyncHash = true) {
   pageViews.forEach((section) => {
     section.hidden = section.id !== `${view}View`;
   });
-  workspaceTabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.view === view));
+  workspaceTabs.forEach((tab) => {
+    const isActive = view === "client" ? tab.dataset.view === "tasks" : tab.dataset.view === view;
+    tab.classList.toggle("active", isActive);
+  });
   if (shouldSyncHash) {
     const nextHash = `#${view}`;
     if (window.location.hash !== nextHash) {
@@ -1089,8 +1318,29 @@ function mapTaskRecord(record) {
   };
 }
 
+function isArchivedTask(taskId) {
+  return state.archivedTaskIds.includes(String(taskId));
+}
+
+function saveArchivedTaskIds() {
+  window.localStorage.setItem("flowboard-archived-task-ids", JSON.stringify(state.archivedTaskIds));
+}
+
+function toggleArchivedTask(taskId) {
+  const key = String(taskId);
+  if (isArchivedTask(key)) {
+    state.archivedTaskIds = state.archivedTaskIds.filter((item) => item !== key);
+  } else {
+    state.archivedTaskIds = [...state.archivedTaskIds, key];
+  }
+  saveArchivedTaskIds();
+}
+
 function getVisibleTasks() {
   return state.tasks.filter((task) => {
+    if (isArchivedTask(task.id)) {
+      return false;
+    }
     if (state.taskFilter === "active" && task.status !== "todo") {
       return false;
     }
@@ -1103,14 +1353,22 @@ function getVisibleTasks() {
     if (state.clientFilter !== "all" && task.client !== state.clientFilter) {
       return false;
     }
+    if (state.taskSearch) {
+      const source = `${task.client} ${task.description} ${task.title} ${task.category}`.toLowerCase();
+      if (!source.includes(state.taskSearch)) {
+        return false;
+      }
+    }
     return true;
   });
 }
 
 function renderClientFilterOptions() {
-  const clients = Array.from(new Set(state.tasks.map((task) => task.client).filter(Boolean))).sort((a, b) =>
-    a.localeCompare(b, "ko")
-  );
+  const clients = getActiveTasks()
+    .map((task) => task.client)
+    .filter(Boolean)
+    .filter((value, index, array) => array.indexOf(value) === index)
+    .sort((a, b) => a.localeCompare(b, "ko"));
   const currentValue = state.clientFilter;
   clientFilterSelect.innerHTML = [
     `<option value="all">${text.clientFilterAll}</option>`,
@@ -1118,6 +1376,113 @@ function renderClientFilterOptions() {
   ].join("");
   clientFilterSelect.value = clients.includes(currentValue) || currentValue === "all" ? currentValue : "all";
   state.clientFilter = clientFilterSelect.value;
+}
+
+function getActiveTasks() {
+  return state.tasks.filter((task) => !isArchivedTask(task.id));
+}
+
+function openClientDetail(clientName) {
+  if (!clientName) {
+    return;
+  }
+  state.selectedClient = clientName;
+  switchView("client");
+  renderClientDetailView();
+}
+
+function renderClientDetailView() {
+  if (!clientView) {
+    return;
+  }
+
+  if (!state.selectedClient) {
+    clientDetailTitle.textContent = "거래처 업무 요약";
+    clientDetailSubtitle.textContent = "업무 카드나 캘린더에서 거래처를 선택하면 전체 흐름을 볼 수 있습니다.";
+    clientDetailMetrics.innerHTML = `<article class="metric-card"><span class="metric-label">선택된 거래처</span><strong>0</strong><small>거래처를 선택해 주세요.</small></article>`;
+    clientTaskHeading.textContent = "거래처 업무 목록";
+    clientTaskCount.textContent = "0건";
+    clientTaskList.innerHTML = `<div class="empty-state">거래처를 먼저 선택해 주세요.</div>`;
+    clientDeadlineList.innerHTML = `<div class="empty-state">거래처를 선택하면 다가오는 마감과 완료 현황을 볼 수 있습니다.</div>`;
+    return;
+  }
+
+  const tasks = getActiveTasks()
+    .filter((task) => task.client === state.selectedClient)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+  const doneCount = tasks.filter((task) => task.status === "done").length;
+  const overdueCount = tasks.filter((task) => isOverdue(task)).length;
+  const upcomingTasks = tasks.filter((task) => task.status !== "done").slice(0, 6);
+  const highPriorityCount = tasks.filter((task) => task.priority === "high").length;
+
+  clientDetailTitle.textContent = state.selectedClient;
+  clientDetailSubtitle.textContent = `${tasks.length}건의 등록 업무와 마감 흐름을 한 화면에서 확인합니다.`;
+  clientTaskHeading.textContent = `${state.selectedClient} 업무 목록`;
+  clientTaskCount.textContent = `${tasks.length}건`;
+
+  clientDetailMetrics.innerHTML = `
+    <article class="metric-card">
+      <span class="metric-label">등록 업무</span>
+      <strong>${tasks.length}</strong>
+      <small>현재 거래처에 연결된 전체 업무 수</small>
+    </article>
+    <article class="metric-card">
+      <span class="metric-label">완료 업무</span>
+      <strong>${doneCount}</strong>
+      <small>완료 처리된 업무 수</small>
+    </article>
+    <article class="metric-card">
+      <span class="metric-label">지연 업무</span>
+      <strong>${overdueCount}</strong>
+      <small>마감일이 지난 미완료 업무 수</small>
+    </article>
+    <article class="metric-card">
+      <span class="metric-label">긴급 우선순위</span>
+      <strong>${highPriorityCount}</strong>
+      <small>긴급으로 표시된 업무 수</small>
+    </article>
+  `;
+
+  clientTaskList.innerHTML = tasks.length
+    ? tasks
+        .map(
+          (task) => `
+            <article class="task-item client-task-item ${task.status === "done" ? "is-done" : ""}">
+              <div class="task-content">
+                <div class="task-client">${escapeHtml(task.client)}</div>
+                <div class="task-description task-description-primary">${escapeHtml(task.description || task.title || "")}</div>
+                <div class="task-meta">${getStatusLabel(task.status)} · ${getPriorityLabel(task.priority)}</div>
+                <div class="task-dates">
+                  <span class="task-date-chip">접수일 ${formatDisplayDate(task.receivedDate)}</span>
+                  <span class="task-date-chip">마감일 ${formatDisplayDate(task.dueDate)}</span>
+                  ${isOverdue(task) ? `<span class="task-date-chip task-date-chip-alert">마감 지연</span>` : ""}
+                </div>
+              </div>
+            </article>
+          `
+        )
+        .join("")
+    : `<div class="empty-state">이 거래처에 등록된 업무가 없습니다.</div>`;
+
+  clientDeadlineList.innerHTML = upcomingTasks.length
+    ? upcomingTasks
+        .map(
+          (task) => `
+            <article class="schedule-item schedule-item-detail priority-${task.priority}">
+              <div class="schedule-item-head">
+                <strong>${escapeHtml(task.client)}</strong>
+                <span class="day-count">${formatDisplayDate(task.dueDate)}</span>
+              </div>
+              <div class="schedule-meta schedule-description-strong">${escapeHtml(task.description || task.title || "")}</div>
+              <div class="schedule-detail-row">
+                <span class="task-date-chip">${getStatusLabel(task.status)}</span>
+                <span class="task-date-chip">${getPriorityLabel(task.priority)}</span>
+              </div>
+            </article>
+          `
+        )
+        .join("")
+    : `<div class="empty-state">다가오는 마감 업무가 없습니다.</div>`;
 }
 
 function renderChoiceButton(kind, task, value, label) {
@@ -1215,16 +1580,16 @@ function renderEmployees() {
 }
 
 function renderAttendanceList() {
-  if (!state.attendanceRecords.length) {
+  const records = getFilteredAttendanceRecords();
+
+  if (!records.length) {
     attendanceList.innerHTML = `<div class="empty-state">출근기록부가 비어 있습니다. 직원과 출퇴근 시간을 입력해 주세요.</div>`;
     return;
   }
 
-  attendanceList.innerHTML = state.attendanceRecords
-    .slice()
-    .sort((a, b) => `${b.workDate}${b.clockIn}`.localeCompare(`${a.workDate}${a.clockIn}`))
+  attendanceList.innerHTML = records
     .map((record) => {
-      const employee = state.employees.find((item) => item.id === record.employeeId);
+      const employee = state.employees.find((item) => String(item.id) === String(record.employeeId));
       const summary = calculateAttendance(record, employee);
       return `
         <article class="attendance-card">
@@ -1244,10 +1609,23 @@ function renderAttendanceList() {
             <span>야근 ${summary.overtimeHours.toFixed(1)}시간 / ${formatCurrency(summary.overtimePay)}</span>
             <span>주말 ${summary.weekendHours.toFixed(1)}시간 / ${formatCurrency(summary.weekendPay)}</span>
           </div>
+          <div class="attendance-card-tools">
+            <span class="task-date-chip">${getAttendanceStatusLabel(summary.attendanceStatus)}</span>
+            <button class="edit-btn" type="button" data-attendance-edit="${record.id}">수정</button>
+          </div>
         </article>
       `;
     })
     .join("");
+
+  attendanceList.querySelectorAll("[data-attendance-edit]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const record = state.attendanceRecords.find((item) => String(item.id) === String(button.dataset.attendanceEdit));
+      if (record) {
+        openAttendanceModal(record);
+      }
+    });
+  });
 }
 
 function updateHrMetrics() {
@@ -1259,6 +1637,7 @@ function updateHrMetrics() {
   monthlyWeekendHours.textContent = `${payrollSummary.reduce((sum, item) => sum + item.weekendHours, 0).toFixed(1)}h`;
   monthlyPayrollTotal.textContent = formatCurrency(payrollSummary.reduce((sum, item) => sum + item.totalPay, 0));
   payrollEmployeeCount.textContent = `${payrollSummary.length}`;
+  payrollConfirmedCount.textContent = `${payrollSummary.filter((item) => item.payrollStatus === "confirmed" || item.payrollStatus === "paid").length} / ${payrollSummary.length}`;
   hrMonthlyOvertimeHours.textContent = monthlyOvertimeHours.textContent;
   hrMonthlyPayrollTotal.textContent = monthlyPayrollTotal.textContent;
 }
@@ -1343,6 +1722,32 @@ function calculatePayrollDeductions(employee, grossPay) {
   };
 }
 
+function getPayrollStatusKey(employeeId) {
+  return `${state.payrollMonth}:${employeeId}`;
+}
+
+function getPayrollStatus(employeeId) {
+  return state.payrollStatusMap[getPayrollStatusKey(employeeId)] || "draft";
+}
+
+function setPayrollStatus(employeeId, status) {
+  state.payrollStatusMap = {
+    ...state.payrollStatusMap,
+    [getPayrollStatusKey(employeeId)]: status,
+  };
+  window.localStorage.setItem("flowboard-payroll-status-map", JSON.stringify(state.payrollStatusMap));
+}
+
+function getPayrollStatusLabel(status) {
+  if (status === "confirmed") {
+    return "확정";
+  }
+  if (status === "paid") {
+    return "지급 완료";
+  }
+  return "미확정";
+}
+
 function buildPayrollSummary() {
   return state.employees.map((employee) => {
     const records = state.attendanceRecords.filter(
@@ -1369,6 +1774,7 @@ function buildPayrollSummary() {
       totalPay: grossPay,
       deductions,
       netPay: deductions.netPay,
+      payrollStatus: getPayrollStatus(employee.id),
     };
   });
 }
@@ -1377,8 +1783,12 @@ function renderPayrollSummary() {
   const summaryItems = buildPayrollSummary();
   if (!summaryItems.length) {
     payrollSummaryList.innerHTML = `<div class="empty-state">등록된 직원이 없어서 급여 요약을 계산할 수 없습니다.</div>`;
+    payrollConfirmedCount.textContent = "0 / 0";
     return;
   }
+
+  const finalizedCount = summaryItems.filter((item) => item.payrollStatus === "confirmed" || item.payrollStatus === "paid").length;
+  payrollConfirmedCount.textContent = `${finalizedCount} / ${summaryItems.length}`;
 
   payrollSummaryList.innerHTML = summaryItems
     .map(
@@ -1391,9 +1801,14 @@ function renderPayrollSummary() {
             </div>
             <span class="task-date-chip">${item.employee.employmentType === "freelancer" ? "프리랜서" : "4대보험 적용 직원"}</span>
           </div>
+          <div class="payroll-status-group" role="group" aria-label="payroll status">
+            <button class="task-choice-btn ${item.payrollStatus === "draft" ? "is-active" : ""}" type="button" data-payroll-status="draft" data-employee-id="${item.employee.id}">미확정</button>
+            <button class="task-choice-btn ${item.payrollStatus === "confirmed" ? "is-active" : ""}" type="button" data-payroll-status="confirmed" data-employee-id="${item.employee.id}">확정</button>
+            <button class="task-choice-btn ${item.payrollStatus === "paid" ? "is-active" : ""}" type="button" data-payroll-status="paid" data-employee-id="${item.employee.id}">지급 완료</button>
+          </div>
           <div class="payroll-total-row">
             <strong>${formatCurrency(item.netPay)}</strong>
-            <span>예상 실지급 · ${item.overtimeHours.toFixed(1)}h 야근 · ${item.weekendHours.toFixed(1)}h 주말</span>
+            <span>${getPayrollStatusLabel(item.payrollStatus)} · ${item.overtimeHours.toFixed(1)}h 야근 · ${item.weekendHours.toFixed(1)}h 주말</span>
           </div>
           <div class="employee-pay-grid">
             <span>기본급 ${formatCurrency(item.employee.baseSalary)}</span>
@@ -1414,6 +1829,14 @@ function renderPayrollSummary() {
       `
     )
     .join("");
+
+  payrollSummaryList.querySelectorAll("[data-payroll-status]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setPayrollStatus(button.dataset.employeeId, button.dataset.payrollStatus);
+      renderPayrollSummary();
+      showToast(`급여 상태를 ${button.textContent}로 변경했습니다.`);
+    });
+  });
 }
 
 function renderAttendanceSummary() {
@@ -1701,6 +2124,10 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function escapeHtmlAttribute(value) {
+  return escapeHtml(value).replaceAll("`", "&#96;");
 }
 
 function mapEmployeeRecord(record) {
@@ -2253,7 +2680,7 @@ printPayrollBtn.addEventListener("click", () => {
   printPayrollView();
 });
 switchView(
-  ["tasks", "hr", "estimate", "statement", "payroll"].includes(window.location.hash.replace("#", ""))
+  ["tasks", "client", "hr", "estimate", "statement", "payroll"].includes(window.location.hash.replace("#", ""))
     ? window.location.hash.replace("#", "")
     : "tasks",
   false

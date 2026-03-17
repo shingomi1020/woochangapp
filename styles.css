@@ -764,6 +764,13 @@ h2 {
   background: linear-gradient(180deg, #ffffff, #f4f8ff);
 }
 
+.payroll-status-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
 .payroll-total-row {
   display: flex;
   align-items: end;
@@ -824,6 +831,12 @@ h2 {
   margin-bottom: 14px;
 }
 
+.calendar-view-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .calendar-hint {
   margin: 0;
   font-size: 0.94rem;
@@ -852,6 +865,46 @@ h2 {
   width: 100%;
   min-width: 0;
   gap: 10px;
+}
+
+.calendar-mode-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.calendar-list-item {
+  border-radius: 20px;
+  border: 1px solid rgba(47, 99, 233, 0.08);
+  background: linear-gradient(180deg, #ffffff, #f7faff);
+}
+
+.calendar-list-open {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  padding: 18px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.calendar-list-open strong {
+  font-size: 1.08rem;
+  color: var(--accent-deep);
+}
+
+.calendar-list-date {
+  display: inline-flex;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
 }
 
 .day-card {
@@ -957,6 +1010,15 @@ h2 {
   text-overflow: ellipsis;
 }
 
+.mini-event-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-deep);
+  text-align: left;
+  cursor: pointer;
+}
+
 .mini-event-text {
   display: -webkit-box;
   overflow: hidden;
@@ -1021,6 +1083,15 @@ h2 {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+}
+
+.client-link-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .event-edit-btn {
@@ -1108,8 +1179,38 @@ h2 {
   margin-bottom: 14px;
 }
 
+.task-controls-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 280px) minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
 .filter-field {
   max-width: 280px;
+}
+
+.search-field {
+  max-width: none;
+}
+
+.archive-toggle-btn {
+  min-height: 56px;
+  white-space: nowrap;
+}
+
+.archive-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  margin-left: 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 0.8rem;
+  font-weight: 800;
 }
 
 .task-summary-card {
@@ -1208,6 +1309,12 @@ h2 {
 
 .task-content {
   min-width: 0;
+}
+
+.task-client-link {
+  padding: 0;
+  border: 0;
+  cursor: pointer;
 }
 
 .task-client {
@@ -1371,6 +1478,24 @@ h2 {
 .task-actions {
   display: grid;
   gap: 10px;
+}
+
+.task-archive-btn {
+  min-height: 44px;
+}
+
+.archive-panel {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 22px;
+  border-radius: 24px;
+  border: 1px solid rgba(47, 99, 233, 0.08);
+  background: linear-gradient(180deg, #fbfdff, #f4f8ff);
+}
+
+.archive-list .task-item {
+  background: linear-gradient(180deg, #f7faff, #f2f6ff);
 }
 
 .edit-btn {
@@ -1738,6 +1863,10 @@ h2 {
 }
 
 @media (max-width: 900px) {
+  .task-controls-grid {
+    grid-template-columns: 1fr;
+  }
+
   .task-form-grid {
     grid-template-columns: 1fr;
   }
@@ -1801,6 +1930,10 @@ h2 {
 
   .calendar-grid {
     gap: 6px;
+  }
+
+  .calendar-view-switch {
+    width: 100%;
   }
 
   .day-card {

@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260317-26" />
+    <link rel="stylesheet" href="styles.css?v=20260317-27" />
   </head>
   <body>
     <div class="app-shell">
@@ -73,7 +73,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 26</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 27</p>
           </div>
         </div>
 
@@ -127,6 +127,11 @@
 
           <div class="calendar-topline">
             <p id="calendarHint" class="calendar-hint">오늘 마감 업무를 먼저 확인해 보세요.</p>
+            <div class="calendar-view-switch" role="tablist" aria-label="캘린더 보기 전환">
+              <button class="chip active" type="button" data-calendar-view="month">월간</button>
+              <button class="chip" type="button" data-calendar-view="week">주간</button>
+              <button class="chip" type="button" data-calendar-view="list">리스트</button>
+            </div>
           </div>
 
           <div class="calendar-scroll">
@@ -172,12 +177,22 @@
           </div>
 
           <div class="task-controls">
-            <label class="field filter-field">
-              <span>거래처 필터</span>
-              <select id="clientFilterSelect">
-                <option value="all">전체 거래처</option>
-              </select>
-            </label>
+            <div class="task-controls-grid">
+              <label class="field filter-field">
+                <span>거래처 필터</span>
+                <select id="clientFilterSelect">
+                  <option value="all">전체 거래처</option>
+                </select>
+              </label>
+              <label class="field search-field">
+                <span>업무 검색</span>
+                <input id="taskSearchInput" type="search" placeholder="거래처명, 업무 내용으로 검색" autocomplete="off" />
+              </label>
+              <button id="openArchiveBtn" class="ghost-btn archive-toggle-btn" type="button">
+                보관함
+                <span id="archivedTaskCount" class="archive-count">0</span>
+              </button>
+            </div>
           </div>
 
           <div class="task-toolbar">
@@ -233,8 +248,56 @@
           </div>
 
           <div id="taskList" class="task-list"></div>
+
+          <section class="archive-panel" aria-labelledby="archivePanelTitle">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">업무 보관함</p>
+                <h3 id="archivePanelTitle">완료 후 보관된 업무</h3>
+              </div>
+              <span id="archivedTaskSummary" class="task-date-chip">0건 보관</span>
+            </div>
+            <div id="archivedTaskList" class="task-list archive-list"></div>
+          </section>
         </section>
       </main>
+
+      <section id="clientView" class="hr-workspace app-view" hidden>
+        <section class="panel hr-hero reveal">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">거래처 상세</p>
+              <h2 id="clientDetailTitle">거래처 업무 요약</h2>
+              <p id="clientDetailSubtitle" class="modal-subtitle">거래처를 선택하면 전체 업무 흐름을 볼 수 있습니다.</p>
+            </div>
+            <button id="clientBackBtn" type="button" class="ghost-btn">업무 보드로 돌아가기</button>
+          </div>
+          <div id="clientDetailMetrics" class="payroll-hero-grid"></div>
+        </section>
+
+        <section class="hr-grid">
+          <section class="panel reveal delay-1">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">등록 업무</p>
+                <h3 id="clientTaskHeading">거래처 업무 목록</h3>
+              </div>
+              <span id="clientTaskCount" class="task-date-chip">0건</span>
+            </div>
+            <div id="clientTaskList" class="task-list"></div>
+          </section>
+
+          <section class="panel reveal delay-2">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">마감 일정</p>
+                <h3>다가오는 마감</h3>
+              </div>
+            </div>
+            <div id="clientDeadlineList" class="schedule-list"></div>
+          </section>
+        </section>
+      </section>
 
       <section id="hrView" class="hr-workspace app-view" hidden>
         <section class="panel hr-hero reveal">
@@ -460,6 +523,11 @@
               <strong id="monthlyWeekendHours">0h</strong>
               <small>주말 근무 누적 시간</small>
             </article>
+            <article class="metric-card">
+              <span class="metric-label">급여 확정 상태</span>
+              <strong id="payrollConfirmedCount">0 / 0</strong>
+              <small>확정 또는 지급 완료 처리된 직원 수</small>
+            </article>
           </div>
         </section>
 
@@ -649,6 +717,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-26"></script>
+    <script src="app.js?v=20260317-27"></script>
   </body>
 </html>
