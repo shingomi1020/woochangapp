@@ -856,8 +856,8 @@ h2 {
 
 .day-card {
   position: relative;
-  min-height: 118px;
-  padding: 14px;
+  min-height: 132px;
+  padding: 12px 10px;
   border-radius: 22px;
   border: 1px solid rgba(47, 99, 233, 0.08);
   background: linear-gradient(180deg, #ffffff, #fbfdff);
@@ -929,31 +929,43 @@ h2 {
 
 .day-events {
   display: grid;
-  gap: 8px;
+  gap: 5px;
+  margin-top: 10px;
 }
 
 .mini-event {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: grid;
+  gap: 3px;
   min-width: 0;
-  padding: 7px 10px;
-  border-radius: 999px;
+  padding: 6px 7px;
+  border-radius: 12px;
   background: #f4f8ff;
   color: var(--accent-deep);
-  font-size: 0.75rem;
+  text-align: left;
+}
+
+.mini-event::before {
+  display: none;
+}
+
+.mini-event-client {
+  font-size: 0.64rem;
+  font-weight: 800;
+  line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.mini-event::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 12px rgba(47, 99, 233, 0.28);
+.mini-event-text {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.69rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text);
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 .schedule-card {
@@ -993,7 +1005,15 @@ h2 {
 }
 
 .schedule-item strong {
-  font-size: 0.98rem;
+  font-size: 1.28rem;
+  color: var(--accent-deep);
+}
+
+.schedule-description-strong {
+  font-size: 1rem;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.6;
 }
 
 .schedule-item-head {
@@ -1190,22 +1210,17 @@ h2 {
   min-width: 0;
 }
 
-.task-title {
-  font-weight: 700;
-  line-height: 1.4;
-}
-
 .task-client {
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  margin-bottom: 8px;
-  padding: 5px 10px;
+  margin-bottom: 10px;
+  padding: 7px 12px;
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--accent-strong);
-  font-size: 0.76rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 800;
 }
 
 .task-description {
@@ -1213,6 +1228,13 @@ h2 {
   color: var(--text);
   font-size: 0.92rem;
   line-height: 1.6;
+}
+
+.task-description-primary {
+  margin-top: 0;
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.55;
 }
 
 .task-inline-controls {
@@ -1360,7 +1382,7 @@ h2 {
   cursor: pointer;
 }
 
-.task-item.is-done .task-title {
+.task-item.is-done .task-description-primary {
   color: #7b8aaa;
   text-decoration: line-through;
 }
@@ -1782,10 +1804,10 @@ h2 {
   }
 
   .day-card {
-    min-height: 88px;
+    min-height: 104px;
     padding: 8px 6px 10px;
     border-radius: 16px;
-    aspect-ratio: 0.66 / 1;
+    aspect-ratio: 0.72 / 1;
   }
 
   .day-number {
@@ -1815,7 +1837,23 @@ h2 {
   }
 
   .day-events {
-    display: none;
+    display: grid;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .mini-event {
+    padding: 4px 5px;
+    border-radius: 10px;
+  }
+
+  .mini-event-client {
+    font-size: 0.56rem;
+  }
+
+  .mini-event-text {
+    font-size: 0.6rem;
+    -webkit-line-clamp: 3;
   }
 
   .task-form {

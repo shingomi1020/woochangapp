@@ -9,7 +9,6 @@ const remainingCount = document.getElementById("remainingCount");
 const monthEventCount = document.getElementById("monthEventCount");
 const taskList = document.getElementById("taskList");
 const taskForm = document.getElementById("taskForm");
-const taskInput = document.getElementById("taskInput");
 const taskClientInput = document.getElementById("taskClientInput");
 const taskDescriptionInput = document.getElementById("taskDescriptionInput");
 const taskReceivedDateInput = document.getElementById("taskReceivedDateInput");
@@ -26,7 +25,6 @@ const editModalTitle = document.getElementById("editModalTitle");
 const editModalSubtitle = document.getElementById("editModalSubtitle");
 const editTaskForm = document.getElementById("editTaskForm");
 const editTaskClientInput = document.getElementById("editTaskClientInput");
-const editTaskInput = document.getElementById("editTaskInput");
 const editTaskDescriptionInput = document.getElementById("editTaskDescriptionInput");
 const editTaskReceivedDateInput = document.getElementById("editTaskReceivedDateInput");
 const editTaskDueDateInput = document.getElementById("editTaskDueDateInput");
@@ -235,13 +233,12 @@ window.addEventListener("hashchange", () => {
 
 taskForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const value = taskInput.value.trim();
   const client = taskClientInput.value.trim();
   const description = taskDescriptionInput.value.trim();
   const receivedDate = taskReceivedDateInput.value;
   const dueDate = taskDueDateInput.value;
 
-  if (!value || !client || !description || !receivedDate || !dueDate) {
+  if (!client || !description || !receivedDate || !dueDate) {
     return;
   }
 
@@ -252,7 +249,7 @@ taskForm.addEventListener("submit", async (event) => {
 
   const isEditing = state.editingTaskId !== null;
   const payload = {
-    title: value,
+    title: description,
     client,
     description,
     received_date: receivedDate,
@@ -342,13 +339,12 @@ editTaskForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  const value = editTaskInput.value.trim();
   const client = editTaskClientInput.value.trim();
   const description = editTaskDescriptionInput.value.trim();
   const receivedDate = editTaskReceivedDateInput.value;
   const dueDate = editTaskDueDateInput.value;
 
-  if (!value || !client || !description || !receivedDate || !dueDate) {
+  if (!client || !description || !receivedDate || !dueDate) {
     return;
   }
 
@@ -358,7 +354,7 @@ editTaskForm.addEventListener("submit", async (event) => {
   }
 
   const payload = {
-    title: value,
+    title: description,
     client,
     description,
     received_date: receivedDate,
@@ -597,7 +593,14 @@ function renderCalendar() {
       <div class="day-events">
         ${cell.tasks
           .slice(0, 2)
-          .map((task) => `<span class="mini-event">${task.title}</span>`)
+          .map(
+            (task) => `
+              <span class="mini-event priority-${task.priority}">
+                <span class="mini-event-client">${task.client}</span>
+                <span class="mini-event-text">${task.description || task.title}</span>
+              </span>
+            `
+          )
           .join("")}
       </div>
     `;
@@ -640,10 +643,10 @@ function renderSelectedDate() {
       (task, index) => `
         <article class="schedule-item schedule-item-detail priority-${task.priority}" style="animation-delay:${index * 70}ms">
           <div class="schedule-item-head">
-            <strong>${task.title}</strong>
+            <strong>${task.client}</strong>
             <span class="day-count">${getStatusLabel(task.status)}</span>
           </div>
-          <div class="schedule-meta">${task.client} / ${task.description}</div>
+          <div class="schedule-meta schedule-description-strong">${task.description}</div>
           <div class="schedule-detail-row">
             <span class="task-date-chip">${getPriorityLabel(task.priority)}</span>
             <span class="task-date-chip">${isOverdue(task) ? "\ub9c8\uac10 \uc9c0\uc5f0" : isTodayTask(task) ? "\uc624\ub298 \ub9c8\uac10" : "\ub9c8\uac10 \uc608\uc815"}</span>
@@ -686,9 +689,8 @@ function renderTasks() {
           ></button>
           <div class="task-content">
             <div class="task-client">${task.client ?? task.category}</div>
-            <div class="task-title">${task.title}</div>
+            <div class="task-description task-description-primary">${task.description ?? task.title ?? ""}</div>
             <div class="task-meta">${getStatusLabel(task.status)} · ${getPriorityLabel(task.priority)} · ${task.category}</div>
-            <div class="task-description">${task.description ?? ""}</div>
             <div class="task-inline-controls">
               <div class="task-choice-group" aria-label="진행 상태 선택">
                 ${renderChoiceButton("status", task, "todo", getStatusLabel("todo"))}
@@ -967,7 +969,6 @@ function openEditModal(task) {
   editModalTitle.textContent = `${task.title} 수정`;
   editModalSubtitle.textContent = `${task.client} 업무를 수정하는 중입니다.`;
   editTaskClientInput.value = task.client || "";
-  editTaskInput.value = task.title || "";
   editTaskDescriptionInput.value = task.description || "";
   editTaskReceivedDateInput.value = task.receivedDate || formatDateKey(today);
   editTaskDueDateInput.value = task.dueDate || formatDateKey(today);
@@ -975,7 +976,7 @@ function openEditModal(task) {
   editTaskPriorityInput.value = task.priority || "medium";
   editModal.hidden = false;
   document.body.classList.add("modal-open");
-  editTaskInput.focus();
+  editTaskDescriptionInput.focus();
 }
 
 function closeEditModal() {
