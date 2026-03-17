@@ -122,8 +122,8 @@ const attendanceClockOutInput = document.getElementById("attendanceClockOutInput
 const attendanceList = document.getElementById("attendanceList");
 const attendanceSummaryCards = document.getElementById("attendanceSummaryCards");
 const attendanceBatchDateInput = document.getElementById("attendanceBatchDateInput");
-const attendanceBatchList = document.getElementById("attendanceBatchList");
-const saveBatchAttendanceBtn = document.getElementById("saveBatchAttendanceBtn");
+  const attendanceBatchList = document.getElementById("attendanceBatchList");
+  const saveBatchAttendanceBtn = document.getElementById("saveBatchAttendanceBtn");
 const attendanceMonthFilterInput = document.getElementById("attendanceMonthFilterInput");
 const attendanceEmployeeFilterSelect = document.getElementById("attendanceEmployeeFilterSelect");
 const attendanceStatusFilterSelect = document.getElementById("attendanceStatusFilterSelect");
@@ -155,10 +155,20 @@ const employeeModalSubtitle = document.getElementById("employeeModalSubtitle");
 const editEmployeeForm = document.getElementById("editEmployeeForm");
 const editEmployeeNameInput = document.getElementById("editEmployeeNameInput");
 const editEmployeeTypeInput = document.getElementById("editEmployeeTypeInput");
-const editEmployeeBaseSalaryInput = document.getElementById("editEmployeeBaseSalaryInput");
-const editEmployeeOvertimeRateInput = document.getElementById("editEmployeeOvertimeRateInput");
-const editEmployeeWeekendRateInput = document.getElementById("editEmployeeWeekendRateInput");
-const editEmployeeDeleteBtn = document.getElementById("editEmployeeDeleteBtn");
+  const editEmployeeBaseSalaryInput = document.getElementById("editEmployeeBaseSalaryInput");
+  const editEmployeeOvertimeRateInput = document.getElementById("editEmployeeOvertimeRateInput");
+  const editEmployeeWeekendRateInput = document.getElementById("editEmployeeWeekendRateInput");
+  const editEmployeeDepartmentInput = document.getElementById("editEmployeeDepartmentInput");
+  const editEmployeeTitleInput = document.getElementById("editEmployeeTitleInput");
+  const editEmployeePhoneInput = document.getElementById("editEmployeePhoneInput");
+  const editEmployeeEmailInput = document.getElementById("editEmployeeEmailInput");
+  const editEmployeeAddressInput = document.getElementById("editEmployeeAddressInput");
+  const editEmployeeBankNameInput = document.getElementById("editEmployeeBankNameInput");
+  const editEmployeeBankAccountInput = document.getElementById("editEmployeeBankAccountInput");
+  const editEmployeeAccountHolderInput = document.getElementById("editEmployeeAccountHolderInput");
+  const editEmployeeDependentsInput = document.getElementById("editEmployeeDependentsInput");
+  const editEmployeeNoteInput = document.getElementById("editEmployeeNoteInput");
+  const editEmployeeDeleteBtn = document.getElementById("editEmployeeDeleteBtn");
 const attendanceModal = document.getElementById("attendanceModal");
 const attendanceModalBackdrop = document.getElementById("attendanceModalBackdrop");
 const attendanceModalCloseBtn = document.getElementById("attendanceModalCloseBtn");
@@ -174,8 +184,8 @@ const employeeDetailModal = document.getElementById("employeeDetailModal");
 const employeeDetailModalBackdrop = document.getElementById("employeeDetailModalBackdrop");
 const employeeDetailCloseBtn = document.getElementById("employeeDetailCloseBtn");
 const employeeDetailTitle = document.getElementById("employeeDetailTitle");
-const employeeDetailSubtitle = document.getElementById("employeeDetailSubtitle");
-const employeeDetailBody = document.getElementById("employeeDetailBody");
+  const employeeDetailSubtitle = document.getElementById("employeeDetailSubtitle");
+  const employeeDetailBody = document.getElementById("employeeDetailBody");
 
 const supabaseUrl = "https://nmnycqaufrpcgdanmpsj.supabase.co";
 const supabaseKey = "sb_publishable_a_WFRivMBscLCg-IPkFcZA_LqpStADT";
@@ -297,10 +307,12 @@ const state = {
   payrollMonth: formatDateKey(today).slice(0, 7),
   attendanceMonthFilter: formatDateKey(today).slice(0, 7),
   attendanceEmployeeFilter: "all",
-  attendanceStatusFilter: "all",
-  employeeDetailId: null,
-  payrollStatusMap: loadPayrollStatusMap(),
-};
+    attendanceStatusFilter: "all",
+    employeeDetailId: null,
+    employeeDocuments: [],
+    selectedEmployeeDocumentId: null,
+    payrollStatusMap: loadPayrollStatusMap(),
+  };
 
 setConnectionState("checking", text.booting);
 
@@ -1590,8 +1602,18 @@ function renderSessionUi() {
   roleSelect.disabled = state.currentUser.role !== "admin";
 }
 
+function getGuestLandingView() {
+  return state.members.length === 0 ? "signup" : "login";
+}
+
 function getViewForUnauthenticated(view) {
-  return ["login", "signup"].includes(view) ? view : "login";
+  if (["login", "signup"].includes(view)) {
+    if (view === "login" && state.members.length === 0) {
+      return "signup";
+    }
+    return view;
+  }
+  return getGuestLandingView();
 }
 
 function syncSignupRoleUi() {
@@ -1725,8 +1747,14 @@ function renderMembers() {
 }
 
 function loginMember(loginId, password) {
+  if (!state.members.length) {
+    showToast("등록된 계정이 없습니다. 먼저 회원가입을 진행해 주세요.");
+    switchView("signup");
+    return false;
+  }
+
   const member = state.members.find(
-    (item) => item.loginId === loginId && item.password === password && item.isActive !== false
+      (item) => item.loginId === loginId && item.password === password && item.isActive !== false
   );
   if (!member) {
     showToast("로그인 정보를 다시 확인해 주세요.");
@@ -1751,7 +1779,7 @@ function logoutCurrentUser(skipToast = false) {
   state.currentUser = null;
   window.localStorage.removeItem("flowboard-session-user");
   applyRoleAccess();
-  switchView("login");
+  switchView(getGuestLandingView());
   if (!skipToast) {
     showToast("로그아웃했습니다.");
   }
@@ -1838,6 +1866,8 @@ function applyRoleAccess() {
   if (!isAuthenticated()) {
     pageHero.hidden = true;
     if (!["login", "signup"].includes(state.currentView)) {
+      switchView(getViewForUnauthenticated(state.currentView));
+    } else {
       switchView(getViewForUnauthenticated(state.currentView));
     }
   } else if (!isViewAllowedForRole(state.currentView)) {
@@ -2566,6 +2596,86 @@ function buildEmployeeMonthSummary(employee) {
   };
 }
 
+function getEmployeeDocuments(employeeId) {
+  return state.employeeDocuments
+    .filter((document) => String(document.employeeId) === String(employeeId))
+    .sort((a, b) => `${b.createdAt}`.localeCompare(`${a.createdAt}`));
+}
+
+function createEmployeeInfoDocumentMarkup(employee) {
+  const documents = getEmployeeDocuments(employee.id);
+  const previewDocument =
+    documents.find((document) => String(document.id) === String(state.selectedEmployeeDocumentId)) || documents[0] || null;
+
+  const uploadForm = state.currentRole === "admin"
+    ? `
+      <form class="employee-doc-upload-form" data-document-upload-form="${employee.id}">
+        <label class="field">
+          <span>문서 구분</span>
+          <select name="documentType">
+            <option value="신분증">신분증</option>
+            <option value="계약서">계약서</option>
+            <option value="통장사본">통장사본</option>
+            <option value="기타">기타</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>증빙서류 파일</span>
+          <input name="documentFile" type="file" accept="image/*,.pdf" required />
+        </label>
+        <button type="submit" class="submit-btn task-submit">증빙서류 업로드</button>
+      </form>
+    `
+    : "";
+
+  const previewMarkup = (() => {
+    if (!previewDocument) {
+      return `<div class="empty-state">등록된 증빙서류가 없습니다.</div>`;
+    }
+
+    if ((previewDocument.mimeType || "").startsWith("image/")) {
+      return `<img class="employee-doc-preview-image" src="${previewDocument.fileData}" alt="${escapeHtml(previewDocument.fileName)}" />`;
+    }
+
+    if (previewDocument.mimeType === "application/pdf") {
+      return `<iframe class="employee-doc-preview-frame" src="${previewDocument.fileData}" title="${escapeHtml(previewDocument.fileName)}"></iframe>`;
+    }
+
+    return `<div class="empty-state">이 형식의 파일은 미리보기를 지원하지 않습니다.</div>`;
+  })();
+
+  return `
+    <section class="employee-info-section-card">
+      <div class="employee-info-section-head">
+        <div>
+          <p class="section-label">증빙서류</p>
+          <h3>업로드 및 미리보기</h3>
+        </div>
+      </div>
+      ${uploadForm}
+      <div class="employee-doc-layout">
+        <div class="employee-doc-list">
+          ${
+            documents.length
+              ? documents
+                  .map(
+                    (document) => `
+                      <button class="employee-doc-item${String(previewDocument?.id) === String(document.id) ? " is-active" : ""}" type="button" data-document-preview="${document.id}">
+                        <strong>${escapeHtml(document.type)}</strong>
+                        <span>${escapeHtml(document.fileName)}</span>
+                      </button>
+                    `
+                  )
+                  .join("")
+              : `<div class="empty-state compact">등록된 문서가 없습니다.</div>`
+          }
+        </div>
+        <div class="employee-doc-preview">${previewMarkup}</div>
+      </div>
+    </section>
+  `;
+}
+
 function renderEmployeeStatusCalendar(employee) {
   const monthDate = new Date(`${state.payrollMonth}-01T00:00:00`);
   const startDay = new Date(monthDate);
@@ -2661,6 +2771,7 @@ function renderEmployeeInfoPage() {
   const totalPay = monthSummary.payrollItem?.totalPay || 0;
   const netPay = monthSummary.payrollItem?.netPay || 0;
   const firstLetter = escapeHtml(employee.name.slice(0, 1) || "직");
+  const documentSectionMarkup = createEmployeeInfoDocumentMarkup(employee);
 
   employeeInfoDesktopSummary.innerHTML = `
     <div class="employee-profile-desktop">
@@ -2722,11 +2833,20 @@ function renderEmployeeInfoPage() {
         </div>
         <div class="employee-info-facts">
           <div><span>구분</span><strong>${insuredLabel}</strong></div>
+          <div><span>부서</span><strong>${escapeHtml(employee.department || "미지정")}</strong></div>
+          <div><span>직책</span><strong>${escapeHtml(employee.title || "미지정")}</strong></div>
+          <div><span>연락처</span><strong>${escapeHtml(employee.phone || "미등록")}</strong></div>
+          <div><span>이메일</span><strong>${escapeHtml(employee.email || "미등록")}</strong></div>
+          <div><span>주소</span><strong>${escapeHtml(employee.address || "미등록")}</strong></div>
           <div><span>기본급</span><strong>${formatCurrency(employee.baseSalary)}</strong></div>
           <div><span>야근 수당</span><strong>${formatCurrency(employee.overtimeRate)}/h</strong></div>
           <div><span>주말 수당</span><strong>${formatCurrency(employee.weekendRate)}/h</strong></div>
-          <div><span>이번 달 기록</span><strong>${monthSummary.records.length}건</strong></div>
+          <div><span>급여 은행</span><strong>${escapeHtml(employee.bankName || "미등록")}</strong></div>
+          <div><span>계좌번호</span><strong>${escapeHtml(employee.bankAccount || "미등록")}</strong></div>
+          <div><span>예금주</span><strong>${escapeHtml(employee.accountHolder || "미등록")}</strong></div>
+          <div><span>부양가족</span><strong>${escapeHtml(employee.dependents || "미등록")}</strong></div>
           <div><span>총 근무</span><strong>${monthSummary.statusCounts.totalHours.toFixed(1)}시간</strong></div>
+          <div><span>이번 달 기록</span><strong>${monthSummary.records.length}건</strong></div>
         </div>
       </section>
       <section class="employee-info-section-card">
@@ -2756,12 +2876,12 @@ function renderEmployeeInfoPage() {
       <section class="employee-info-section-card">
         <div class="employee-info-section-head">
           <div>
-            <p class="section-label">운영 안내</p>
-            <h3>다음 확장 예정</h3>
+            <p class="section-label">추가 정보</p>
+            <h3>메모와 안내</h3>
           </div>
         </div>
         <div class="employee-info-notes">
-          <p>증빙서류 업로드, 급여계좌, 부양가족, 공지 열람 같은 세부 인사정보는 이 페이지를 기준으로 확장할 수 있게 준비해두었습니다.</p>
+          <p>${escapeHtml(employee.note || "직원별 메모가 아직 없습니다. 업무 특이사항이나 인사 메모를 기록해둘 수 있습니다.")}</p>
           <div class="employee-profile-meta">
             <span class="task-date-chip">증빙서류</span>
             <span class="task-date-chip">급여계좌</span>
@@ -2770,6 +2890,7 @@ function renderEmployeeInfoPage() {
           </div>
         </div>
       </section>
+      ${documentSectionMarkup}
     </div>
   `;
 
@@ -2797,7 +2918,62 @@ function renderEmployeeInfoPage() {
   document.querySelectorAll("[data-employee-info-id]").forEach((button) => {
     button.addEventListener("click", () => {
       state.employeeDetailId = button.dataset.employeeInfoId;
+      state.selectedEmployeeDocumentId = null;
       renderEmployeeInfoPage();
+    });
+  });
+
+  document.querySelectorAll("[data-document-preview]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedEmployeeDocumentId = button.dataset.documentPreview;
+      renderEmployeeInfoPage();
+    });
+  });
+
+  document.querySelectorAll("[data-document-upload-form]").forEach((form) => {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const targetForm = event.currentTarget;
+      const employeeId = targetForm.dataset.documentUploadForm;
+      const fileInput = targetForm.querySelector('input[name="documentFile"]');
+      const typeInput = targetForm.querySelector('select[name="documentType"]');
+      const file = fileInput?.files?.[0];
+      if (!file) {
+        showToast("업로드할 파일을 선택해 주세요.");
+        return;
+      }
+
+      const fileData = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("파일을 읽지 못했습니다."));
+        reader.readAsDataURL(file);
+      });
+
+      const { data, error } = await requestTasks("/rest/v1/employee_documents", {
+        method: "POST",
+        headers: {
+          Prefer: "return=representation",
+        },
+        body: JSON.stringify({
+          employee_id: Number(employeeId),
+          document_type: typeInput.value,
+          file_name: file.name,
+          mime_type: file.type || "",
+          file_data: fileData,
+        }),
+      });
+
+      if (error) {
+        handleSupabaseError("Failed to upload employee document:", error);
+        return;
+      }
+
+      const savedDocument = mapEmployeeDocumentRecord(Array.isArray(data) ? data[0] : data);
+      state.employeeDocuments.unshift(savedDocument);
+      state.selectedEmployeeDocumentId = savedDocument.id;
+      renderEmployeeInfoPage();
+      showToast("증빙서류를 업로드했습니다.");
     });
   });
 }
@@ -2880,6 +3056,28 @@ function mapEmployeeRecord(record) {
     baseSalary: Number(record.base_salary || 0),
     overtimeRate: Number(record.overtime_rate || 0),
     weekendRate: Number(record.weekend_rate || 0),
+    department: record.department || "",
+    title: record.title || "",
+    phone: record.phone || "",
+    email: record.email || "",
+    address: record.address || "",
+    bankName: record.bank_name || "",
+    bankAccount: record.bank_account || "",
+    accountHolder: record.account_holder || "",
+    dependents: record.dependents || "",
+    note: record.note || "",
+    createdAt: record.created_at || new Date().toISOString(),
+  };
+}
+
+function mapEmployeeDocumentRecord(record) {
+  return {
+    id: record.id,
+    employeeId: record.employee_id,
+    type: record.document_type || "기타",
+    fileName: record.file_name || "문서",
+    mimeType: record.mime_type || "",
+    fileData: record.file_data || "",
     createdAt: record.created_at || new Date().toISOString(),
   };
 }
@@ -2896,9 +3094,10 @@ function mapAttendanceRecord(record) {
 }
 
 async function loadHrData() {
-  const [employeesResult, attendanceResult] = await Promise.all([
+  const [employeesResult, attendanceResult, documentsResult] = await Promise.all([
     requestTasks("/rest/v1/employees?select=*&order=created_at.desc"),
     requestTasks("/rest/v1/attendance_records?select=*&order=work_date.desc"),
+    requestTasks("/rest/v1/employee_documents?select=*&order=created_at.desc"),
   ]);
 
   if (employeesResult.error) {
@@ -2913,6 +3112,7 @@ async function loadHrData() {
 
   state.employees = (employeesResult.data ?? []).map(mapEmployeeRecord);
   state.attendanceRecords = (attendanceResult.data ?? []).map(mapAttendanceRecord);
+  state.employeeDocuments = documentsResult.error ? [] : (documentsResult.data ?? []).map(mapEmployeeDocumentRecord);
   renderHrWorkspace();
 }
 
@@ -3106,6 +3306,16 @@ function openEmployeeModal(employee) {
   editEmployeeBaseSalaryInput.value = employee.baseSalary || 0;
   editEmployeeOvertimeRateInput.value = employee.overtimeRate || 0;
   editEmployeeWeekendRateInput.value = employee.weekendRate || 0;
+  editEmployeeDepartmentInput.value = employee.department || "";
+  editEmployeeTitleInput.value = employee.title || "";
+  editEmployeePhoneInput.value = employee.phone || "";
+  editEmployeeEmailInput.value = employee.email || "";
+  editEmployeeAddressInput.value = employee.address || "";
+  editEmployeeBankNameInput.value = employee.bankName || "";
+  editEmployeeBankAccountInput.value = employee.bankAccount || "";
+  editEmployeeAccountHolderInput.value = employee.accountHolder || "";
+  editEmployeeDependentsInput.value = employee.dependents || "";
+  editEmployeeNoteInput.value = employee.note || "";
   employeeModal.hidden = false;
   document.body.classList.add("modal-open");
   editEmployeeNameInput.focus();
@@ -3128,6 +3338,16 @@ async function updateEmployee() {
   const baseSalary = Number(editEmployeeBaseSalaryInput.value || 0);
   const overtimeRate = Number(editEmployeeOvertimeRateInput.value || 0);
   const weekendRate = Number(editEmployeeWeekendRateInput.value || 0);
+  const department = editEmployeeDepartmentInput.value.trim();
+  const title = editEmployeeTitleInput.value.trim();
+  const phone = editEmployeePhoneInput.value.trim();
+  const email = editEmployeeEmailInput.value.trim();
+  const address = editEmployeeAddressInput.value.trim();
+  const bankName = editEmployeeBankNameInput.value.trim();
+  const bankAccount = editEmployeeBankAccountInput.value.trim();
+  const accountHolder = editEmployeeAccountHolderInput.value.trim();
+  const dependents = editEmployeeDependentsInput.value.trim();
+  const note = editEmployeeNoteInput.value.trim();
 
   if (!name || baseSalary < 0 || overtimeRate < 0 || weekendRate < 0) {
     return;
@@ -3140,12 +3360,22 @@ async function updateEmployee() {
     },
     body: JSON.stringify({
       name,
-      employment_type: employmentType,
-      base_salary: baseSalary,
-      overtime_rate: overtimeRate,
-      weekend_rate: weekendRate,
-    }),
-  });
+        employment_type: employmentType,
+        base_salary: baseSalary,
+        overtime_rate: overtimeRate,
+        weekend_rate: weekendRate,
+        department,
+        title,
+        phone,
+        email,
+        address,
+        bank_name: bankName,
+        bank_account: bankAccount,
+        account_holder: accountHolder,
+        dependents,
+        note,
+      }),
+    });
 
   if (error) {
     handleSupabaseError("Failed to update employee:", error);
@@ -3561,7 +3791,7 @@ const initialView = ["tasks", "calendar", "todos", "client", "hr", "employeeinfo
   ? initialHashView
   : isAuthenticated()
     ? "calendar"
-    : "login";
+    : getGuestLandingView();
 switchView(isAuthenticated() ? initialView : getViewForUnauthenticated(initialView), false);
 loadHrData();
 loadTasks();

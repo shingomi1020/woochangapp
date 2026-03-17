@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-  <link rel="stylesheet" href="styles.css?v=20260317-35" />
+  <link rel="stylesheet" href="styles.css?v=20260317-36" />
   </head>
   <body>
     <div class="app-shell">
@@ -93,7 +93,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 35</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 36</p>
           </div>
         </div>
 
@@ -921,6 +921,46 @@
               <span>주말 수당 (시간당)</span>
               <input id="editEmployeeWeekendRateInput" type="number" min="0" step="1000" required />
             </label>
+            <label class="field">
+              <span>부서</span>
+              <input id="editEmployeeDepartmentInput" type="text" maxlength="40" />
+            </label>
+            <label class="field">
+              <span>직책</span>
+              <input id="editEmployeeTitleInput" type="text" maxlength="40" />
+            </label>
+            <label class="field">
+              <span>연락처</span>
+              <input id="editEmployeePhoneInput" type="text" maxlength="30" />
+            </label>
+            <label class="field">
+              <span>이메일</span>
+              <input id="editEmployeeEmailInput" type="email" maxlength="80" />
+            </label>
+            <label class="field task-form-wide">
+              <span>주소</span>
+              <input id="editEmployeeAddressInput" type="text" maxlength="120" />
+            </label>
+            <label class="field">
+              <span>은행명</span>
+              <input id="editEmployeeBankNameInput" type="text" maxlength="40" />
+            </label>
+            <label class="field">
+              <span>급여 계좌번호</span>
+              <input id="editEmployeeBankAccountInput" type="text" maxlength="40" />
+            </label>
+            <label class="field">
+              <span>예금주</span>
+              <input id="editEmployeeAccountHolderInput" type="text" maxlength="30" />
+            </label>
+            <label class="field task-form-wide">
+              <span>부양가족 정보</span>
+              <input id="editEmployeeDependentsInput" type="text" maxlength="120" placeholder="예: 배우자 1명, 자녀 2명" />
+            </label>
+            <label class="field task-form-wide">
+              <span>비고</span>
+              <input id="editEmployeeNoteInput" type="text" maxlength="160" />
+            </label>
           </div>
           <div class="task-form-actions attendance-modal-actions">
             <button id="editEmployeeDeleteBtn" type="button" class="ghost-btn danger-soft">직원 삭제</button>
@@ -994,6 +1034,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-35"></script>
+      <script src="app.js?v=20260317-36"></script>
   </body>
 </html>
