@@ -3573,6 +3573,240 @@ body[data-device="mobile"] .attendance-table tbody tr {
   border-radius: 18px;
 }
 
+body[data-device] {
+  --shadow: 0 10px 24px rgba(39, 78, 159, 0.06);
+  --shadow-strong: 0 14px 30px rgba(39, 78, 159, 0.08);
+}
+
+body[data-device] .panel,
+body[data-device] .metric-card,
+body[data-device] .schedule-card,
+body[data-device] .employee-info-section-card,
+body[data-device] .attendance-calendar-panel,
+body[data-device] .employee-info-sidebar,
+body[data-device] .employee-info-mobile-top,
+body[data-device] .employee-info-mobile-card {
+  box-shadow: var(--shadow);
+}
+
+body[data-device] .icon-chip,
+body[data-device] .metric-icon,
+body[data-device] .btn-icon {
+  box-shadow: none;
+}
+
+body[data-device] .icon-chip,
+body[data-device] .metric-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: #eef4ff;
+  color: var(--accent);
+}
+
+body[data-device] .section-label,
+body[data-device] .eyebrow {
+  color: #7a8cad;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+body[data-device] .panel-head h2,
+body[data-device] .panel-head h3,
+body[data-device] .schedule-head h3 {
+  letter-spacing: -0.02em;
+}
+
+body[data-device] .hero-copy-wrap,
+body[data-device] .panel,
+body[data-device] .metric-card,
+body[data-device] .schedule-card {
+  border-color: rgba(47, 99, 233, 0.06);
+}
+
+body[data-device] .hero-btn,
+body[data-device] .ghost-btn,
+body[data-device] .chip,
+body[data-device] .submit-btn,
+body[data-device] .remove-btn {
+  transform: none;
+  box-shadow: none;
+}
+
+body[data-device] .hero-btn:hover,
+body[data-device] .ghost-btn:hover,
+body[data-device] .chip:hover,
+body[data-device] .submit-btn:hover,
+body[data-device] .remove-btn:hover {
+  transform: none;
+}
+
+body[data-device] .ghost-btn,
+body[data-device] .chip {
+  background: #f6f8fc;
+  color: #597199;
+  box-shadow: inset 0 0 0 1px rgba(47, 99, 233, 0.06);
+}
+
+body[data-device] .ghost-btn:hover,
+body[data-device] .chip:hover {
+  background: #edf2fb;
+  color: var(--accent-strong);
+}
+
+body[data-device] .chip.active,
+body[data-device] .site-menu-link.active,
+body[data-device] .submit-btn,
+body[data-device] .hero-btn.primary,
+body[data-device] .ghost-btn.primary {
+  background: linear-gradient(135deg, #2f63e9, #4c82f5);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(47, 99, 233, 0.16);
+}
+
+body[data-device] .remove-btn,
+body[data-device] .ghost-btn.danger,
+body[data-device] .danger-soft {
+  background: #fff6f6;
+  color: #d16565;
+  box-shadow: inset 0 0 0 1px rgba(209, 101, 101, 0.08);
+}
+
+body[data-device] .metric-card {
+  padding: 18px 18px 16px;
+  border-radius: 22px;
+}
+
+body[data-device] .metric-card::before,
+body[data-device] .day-card::before {
+  opacity: 0.45;
+}
+
+body[data-device] .metric-card strong {
+  margin-top: 10px;
+  font-size: 1.7rem;
+}
+
+body[data-device] .metric-card small {
+  margin-top: 6px;
+  font-size: 0.82rem;
+}
+
+body[data-device] .task-date-chip,
+body[data-device] .day-count,
+body[data-device] .calendar-list-date,
+body[data-device] .badge {
+  background: #f3f6fc;
+  color: #5d7396;
+  border: 1px solid rgba(47, 99, 233, 0.05);
+  box-shadow: none;
+}
+
+body[data-device] .task-date-chip-today,
+body[data-device] .task-date-chip-alert {
+  border-color: transparent;
+}
+
+body[data-device] .mini-event {
+  background: #f8faff;
+  border: 1px solid rgba(47, 99, 233, 0.05);
+}
+
+body[data-device] .weekdays {
+  color: #96a5bf;
+}
+
+body[data-device] .day-card {
+  border-radius: 18px;
+  border-color: rgba(47, 99, 233, 0.06);
+}
+
+body[data-device] .day-card.is-selected {
+  background: linear-gradient(180deg, #f5f8ff, #ffffff);
+}
+
+body[data-device="desktop"] .hero-copy-wrap {
+  min-height: 220px;
+  padding: 28px 30px;
+}
+
+body[data-device="desktop"] .hero-copy-wrap h1 {
+  margin-bottom: 10px;
+  font-size: clamp(2.8rem, 5vw, 4.4rem);
+}
+
+body[data-device="desktop"] .hero-copy {
+  max-width: 600px;
+  font-size: 1rem;
+}
+
+body[data-device="desktop"] .hero-actions {
+  margin-top: 16px;
+}
+
+body[data-device="desktop"] .hero-meta {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body[data-device="desktop"] .metric-card.float-card {
+  min-height: 118px;
+}
+
+body[data-device="desktop"] .site-brand p {
+  max-width: 140px;
+}
+
+body[data-device="desktop"] .employee-info-section-grid {
+  gap: 16px;
+}
+
+body[data-device="desktop"] .employee-info-section-card {
+  padding: 20px;
+}
+
+body[data-device="mobile"] .hero-copy-wrap {
+  padding: 20px 18px;
+}
+
+body[data-device="mobile"] .hero-copy-wrap h1 {
+  font-size: 2.35rem;
+  margin-bottom: 8px;
+}
+
+body[data-device="mobile"] .hero-copy {
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+body[data-device="mobile"] .hero-meta {
+  gap: 10px;
+}
+
+body[data-device="mobile"] .metric-card.float-card {
+  min-height: 96px;
+  padding: 16px;
+}
+
+body[data-device="mobile"] .metric-card small {
+  display: none;
+}
+
+body[data-device="mobile"] .site-menu-link,
+body[data-device="mobile"] .ghost-btn,
+body[data-device="mobile"] .chip {
+  font-size: 0.9rem;
+}
+
+body[data-device="mobile"] .employee-info-mobile-card,
+body[data-device="mobile"] .employee-info-section-card,
+body[data-device="mobile"] .panel {
+  box-shadow: 0 8px 22px rgba(39, 78, 159, 0.06);
+}
+
+body[data-device="mobile"] .employee-info-list-item {
+  border-radius: 16px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
