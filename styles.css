@@ -3100,14 +3100,17 @@ h2 {
 }
 
 body[data-device="desktop"] .app-shell {
-  max-width: 1720px;
+  width: 1440px;
+  min-width: 1440px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 20px 24px 48px;
+  padding: 20px 20px 48px;
 }
 
 body[data-device="desktop"] .site-nav {
   top: 10px;
-  max-width: 1560px;
+  width: 1400px;
+  max-width: 1400px;
   margin-bottom: 20px;
 }
 
@@ -3135,12 +3138,7 @@ body[data-device="desktop"] .site-menu {
   padding: 7px;
   border-radius: 18px;
   background: linear-gradient(90deg, #2f6dec 0%, #4f89ff 100%);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-body[data-device="desktop"] .site-menu::-webkit-scrollbar {
-  display: none;
+  overflow: hidden;
 }
 
 body[data-device="desktop"] .site-menu-link {
@@ -3172,9 +3170,10 @@ body[data-device="desktop"] .session-badge {
 }
 
 body[data-device="desktop"] .hero {
-  max-width: 1560px;
+  width: 1400px;
+  max-width: 1400px;
   margin: 0 auto 22px;
-  grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.85fr);
+  grid-template-columns: 940px 420px;
   gap: 20px;
 }
 
@@ -3232,9 +3231,24 @@ body[data-device="desktop"] .metric-card.float-card {
 body[data-device="desktop"] .dashboard,
 body[data-device="desktop"] .hr-workspace,
 body[data-device="desktop"] .employee-info-view {
-  max-width: 1560px;
+  width: 1400px;
+  max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
+}
+
+body[data-device="desktop"] .dashboard {
+  grid-template-columns: 760px 616px;
+  gap: 24px;
+}
+
+body[data-device="desktop"] .hr-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+body[data-device="desktop"] .hr-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
 
 body[data-device="desktop"] .panel,
@@ -3259,7 +3273,7 @@ body[data-device="desktop"] .employee-info-hero .modal-subtitle {
 }
 
 body[data-device="desktop"] .employee-info-desktop {
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: 300px 1076px;
   align-items: start;
 }
 
@@ -3354,6 +3368,23 @@ body[data-device="desktop"] .employee-info-facts div {
   border-radius: 14px;
   background: #f7faff;
   border: 1px solid rgba(47, 99, 233, 0.08);
+}
+
+body[data-device="desktop"] .task-controls-grid {
+  grid-template-columns: 260px 1fr auto;
+}
+
+body[data-device="desktop"] .task-form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body[data-device="desktop"] .calendar-scroll {
+  overflow: visible;
+}
+
+body[data-device="desktop"] .weekdays,
+body[data-device="desktop"] .calendar-grid {
+  min-width: 0;
 }
 
 body[data-device="desktop"] .employee-doc-layout {
