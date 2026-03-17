@@ -47,7 +47,10 @@ const focusTodayBtn = document.getElementById("focusTodayBtn");
 const focusInputBtn = document.getElementById("focusInputBtn");
 const pageHero = document.querySelector(".hero");
 const workspaceTabs = document.querySelectorAll("[data-view]");
+const roleSensitiveTabs = document.querySelectorAll("[data-role-visible]");
 const pageViews = document.querySelectorAll(".app-view");
+const roleSections = document.querySelectorAll("[data-role-section]");
+const roleSelect = document.getElementById("roleSelect");
 const tasksView = document.getElementById("tasksView");
 const clientView = document.getElementById("clientView");
 const hrView = document.getElementById("hrView");
@@ -191,6 +194,14 @@ function loadPayrollStatusMap() {
   }
 }
 
+function loadCurrentRole() {
+  try {
+    return window.localStorage.getItem("flowboard-role") || "admin";
+  } catch (error) {
+    return "admin";
+  }
+}
+
 const state = {
   viewDate: new Date(currentMonth),
   selectedDateKey: formatDateKey(today),
@@ -200,6 +211,7 @@ const state = {
   calendarMode: "month",
   currentView: "tasks",
   selectedClient: "",
+  currentRole: loadCurrentRole(),
   editingTaskId: null,
   toastTimer: null,
   isLoading: true,
@@ -281,6 +293,13 @@ openArchiveBtn.addEventListener("click", () => {
 
 clientBackBtn.addEventListener("click", () => {
   switchView("tasks");
+});
+
+roleSelect.addEventListener("change", () => {
+  state.currentRole = roleSelect.value;
+  window.localStorage.setItem("flowboard-role", state.currentRole);
+  applyRoleAccess();
+  showToast(`${getRoleLabel(state.currentRole)} 화면으로 전환했습니다.`);
 });
 
 window.addEventListener("hashchange", () => {
@@ -1250,6 +1269,43 @@ function switchView(view, shouldSyncHash = true) {
     if (window.location.hash !== nextHash) {
       window.location.hash = nextHash;
     }
+  }
+}
+
+function getRoleLabel(role) {
+  if (role === "employee") {
+    return "직원";
+  }
+  if (role === "freelancer") {
+    return "프리랜서";
+  }
+  return "관리자";
+}
+
+function isViewAllowedForRole(view) {
+  const allowed = {
+    admin: ["tasks", "client", "hr", "estimate", "statement", "payroll"],
+    employee: ["tasks", "client", "hr", "payroll"],
+    freelancer: ["tasks", "client", "hr", "payroll"],
+  };
+  return allowed[state.currentRole]?.includes(view);
+}
+
+function applyRoleAccess() {
+  roleSelect.value = state.currentRole;
+
+  roleSensitiveTabs.forEach((tab) => {
+    const visibleRoles = (tab.dataset.roleVisible || "admin").split(",");
+    tab.hidden = !visibleRoles.includes(state.currentRole);
+  });
+
+  roleSections.forEach((section) => {
+    const onlyRole = section.dataset.roleSection;
+    section.hidden = onlyRole && onlyRole !== state.currentRole;
+  });
+
+  if (!isViewAllowedForRole(state.currentView)) {
+    switchView("tasks");
   }
 }
 
@@ -2627,6 +2683,132 @@ function renderAttendanceList() {
   });
 }
 
+function renderEmployees() {
+  if (!state.employees.length) {
+    employeeList.innerHTML = `<div class="empty-state">등록된 직원이 없습니다. 기본급과 수당 기준을 먼저 입력해 주세요.</div>`;
+    return;
+  }
+
+  const canManageEmployees = state.currentRole === "admin";
+
+  employeeList.innerHTML = state.employees
+    .map(
+      (employee) => `
+        <article class="employee-card">
+          <div class="employee-card-head">
+            <div>
+              <strong>${employee.name}</strong>
+              <p class="employee-card-subtitle">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</p>
+            </div>
+            <div class="employee-card-tools">
+              <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</span>
+              <div class="employee-card-actions">
+                <button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="detail" data-id="${employee.id}">상세</button>
+                ${canManageEmployees ? `<button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="edit" data-id="${employee.id}">수정</button>` : ""}
+              </div>
+            </div>
+          </div>
+          <div class="employee-pay-grid">
+            <span>기본급 ${formatCurrency(employee.baseSalary)}</span>
+            <span>야근 수당 ${formatCurrency(employee.overtimeRate)}/h</span>
+            <span>주말 수당 ${formatCurrency(employee.weekendRate)}/h</span>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  employeeList.querySelectorAll("[data-employee-action='edit']").forEach((button) => {
+    button.addEventListener("click", () => {
+      const employee = state.employees.find((item) => String(item.id) === String(button.dataset.id));
+      if (employee) {
+        openEmployeeModal(employee);
+      }
+    });
+  });
+
+  employeeList.querySelectorAll("[data-employee-action='detail']").forEach((button) => {
+    button.addEventListener("click", () => {
+      const employee = state.employees.find((item) => String(item.id) === String(button.dataset.id));
+      if (employee) {
+        openEmployeeDetailModal(employee);
+      }
+    });
+  });
+}
+
+function renderAttendanceList() {
+  if (!state.attendanceRecords.length) {
+    attendanceList.innerHTML = `<div class="empty-state">출근기록부가 비어 있습니다. 직원과 출퇴근 시간을 입력해 주세요.</div>`;
+    renderAttendanceSummary();
+    return;
+  }
+
+  const filteredRecords = getFilteredAttendanceRecords();
+
+  if (!filteredRecords.length) {
+    attendanceList.innerHTML = `<div class="empty-state">현재 필터에 맞는 출근기록이 없습니다. 조회 월이나 직원을 바꿔 보세요.</div>`;
+    renderAttendanceSummary();
+    return;
+  }
+
+  const canEditAttendance = state.currentRole === "admin";
+
+  attendanceList.innerHTML = `
+    <div class="attendance-table-wrap">
+      <table class="attendance-table">
+        <thead>
+          <tr>
+            <th>직원명</th>
+            <th>구분</th>
+            <th>근무일</th>
+            <th>출근</th>
+            <th>퇴근</th>
+            <th>총근무</th>
+            <th>야근</th>
+            <th>주말</th>
+            <th>상태</th>
+            <th>수정</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filteredRecords
+            .map((record) => {
+              const employee = state.employees.find((item) => String(item.id) === String(record.employeeId));
+              const summary = calculateAttendance(record, employee);
+              return `
+                <tr class="attendance-row attendance-${summary.attendanceStatus}">
+                  <td class="attendance-cell-strong">${employee?.name || "이름 없는 직원"}</td>
+                  <td><span class="employee-type ${employee?.employmentType || "insured"}">${employee?.employmentType === "freelancer" ? "프리랜서" : "4대보험"}</span></td>
+                  <td>${record.workDate}</td>
+                  <td>${record.clockIn}</td>
+                  <td>${record.clockOut}</td>
+                  <td>${summary.totalHours.toFixed(1)}h</td>
+                  <td>${summary.overtimeHours.toFixed(1)}h</td>
+                  <td>${summary.weekendHours.toFixed(1)}h</td>
+                  <td><span class="task-date-chip">${getAttendanceStatusLabel(summary.attendanceStatus)}</span></td>
+                  <td>${canEditAttendance ? `<button class="ghost-btn attendance-edit-btn" type="button" data-attendance-action="edit" data-id="${record.id}">수정</button>` : `<span class="attendance-readonly">조회</span>`}</td>
+                </tr>
+              `;
+            })
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  renderAttendanceSummary();
+
+  attendanceList.querySelectorAll("[data-attendance-action='edit']").forEach((button) => {
+    button.addEventListener("click", () => {
+      const record = state.attendanceRecords.find((item) => String(item.id) === String(button.dataset.id));
+      if (record) {
+        openAttendanceModal(record);
+      }
+    });
+  });
+}
+
 taskReceivedDateInput.value = formatDateKey(today);
 taskDueDateInput.value = formatDateKey(today);
 taskStatusInput.value = "todo";
@@ -2636,10 +2818,12 @@ attendanceClockInInput.value = "09:00";
 attendanceClockOutInput.value = "18:00";
 attendanceBatchDateInput.value = formatDateKey(today);
 employeeTypeInput.value = "insured";
+roleSelect.value = state.currentRole;
 attendanceMonthFilterInput.value = state.attendanceMonthFilter;
 payrollMonthInput.value = state.payrollMonth;
 syncFormMode();
 loadHrState();
+applyRoleAccess();
 renderHrWorkspace();
 employeeForm.addEventListener(
   "submit",

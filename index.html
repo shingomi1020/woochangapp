@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260317-27" />
+    <link rel="stylesheet" href="styles.css?v=20260317-28" />
   </head>
   <body>
     <div class="app-shell">
@@ -31,12 +31,20 @@
             </div>
           </div>
           <nav class="site-menu" aria-label="상단 메뉴">
-            <button class="site-menu-link active" type="button" data-view="tasks">업무 보드</button>
-            <button class="site-menu-link" type="button" data-view="hr">인사 관리</button>
-            <button class="site-menu-link" type="button" data-view="estimate">견적서</button>
-            <button class="site-menu-link" type="button" data-view="statement">거래명세서</button>
-            <button class="site-menu-link" type="button" data-view="payroll">급여 관리</button>
+            <button class="site-menu-link active" type="button" data-view="tasks" data-role-visible="admin,employee,freelancer">업무 보드</button>
+            <button class="site-menu-link" type="button" data-view="hr" data-role-visible="admin,employee,freelancer">인사 관리</button>
+            <button class="site-menu-link" type="button" data-view="estimate" data-role-visible="admin">견적서</button>
+            <button class="site-menu-link" type="button" data-view="statement" data-role-visible="admin">거래명세서</button>
+            <button class="site-menu-link" type="button" data-view="payroll" data-role-visible="admin,employee,freelancer">급여 관리</button>
           </nav>
+          <label class="role-switcher">
+            <span>권한</span>
+            <select id="roleSelect">
+              <option value="admin">관리자</option>
+              <option value="employee">직원</option>
+              <option value="freelancer">프리랜서</option>
+            </select>
+          </label>
         </div>
       </header>
 
@@ -73,7 +81,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 27</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 28</p>
           </div>
         </div>
 
@@ -276,7 +284,7 @@
         </section>
 
         <section class="hr-grid">
-          <section class="panel reveal delay-1">
+          <section id="employeeAdminPanel" class="panel reveal delay-1" data-role-section="admin">
             <div class="panel-head">
               <div>
                 <p class="section-label">등록 업무</p>
@@ -717,6 +725,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-27"></script>
+    <script src="app.js?v=20260317-28"></script>
   </body>
 </html>

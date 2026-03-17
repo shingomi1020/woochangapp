@@ -171,6 +171,26 @@ select:focus-visible {
   box-shadow: 0 14px 30px rgba(47, 99, 233, 0.24);
 }
 
+.role-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(47, 99, 233, 0.06);
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.role-switcher select {
+  border: 1px solid rgba(47, 99, 233, 0.12);
+  background: #fff;
+  color: var(--accent-deep);
+  border-radius: 999px;
+  padding: 8px 12px;
+}
+
 .app-view[hidden],
 .hero[hidden] {
   display: none !important;
@@ -598,6 +618,49 @@ h2 {
   border-radius: 22px;
   background: linear-gradient(180deg, #ffffff, #f7fbff);
   border: 1px solid rgba(47, 99, 233, 0.08);
+}
+
+.attendance-table-wrap {
+  overflow-x: auto;
+  border-radius: 22px;
+  border: 1px solid rgba(47, 99, 233, 0.08);
+  background: linear-gradient(180deg, #ffffff, #f7fbff);
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 880px;
+}
+
+.attendance-table th,
+.attendance-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(47, 99, 233, 0.08);
+  text-align: left;
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.attendance-table th {
+  color: var(--muted);
+  font-weight: 800;
+  background: #f7faff;
+}
+
+.attendance-row:last-child td {
+  border-bottom: 0;
+}
+
+.attendance-cell-strong {
+  font-weight: 800;
+  color: var(--accent-deep);
+}
+
+.attendance-readonly {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 
 .attendance-card {
@@ -1732,6 +1795,11 @@ h2 {
   .site-nav-inner {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .role-switcher {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .hero-meta {
