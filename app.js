@@ -52,6 +52,7 @@ const authSensitiveTabs = document.querySelectorAll("[data-auth-visible]");
 const pageViews = document.querySelectorAll(".app-view");
 const roleSections = document.querySelectorAll("[data-role-section]");
 const roleSelect = document.getElementById("roleSelect");
+const roleSwitcher = roleSelect?.closest(".role-switcher");
 const sessionBadge = document.getElementById("sessionBadge");
 const sessionUserName = document.getElementById("sessionUserName");
 const sessionUserMeta = document.getElementById("sessionUserMeta");
@@ -1587,11 +1588,14 @@ function renderSessionUi() {
   }
 
   if (!state.currentUser) {
-    sessionBadge.hidden = true;
+    sessionBadge.hidden = false;
     logoutBtn.hidden = true;
     sessionUserName.textContent = "게스트";
     sessionUserMeta.textContent = "로그인이 필요합니다";
     roleSelect.disabled = true;
+    if (roleSwitcher) {
+      roleSwitcher.hidden = true;
+    }
     return;
   }
 
@@ -1600,6 +1604,9 @@ function renderSessionUi() {
   sessionUserName.textContent = state.currentUser.name;
   sessionUserMeta.textContent = `${getRoleLabel(state.currentUser.role)} · ${state.currentUser.loginId}`;
   roleSelect.disabled = state.currentUser.role !== "admin";
+  if (roleSwitcher) {
+    roleSwitcher.hidden = false;
+  }
 }
 
 function getGuestLandingView() {
@@ -1849,14 +1856,20 @@ function applyRoleAccess() {
   renderSessionUi();
   roleSelect.value = state.currentRole;
 
-  roleSensitiveTabs.forEach((tab) => {
-    const visibleRoles = (tab.dataset.roleVisible || "admin").split(",");
-    tab.hidden = !visibleRoles.includes(state.currentRole);
-  });
-
   authSensitiveTabs.forEach((tab) => {
     tab.hidden = tab.dataset.authVisible === "guest" ? isAuthenticated() : !isAuthenticated();
   });
+
+  if (!isAuthenticated()) {
+    roleSensitiveTabs.forEach((tab) => {
+      tab.hidden = true;
+    });
+  } else {
+    roleSensitiveTabs.forEach((tab) => {
+      const visibleRoles = (tab.dataset.roleVisible || "admin").split(",");
+      tab.hidden = !visibleRoles.includes(state.currentRole);
+    });
+  }
 
   roleSections.forEach((section) => {
     const onlyRole = section.dataset.roleSection;
