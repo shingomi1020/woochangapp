@@ -5214,3 +5214,103 @@ body[data-device="mobile"] .panel,
 body[data-device="mobile"] .metric-card {
   border-radius: 16px;
 }
+
+/* Page-specific density separation */
+#tasksView .calendar-hint,
+#tasksView .schedule-head .section-label,
+#loginView .modal-subtitle,
+#signupView .modal-subtitle,
+#hrView .attendance-ledger-hint,
+#employeeinfoView .employee-info-hero .modal-subtitle,
+#estimateView .empty-state,
+#statementView .empty-state {
+  display: none;
+}
+
+#tasksView .panel-calendar {
+  padding: 18px 20px;
+}
+
+#tasksView .panel-calendar .panel-head {
+  margin-bottom: 10px;
+}
+
+#tasksView .panel-calendar .weekdays {
+  margin-bottom: 10px;
+}
+
+#tasksView .panel-calendar .day-card {
+  border-radius: 14px;
+}
+
+#tasksView .panel-calendar .mini-event {
+  padding: 6px 8px;
+  border-radius: 10px;
+  line-height: 1.3;
+}
+
+body[data-device="desktop"] #hrView .panel,
+body[data-device="desktop"] #payrollView .panel,
+body[data-device="desktop"] #membersView .panel {
+  padding: 16px 18px;
+}
+
+body[data-device="desktop"] #hrView .panel-head,
+body[data-device="desktop"] #payrollView .panel-head,
+body[data-device="desktop"] #membersView .panel-head {
+  margin-bottom: 12px;
+}
+
+body[data-device="desktop"] #hrView .task-form,
+body[data-device="desktop"] #payrollView .task-form,
+body[data-device="desktop"] #membersView .task-form,
+body[data-device="desktop"] #hrView .attendance-ledger {
+  padding: 14px;
+  border-radius: 14px;
+}
+
+body[data-device="desktop"] #hrView .task-form-grid,
+body[data-device="desktop"] #payrollView .task-form-grid,
+body[data-device="desktop"] #membersView .task-form-grid,
+body[data-device="desktop"] #hrView .attendance-filters {
+  gap: 10px;
+}
+
+body[data-device="desktop"] #hrView .field input,
+body[data-device="desktop"] #hrView .field select,
+body[data-device="desktop"] #payrollView .field input,
+body[data-device="desktop"] #payrollView .field select,
+body[data-device="desktop"] #membersView .field input,
+body[data-device="desktop"] #membersView .field select {
+  min-height: 42px;
+  padding: 0 12px;
+}
+
+body[data-device="desktop"] #hrView .attendance-table th,
+body[data-device="desktop"] #hrView .attendance-table td,
+body[data-device="desktop"] #payrollView .attendance-table th,
+body[data-device="desktop"] #payrollView .attendance-table td {
+  padding: 10px 12px;
+}
+
+body[data-device="desktop"] #employeeinfoView .employee-info-hero,
+body[data-device="desktop"] #employeeinfoView .employee-info-profile-card,
+body[data-device="desktop"] #employeeinfoView .employee-info-sections,
+body[data-device="desktop"] #employeeinfoView .employee-info-sidebar,
+body[data-device="desktop"] #employeeinfoView .employee-info-section-card {
+  padding: 18px;
+  border-radius: 18px;
+}
+
+body[data-device="desktop"] #employeeinfoView .employee-info-section-grid {
+  gap: 14px;
+}
+
+body[data-device="desktop"] #employeeinfoView .employee-info-facts {
+  gap: 10px 16px;
+}
+
+body[data-device="desktop"] #employeeinfoView .employee-record-item {
+  padding: 12px 14px;
+  border-radius: 12px;
+}
