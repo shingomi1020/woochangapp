@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260317-54" />
+    <link rel="stylesheet" href="styles.css?v=20260317-55" />
   </head>
   <body>
     <div class="app-shell">
@@ -89,7 +89,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-        <p id="buildStamp" class="build-stamp">Build 2026-03-17 54</p>
+        <p id="buildStamp" class="build-stamp">Build 2026-03-17 55</p>
           </div>
         </div>
 
@@ -114,7 +114,7 @@
             <strong id="monthEventCount">0</strong>
             <small>현재 보는 달에 마감이 있는 업무 수</small>
           </div>
-          <div class="metric-card float-card delay-2">
+          <div class="metric-card float-card delay-2" hidden>
             <span class="metric-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 4a1 1 0 0 0-1 1v5.4c0 .3.12.58.33.79l3.6 3.6 1.41-1.42L13 11.99V7a1 1 0 0 0-1-1Z" />
@@ -330,22 +330,22 @@
             </div>
           </div>
           <div class="hr-metrics">
-            <article class="metric-card">
+            <article class="metric-card" hidden>
               <span class="metric-label">등록 직원</span>
               <strong id="employeeCount">0</strong>
               <small>4대보험 직원과 프리랜서를 함께 관리</small>
             </article>
-            <article class="metric-card">
+            <article class="metric-card" hidden>
               <span class="metric-label">오늘 출근 기록</span>
               <strong id="attendanceTodayCount">0</strong>
               <small>오늘 날짜 기준 출퇴근 입력 건수</small>
             </article>
-            <article class="metric-card">
+            <article class="metric-card" hidden>
               <span class="metric-label">이번 달 야근 시간</span>
               <strong id="hrMonthlyOvertimeHours">0h</strong>
               <small>18시 이후 누적 시간</small>
             </article>
-            <article class="metric-card">
+            <article class="metric-card" hidden>
               <span class="metric-label">이번 달 예상 급여</span>
               <strong id="hrMonthlyPayrollTotal">₩0</strong>
               <small>기본급 + 야근 + 주말 수당 합산</small>
@@ -619,12 +619,12 @@
               <strong id="payrollEmployeeCount">0</strong>
               <small>현재 기준 월에 집계되는 직원 수</small>
             </article>
-            <article class="metric-card">
+            <article class="metric-card" hidden>
               <span class="metric-label">이번 달 야근 시간</span>
               <strong id="monthlyOvertimeHours">0h</strong>
               <small>18시 이후 누적 시간</small>
             </article>
-            <article class="metric-card">
+            <article class="metric-card" hidden>
               <span class="metric-label">이번 달 주말 근무</span>
               <strong id="monthlyWeekendHours">0h</strong>
               <small>주말 근무 누적 시간</small>
@@ -1045,6 +1045,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-54"></script>
+    <script src="app.js?v=20260317-55"></script>
   </body>
 </html>

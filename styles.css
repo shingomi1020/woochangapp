@@ -4963,3 +4963,254 @@ body[data-device="mobile"] .panel-calendar .mini-event {
 .task-item.is-today-deadline:not(.is-overdue) {
   border-left: 4px solid #f59e0b;
 }
+
+/* Minimal UI pass */
+:root {
+  --bg: #f6f8fc;
+  --bg-soft: #eef2f8;
+  --panel: #ffffff;
+  --panel-strong: #ffffff;
+  --line: rgba(21, 36, 67, 0.08);
+  --line-strong: rgba(21, 36, 67, 0.12);
+  --muted: #6f7d96;
+  --accent: #2d5bdb;
+  --accent-strong: #2448b0;
+  --accent-soft: #eef3ff;
+  --accent-soft-2: #f7f9fd;
+  --shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  --shadow-strong: 0 10px 28px rgba(15, 23, 42, 0.06);
+  --radius-xl: 26px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+}
+
+html,
+body {
+  background: #f6f8fc;
+}
+
+.ambient {
+  display: none;
+}
+
+.site-brand p,
+.session-badge span,
+.metric-card small,
+.attendance-ledger-hint {
+  display: none;
+}
+
+.site-nav {
+  margin-bottom: 14px;
+}
+
+.site-nav-inner {
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow);
+  backdrop-filter: none;
+}
+
+.site-menu {
+  gap: 6px;
+}
+
+.site-menu-link {
+  padding: 9px 13px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.site-menu-link:hover {
+  transform: none;
+  background: #f1f4f9;
+}
+
+.site-menu-link.active {
+  background: var(--accent);
+  box-shadow: none;
+}
+
+.session-badge,
+.role-switcher {
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: #f5f7fb;
+  border-color: var(--line);
+}
+
+.role-switcher span {
+  display: none;
+}
+
+.hero {
+  margin-bottom: 16px;
+}
+
+.hero-copy-wrap,
+.hero-meta {
+  gap: 12px;
+}
+
+.hero-copy {
+  max-width: 640px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.hero-actions {
+  gap: 10px;
+}
+
+.panel,
+.metric-card,
+.member-card {
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.panel {
+  padding: 20px;
+}
+
+.metric-card {
+  padding: 16px 18px;
+}
+
+.metric-card::before {
+  display: none;
+}
+
+.metric-card strong {
+  font-size: 1.9rem;
+}
+
+.panel-head,
+.schedule-head {
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.task-form,
+.attendance-ledger,
+.auth-help,
+.schedule-card {
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.task-form-grid,
+.hr-form-grid,
+.task-controls-grid,
+.attendance-filters {
+  gap: 12px;
+}
+
+.field input,
+.field select,
+.task-form input,
+.task-form select {
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border-color: #d9e1ec;
+  background: #fff;
+}
+
+.field span {
+  margin-bottom: 6px;
+  font-size: 0.88rem;
+}
+
+.task-form-actions,
+.auth-actions {
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ghost-btn,
+.submit-btn,
+.chip,
+.hero-btn {
+  min-height: 44px;
+  border-radius: 12px;
+  box-shadow: none;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.ghost-btn,
+.chip,
+.hero-btn.secondary {
+  background: #fff;
+  border: 1px solid #d9e1ec;
+  color: #45536d;
+}
+
+.ghost-btn:hover,
+.chip:hover,
+.hero-btn.secondary:hover {
+  background: #f5f7fb;
+  color: #22324f;
+  transform: none;
+}
+
+.submit-btn,
+.ghost-btn.primary,
+.hero-btn.primary,
+.chip.active,
+.calendar-nav .ghost-btn.primary {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: #fff;
+}
+
+.submit-btn:hover,
+.ghost-btn.primary:hover,
+.hero-btn.primary:hover,
+.chip.active:hover,
+.calendar-nav .ghost-btn.primary:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.calendar-toolbar {
+  gap: 10px;
+}
+
+.calendar-nav,
+.calendar-view-switch {
+  background: #f5f7fb;
+  border: 1px solid #d9e1ec;
+  box-shadow: none;
+}
+
+.attendance-table th,
+.attendance-table td {
+  padding: 12px 14px;
+}
+
+.attendance-table th {
+  font-size: 0.84rem;
+}
+
+.attendance-table td {
+  font-size: 0.92rem;
+}
+
+body[data-device="desktop"] .hero-meta,
+body[data-device="desktop"] .hr-metrics,
+body[data-device="desktop"] .payroll-hero-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body[data-device="desktop"] .panel {
+  padding: 22px;
+}
+
+body[data-device="mobile"] .panel,
+body[data-device="mobile"] .metric-card {
+  border-radius: 16px;
+}
