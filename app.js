@@ -460,10 +460,18 @@ focusInputBtn.addEventListener("click", () => {
   showToast(text.readyToAdd);
 });
 
+function handleWorkspaceTabInteraction(event) {
+  const tab = event.currentTarget;
+  if (!tab?.dataset?.view) {
+    return;
+  }
+  event.preventDefault();
+  switchView(tab.dataset.view);
+}
+
 workspaceTabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    switchView(tab.dataset.view);
-  });
+  tab.addEventListener("click", handleWorkspaceTabInteraction);
+  tab.addEventListener("touchend", handleWorkspaceTabInteraction, { passive: false });
 });
 
 calendarViewButtons.forEach((button) => {
@@ -1997,6 +2005,10 @@ function switchView(view, shouldSyncHash = true) {
   const isBoardView = boardViews.includes(view);
   pageHero.hidden = !isBoardView;
   renderStandaloneViews(view);
+  if (["login", "signup"].includes(view)) {
+    const authTarget = document.getElementById(`${view}View`);
+    authTarget?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
   workspaceTabs.forEach((tab) => {
     const isActive =
       (view === "client" && tab.dataset.view === "calendar") ||

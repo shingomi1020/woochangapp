@@ -181,6 +181,7 @@ select:focus-visible {
   color: var(--muted);
   font-weight: 800;
   cursor: pointer;
+  touch-action: manipulation;
   transition:
     background 180ms ease,
     color 180ms ease,
@@ -3493,6 +3494,7 @@ body[data-device="mobile"] .site-menu {
   order: 3;
   flex-wrap: nowrap;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 2px;
   scrollbar-width: none;
 }
