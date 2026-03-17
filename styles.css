@@ -3847,3 +3847,223 @@ body[data-device="mobile"] .employee-info-list-item {
     scroll-behavior: auto !important;
   }
 }
+
+/* Minimal visual cleanup */
+:root {
+  --bg: #f6f7fb;
+  --bg-soft: #f1f4f9;
+  --panel: #ffffff;
+  --panel-strong: #ffffff;
+  --line: rgba(21, 36, 67, 0.08);
+  --line-strong: rgba(21, 36, 67, 0.14);
+  --text: #1c2740;
+  --muted: #6f7d95;
+  --accent: #2f63e9;
+  --accent-strong: #2452cb;
+  --accent-deep: #1b3f9f;
+  --accent-soft: #edf2fb;
+  --accent-soft-2: #f6f8fc;
+  --danger: #cf6666;
+  --danger-soft: #fcf3f3;
+  --shadow: 0 8px 20px rgba(22, 39, 72, 0.05);
+  --shadow-strong: 0 12px 28px rgba(22, 39, 72, 0.08);
+}
+
+html,
+body {
+  background: #f6f7fb !important;
+}
+
+body {
+  color: var(--text);
+}
+
+.ambient,
+.hero-copy-wrap::before,
+.hero-copy-wrap::after,
+.metric-card::before,
+.day-card::before {
+  display: none !important;
+}
+
+.site-nav-inner,
+.hero-copy-wrap,
+.metric-card,
+.panel,
+.schedule-card,
+.attendance-calendar-panel,
+.employee-info-sidebar,
+.employee-info-mobile-top,
+.employee-info-mobile-card,
+.employee-info-profile-card,
+.employee-info-section-card,
+.archive-panel,
+.auth-panel {
+  background: #ffffff !important;
+  box-shadow: var(--shadow) !important;
+  border: 1px solid var(--line) !important;
+}
+
+.site-nav-inner {
+  backdrop-filter: none !important;
+}
+
+.site-menu {
+  background: #ffffff !important;
+  border: 1px solid var(--line);
+}
+
+.site-menu-link {
+  background: transparent !important;
+  color: var(--muted) !important;
+  box-shadow: none !important;
+}
+
+.site-menu-link:hover {
+  background: #f3f6fb !important;
+  color: var(--text) !important;
+}
+
+.site-menu-link.active {
+  background: #eef3ff !important;
+  color: var(--accent-strong) !important;
+  box-shadow: inset 0 0 0 1px rgba(47, 99, 233, 0.12) !important;
+}
+
+.session-badge,
+.role-switcher,
+.connection-strip,
+.employee-info-facts div,
+.employee-info-list-item,
+.attendance-summary-card,
+.mini-event,
+.day-card.is-selected,
+.calendar-list-date,
+.task-date-chip,
+.day-count,
+.badge,
+.auth-help {
+  background: #f7f8fb !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: none !important;
+}
+
+.icon-chip,
+.metric-icon,
+.btn-icon {
+  background: #eef2f8 !important;
+  color: var(--accent) !important;
+  border: 1px solid rgba(47, 99, 233, 0.08);
+}
+
+.hero-copy-wrap,
+body[data-device="desktop"] .hero-copy-wrap,
+body[data-device="mobile"] .hero-copy-wrap,
+.employee-info-hero,
+body[data-device="desktop"] .employee-info-hero,
+.employee-info-mobile-card,
+body[data-device="mobile"] .employee-info-mobile-card,
+.employee-info-profile-card,
+body[data-device="desktop"] .employee-info-profile-card {
+  color: var(--text) !important;
+}
+
+.hero-copy-wrap .eyebrow,
+.hero-copy-wrap .hero-copy,
+.connection-message,
+.build-stamp,
+.employee-info-hero .section-label,
+.employee-info-hero .modal-subtitle,
+.employee-info-profile-card .section-label,
+.employee-info-profile-card p,
+.employee-info-profile-card small,
+.employee-info-mobile-card .section-label,
+.employee-info-mobile-card p {
+  color: var(--muted) !important;
+}
+
+.hero-btn,
+.ghost-btn,
+.chip,
+.submit-btn,
+.remove-btn,
+.site-menu-link {
+  box-shadow: none !important;
+}
+
+.hero-btn.primary,
+.ghost-btn.primary,
+.submit-btn,
+.chip.active {
+  background: #2f63e9 !important;
+  color: #ffffff !important;
+  border: 1px solid #2f63e9 !important;
+}
+
+.hero-btn.secondary,
+.ghost-btn,
+.chip,
+.ghost-btn.secondary {
+  background: #f6f8fc !important;
+  color: var(--muted) !important;
+  border: 1px solid var(--line) !important;
+}
+
+.hero-btn.secondary:hover,
+.ghost-btn:hover,
+.chip:hover {
+  background: #eef2f8 !important;
+  color: var(--text) !important;
+}
+
+.remove-btn,
+.ghost-btn.danger,
+.danger-soft {
+  background: #fcf3f3 !important;
+  color: var(--danger) !important;
+  border: 1px solid rgba(207, 102, 102, 0.12) !important;
+}
+
+.day-card,
+.attendance-month-cell,
+.employee-month-cell {
+  background: #ffffff !important;
+}
+
+.task-date-chip-today,
+.task-date-chip-alert {
+  background: #eef3ff !important;
+  color: var(--accent-strong) !important;
+  border: 1px solid rgba(47, 99, 233, 0.1) !important;
+}
+
+body[data-device="desktop"] .site-menu,
+body[data-device="desktop"] .site-nav-inner,
+body[data-device="desktop"] .session-badge,
+body[data-device="desktop"] .hero-copy-wrap,
+body[data-device="desktop"] .metric-card.float-card,
+body[data-device="desktop"] .panel,
+body[data-device="desktop"] .schedule-card,
+body[data-device="desktop"] .employee-info-sidebar,
+body[data-device="desktop"] .employee-info-profile-card {
+  background: #ffffff !important;
+}
+
+body[data-device="desktop"] .employee-info-list-item.is-active::before {
+  background: #2f63e9 !important;
+}
+
+body[data-device="mobile"] .site-nav-inner,
+body[data-device="mobile"] .hero-copy-wrap,
+body[data-device="mobile"] .metric-card.float-card,
+body[data-device="mobile"] .employee-info-mobile-top,
+body[data-device="mobile"] .employee-info-mobile-card,
+body[data-device="mobile"] .employee-info-section-card,
+body[data-device="mobile"] .panel {
+  background: #ffffff !important;
+}
+
+body[data-device="mobile"] .hero-btn.primary {
+  background: #2f63e9 !important;
+  color: #ffffff !important;
+}
