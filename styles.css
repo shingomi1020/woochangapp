@@ -554,6 +554,10 @@ h2 {
   line-height: 1.5;
 }
 
+.hr-filter-field {
+  min-width: 180px;
+}
+
 .employee-card,
 .attendance-card {
   padding: 18px;
@@ -595,6 +599,18 @@ h2 {
 .attendance-edit-btn {
   min-height: 42px;
   padding-inline: 16px;
+}
+
+.employee-card-subtitle {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.employee-card-tools {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
 }
 
 .employee-type {
@@ -640,6 +656,28 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.attendance-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.payroll-card {
+  background: linear-gradient(180deg, #ffffff, #f4f8ff);
+}
+
+.attendance-late {
+  border-color: rgba(233, 160, 47, 0.28);
+}
+
+.attendance-early {
+  border-color: rgba(94, 149, 233, 0.28);
+}
+
+.attendance-absent {
+  border-color: rgba(217, 103, 103, 0.28);
 }
 
 .panel {
@@ -1466,6 +1504,15 @@ h2 {
   .attendance-card-tools {
     width: 100%;
     justify-items: stretch;
+  }
+
+  .employee-card-tools {
+    width: 100%;
+    justify-items: stretch;
+  }
+
+  .attendance-filters {
+    grid-template-columns: 1fr;
   }
 
   .task-summary-card {
