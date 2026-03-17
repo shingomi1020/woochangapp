@@ -87,6 +87,10 @@ const saveBatchAttendanceBtn = document.getElementById("saveBatchAttendanceBtn")
 const attendanceMonthFilterInput = document.getElementById("attendanceMonthFilterInput");
 const attendanceEmployeeFilterSelect = document.getElementById("attendanceEmployeeFilterSelect");
 const attendanceStatusFilterSelect = document.getElementById("attendanceStatusFilterSelect");
+const attendanceCalendarEmployeeSelect = document.getElementById("attendanceCalendarEmployeeSelect");
+const attendanceCalendarMonthInput = document.getElementById("attendanceCalendarMonthInput");
+const attendanceCalendarLabel = document.getElementById("attendanceCalendarLabel");
+const attendanceCalendarGrid = document.getElementById("attendanceCalendarGrid");
 const monthlyPayrollTotal = document.getElementById("monthlyPayrollTotal");
 const payrollEmployeeCount = document.getElementById("payrollEmployeeCount");
 const monthlyWeekendHours = document.getElementById("monthlyWeekendHours");
@@ -598,20 +602,37 @@ clientFilterSelect.addEventListener("change", () => {
 
 attendanceMonthFilterInput.addEventListener("change", () => {
   state.attendanceMonthFilter = attendanceMonthFilterInput.value || formatDateKey(today).slice(0, 7);
+  if (attendanceCalendarMonthInput) {
+    attendanceCalendarMonthInput.value = state.attendanceMonthFilter;
+  }
   renderAttendanceList();
   renderAttendanceSummary();
+  renderAttendanceCalendar();
 });
 
 attendanceEmployeeFilterSelect.addEventListener("change", () => {
   state.attendanceEmployeeFilter = attendanceEmployeeFilterSelect.value;
+  if (attendanceCalendarEmployeeSelect && state.attendanceEmployeeFilter !== "all") {
+    attendanceCalendarEmployeeSelect.value = state.attendanceEmployeeFilter;
+  }
   renderAttendanceList();
   renderAttendanceSummary();
+  renderAttendanceCalendar();
 });
 
 attendanceStatusFilterSelect.addEventListener("change", () => {
   state.attendanceStatusFilter = attendanceStatusFilterSelect.value;
   renderAttendanceList();
   renderAttendanceSummary();
+  renderAttendanceCalendar();
+});
+
+attendanceCalendarEmployeeSelect?.addEventListener("change", () => {
+  renderAttendanceCalendar();
+});
+
+attendanceCalendarMonthInput?.addEventListener("change", () => {
+  renderAttendanceCalendar();
 });
 
 payrollMonthInput.addEventListener("change", () => {
@@ -2737,10 +2758,209 @@ function renderEmployees() {
   });
 }
 
+function normalizeAttendanceCalendarControls() {
+  if (!attendanceCalendarEmployeeSelect || !attendanceCalendarMonthInput) {
+    return { employeeId: "", monthValue: state.attendanceMonthFilter };
+  }
+
+  if (!attendanceCalendarMonthInput.value) {
+    attendanceCalendarMonthInput.value = state.attendanceMonthFilter;
+  }
+
+  if (!attendanceCalendarEmployeeSelect.value) {
+    const fallbackEmployeeId =
+      state.attendanceEmployeeFilter !== "all"
+        ? state.attendanceEmployeeFilter
+        : state.employees[0]
+          ? String(state.employees[0].id)
+          : "";
+    attendanceCalendarEmployeeSelect.value = fallbackEmployeeId;
+  }
+
+  return {
+    employeeId: attendanceCalendarEmployeeSelect.value,
+    monthValue: attendanceCalendarMonthInput.value || state.attendanceMonthFilter,
+  };
+}
+
+function renderAttendanceCalendar() {
+  if (!attendanceCalendarGrid || !attendanceCalendarEmployeeSelect || !attendanceCalendarMonthInput || !attendanceCalendarLabel) {
+    return;
+  }
+
+  const currentEmployeeValue = attendanceCalendarEmployeeSelect.value;
+  attendanceCalendarEmployeeSelect.innerHTML = [
+    `<option value="">직원을 선택해 주세요</option>`,
+    ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
+  ].join("");
+
+  if (state.employees.some((employee) => String(employee.id) === String(currentEmployeeValue))) {
+    attendanceCalendarEmployeeSelect.value = currentEmployeeValue;
+  }
+
+  const { employeeId, monthValue } = normalizeAttendanceCalendarControls();
+  const monthDate = new Date(`${monthValue || formatDateKey(today).slice(0, 7)}-01T00:00:00`);
+
+  if (!employeeId) {
+    attendanceCalendarLabel.textContent = "직원을 선택하면 월간 근태 흐름이 보입니다";
+    attendanceCalendarGrid.innerHTML = `<div class="empty-state">직원을 선택하면 정상, 지각, 조퇴, 결근 흐름을 월간 달력으로 확인할 수 있습니다.</div>`;
+    return;
+  }
+
+  const employee = state.employees.find((item) => String(item.id) === String(employeeId));
+  const monthLabelText = `${monthDate.getFullYear()}년 ${monthDate.getMonth() + 1}월`;
+  attendanceCalendarLabel.textContent = `${employee?.name || "직원"} · ${monthLabelText} 근태 달력`;
+
+  const startDay = new Date(monthDate);
+  startDay.setDate(1);
+  startDay.setDate(startDay.getDate() - startDay.getDay());
+
+  const recordsByDate = new Map(
+    state.attendanceRecords
+      .filter(
+        (record) =>
+          String(record.employeeId) === String(employeeId) &&
+          record.workDate.startsWith(`${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, "0")}`)
+      )
+      .map((record) => {
+        const summary = calculateAttendance(record, employee);
+        return [record.workDate, { record, summary }];
+      })
+  );
+
+  const dayNames = ["일", "월", "화", "수", "목", "금", "토"]
+    .map((dayName) => `<span class="attendance-calendar-weekday">${dayName}</span>`)
+    .join("");
+
+  const cells = Array.from({ length: 42 }, (_, index) => {
+    const currentDate = new Date(startDay);
+    currentDate.setDate(startDay.getDate() + index);
+    const dateKey = formatDateKey(currentDate);
+    const recordInfo = recordsByDate.get(dateKey);
+    const isCurrentMonth = currentDate.getMonth() === monthDate.getMonth();
+    const status = recordInfo?.summary.attendanceStatus || "";
+    const weekendClass = currentDate.getDay() === 0 ? " sunday" : currentDate.getDay() === 6 ? " saturday" : "";
+    return `
+      <button
+        class="attendance-calendar-cell${isCurrentMonth ? "" : " is-outside"}${status ? ` is-${status}` : ""}${weekendClass}"
+        type="button"
+        data-attendance-calendar-date="${dateKey}"
+        ${recordInfo ? `data-attendance-record-id="${recordInfo.record.id}"` : ""}
+      >
+        <span class="attendance-calendar-date">${currentDate.getDate()}</span>
+        ${
+          recordInfo
+            ? `
+              <span class="attendance-calendar-status">${getAttendanceStatusLabel(recordInfo.summary.attendanceStatus)}</span>
+              <span class="attendance-calendar-time">${recordInfo.record.clockIn} - ${recordInfo.record.clockOut}</span>
+            `
+            : `<span class="attendance-calendar-status empty">${isCurrentMonth ? "기록 없음" : ""}</span>`
+        }
+      </button>
+    `;
+  }).join("");
+
+  attendanceCalendarGrid.innerHTML = `
+    <div class="attendance-calendar-weekdays">${dayNames}</div>
+    <div class="attendance-calendar-cells">${cells}</div>
+  `;
+
+  attendanceCalendarGrid.querySelectorAll("[data-attendance-record-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const record = state.attendanceRecords.find((item) => String(item.id) === String(button.dataset.attendanceRecordId));
+      if (record) {
+        openAttendanceModal(record);
+      }
+    });
+  });
+}
+
+function renderAttendanceFilterOptions() {
+  const currentFilterValue = state.attendanceEmployeeFilter;
+  attendanceEmployeeFilterSelect.innerHTML = [
+    `<option value="all">전체 직원</option>`,
+    ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
+  ].join("");
+  attendanceEmployeeFilterSelect.value = state.employees.some((employee) => String(employee.id) === String(currentFilterValue))
+    ? currentFilterValue
+    : "all";
+  state.attendanceEmployeeFilter = attendanceEmployeeFilterSelect.value;
+
+  if (attendanceCalendarEmployeeSelect) {
+    const calendarCurrentValue = attendanceCalendarEmployeeSelect.value;
+    attendanceCalendarEmployeeSelect.innerHTML = [
+      `<option value="">직원을 선택해 주세요</option>`,
+      ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
+    ].join("");
+    if (state.employees.some((employee) => String(employee.id) === String(calendarCurrentValue))) {
+      attendanceCalendarEmployeeSelect.value = calendarCurrentValue;
+    }
+  }
+}
+
+function renderEmployees() {
+  if (!state.employees.length) {
+    employeeList.innerHTML = `<div class="empty-state">등록된 직원이 없습니다. 기본급과 수당 기준을 먼저 입력해 주세요.</div>`;
+    return;
+  }
+
+  const canManageEmployees = state.currentRole === "admin";
+
+  employeeList.innerHTML = state.employees
+    .map(
+      (employee) => `
+        <article class="employee-card">
+          <div class="employee-card-head">
+            <div>
+              <strong>${employee.name}</strong>
+              <p class="employee-card-subtitle">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</p>
+            </div>
+            <div class="employee-card-tools">
+              <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</span>
+              <div class="employee-card-actions">
+                <button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="detail" data-id="${employee.id}">상세</button>
+                ${canManageEmployees ? `<button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="edit" data-id="${employee.id}">수정</button>` : ""}
+              </div>
+            </div>
+          </div>
+          <div class="employee-pay-grid">
+            <span>기본급 ${formatCurrency(employee.baseSalary)}</span>
+            <span>야근 수당 ${formatCurrency(employee.overtimeRate)}/h</span>
+            <span>주말 수당 ${formatCurrency(employee.weekendRate)}/h</span>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  employeeList.querySelectorAll("[data-employee-action='edit']").forEach((button) => {
+    button.addEventListener("click", () => {
+      const employee = state.employees.find((item) => String(item.id) === String(button.dataset.id));
+      if (employee) {
+        openEmployeeModal(employee);
+      }
+    });
+  });
+
+  employeeList.querySelectorAll("[data-employee-action='detail']").forEach((button) => {
+    button.addEventListener("click", () => {
+      const employee = state.employees.find((item) => String(item.id) === String(button.dataset.id));
+      if (employee) {
+        if (attendanceCalendarEmployeeSelect) {
+          attendanceCalendarEmployeeSelect.value = String(employee.id);
+        }
+        renderAttendanceCalendar();
+        openEmployeeDetailModal(employee);
+      }
+    });
+  });
+}
+
 function renderAttendanceList() {
   if (!state.attendanceRecords.length) {
     attendanceList.innerHTML = `<div class="empty-state">출근기록부가 비어 있습니다. 직원과 출퇴근 시간을 입력해 주세요.</div>`;
     renderAttendanceSummary();
+    renderAttendanceCalendar();
     return;
   }
 
@@ -2749,6 +2969,7 @@ function renderAttendanceList() {
   if (!filteredRecords.length) {
     attendanceList.innerHTML = `<div class="empty-state">현재 필터에 맞는 출근기록이 없습니다. 조회 월이나 직원을 바꿔 보세요.</div>`;
     renderAttendanceSummary();
+    renderAttendanceCalendar();
     return;
   }
 
@@ -2760,15 +2981,14 @@ function renderAttendanceList() {
         <thead>
           <tr>
             <th>직원명</th>
-            <th>구분</th>
             <th>근무일</th>
             <th>출근</th>
             <th>퇴근</th>
             <th>총근무</th>
             <th>야근</th>
             <th>주말</th>
-            <th>상태</th>
-            <th>수정</th>
+            <th>근태상태</th>
+            <th>상세</th>
           </tr>
         </thead>
         <tbody>
@@ -2777,17 +2997,20 @@ function renderAttendanceList() {
               const employee = state.employees.find((item) => String(item.id) === String(record.employeeId));
               const summary = calculateAttendance(record, employee);
               return `
-                <tr class="attendance-row attendance-${summary.attendanceStatus}">
-                  <td class="attendance-cell-strong">${employee?.name || "이름 없는 직원"}</td>
-                  <td><span class="employee-type ${employee?.employmentType || "insured"}">${employee?.employmentType === "freelancer" ? "프리랜서" : "4대보험"}</span></td>
-                  <td>${record.workDate}</td>
-                  <td>${record.clockIn}</td>
-                  <td>${record.clockOut}</td>
-                  <td>${summary.totalHours.toFixed(1)}h</td>
-                  <td>${summary.overtimeHours.toFixed(1)}h</td>
-                  <td>${summary.weekendHours.toFixed(1)}h</td>
-                  <td><span class="task-date-chip">${getAttendanceStatusLabel(summary.attendanceStatus)}</span></td>
-                  <td>${canEditAttendance ? `<button class="ghost-btn attendance-edit-btn" type="button" data-attendance-action="edit" data-id="${record.id}">수정</button>` : `<span class="attendance-readonly">조회</span>`}</td>
+                <tr class="attendance-row attendance-${summary.attendanceStatus}" data-attendance-row="${record.id}">
+                  <td class="attendance-cell-strong" data-label="직원명">
+                    <button class="attendance-row-link" type="button" data-attendance-employee="${employee?.id || ""}">
+                      ${employee?.name || "이름 없는 직원"}
+                    </button>
+                  </td>
+                  <td data-label="근무일">${record.workDate}</td>
+                  <td data-label="출근">${record.clockIn}</td>
+                  <td data-label="퇴근">${record.clockOut}</td>
+                  <td data-label="총근무">${summary.totalHours.toFixed(1)}h</td>
+                  <td data-label="야근">${summary.overtimeHours.toFixed(1)}h</td>
+                  <td data-label="주말">${summary.weekendHours.toFixed(1)}h</td>
+                  <td data-label="근태상태"><span class="attendance-status-pill is-${summary.attendanceStatus}">${getAttendanceStatusLabel(summary.attendanceStatus)}</span></td>
+                  <td data-label="상세">${canEditAttendance ? `<button class="ghost-btn attendance-edit-btn" type="button" data-attendance-action="edit" data-id="${record.id}">수정</button>` : `<button class="ghost-btn attendance-edit-btn" type="button" data-attendance-action="view" data-id="${record.id}">상세</button>`}</td>
                 </tr>
               `;
             })
@@ -2798,15 +3021,49 @@ function renderAttendanceList() {
   `;
 
   renderAttendanceSummary();
+  renderAttendanceCalendar();
 
-  attendanceList.querySelectorAll("[data-attendance-action='edit']").forEach((button) => {
-    button.addEventListener("click", () => {
+  attendanceList.querySelectorAll("[data-attendance-action]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
       const record = state.attendanceRecords.find((item) => String(item.id) === String(button.dataset.id));
       if (record) {
         openAttendanceModal(record);
       }
     });
   });
+
+  attendanceList.querySelectorAll("[data-attendance-row]").forEach((row) => {
+    row.addEventListener("click", () => {
+      const record = state.attendanceRecords.find((item) => String(item.id) === String(row.dataset.attendanceRow));
+      if (record) {
+        openAttendanceModal(record);
+      }
+    });
+  });
+
+  attendanceList.querySelectorAll("[data-attendance-employee]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (attendanceCalendarEmployeeSelect) {
+        attendanceCalendarEmployeeSelect.value = button.dataset.attendanceEmployee;
+      }
+      renderAttendanceCalendar();
+    });
+  });
+}
+
+function renderHrWorkspace() {
+  renderEmployeeSelect();
+  renderEditAttendanceEmployeeSelect();
+  renderAttendanceFilterOptions();
+  renderEmployees();
+  renderPayrollSummary();
+  renderAttendanceList();
+  renderAttendanceSummary();
+  renderAttendanceBatchList();
+  renderAttendanceCalendar();
+  updateHrMetrics();
 }
 
 taskReceivedDateInput.value = formatDateKey(today);
@@ -2820,6 +3077,9 @@ attendanceBatchDateInput.value = formatDateKey(today);
 employeeTypeInput.value = "insured";
 roleSelect.value = state.currentRole;
 attendanceMonthFilterInput.value = state.attendanceMonthFilter;
+if (attendanceCalendarMonthInput) {
+  attendanceCalendarMonthInput.value = state.attendanceMonthFilter;
+}
 payrollMonthInput.value = state.payrollMonth;
 syncFormMode();
 loadHrState();

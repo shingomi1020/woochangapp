@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260317-28" />
+    <link rel="stylesheet" href="styles.css?v=20260317-29" />
   </head>
   <body>
     <div class="app-shell">
@@ -81,7 +81,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 28</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 29</p>
           </div>
         </div>
 
@@ -465,6 +465,33 @@
                   </select>
                 </label>
               </div>
+              <div class="attendance-calendar-panel">
+                <div class="schedule-head attendance-calendar-head">
+                  <div>
+                    <p class="section-label">월간 근태 달력</p>
+                    <h3 id="attendanceCalendarLabel">직원별 월간 근태 흐름</h3>
+                  </div>
+                  <div class="attendance-calendar-controls">
+                    <label class="field hr-filter-field">
+                      <span>직원 선택</span>
+                      <select id="attendanceCalendarEmployeeSelect">
+                        <option value="">직원을 선택해 주세요</option>
+                      </select>
+                    </label>
+                    <label class="field hr-filter-field">
+                      <span>조회 월</span>
+                      <input id="attendanceCalendarMonthInput" type="month" />
+                    </label>
+                  </div>
+                </div>
+                <div class="attendance-calendar-legend" aria-hidden="true">
+                  <span class="attendance-legend-item normal">정상</span>
+                  <span class="attendance-legend-item late">지각</span>
+                  <span class="attendance-legend-item early">조퇴</span>
+                  <span class="attendance-legend-item absent">결근</span>
+                </div>
+                <div id="attendanceCalendarGrid" class="attendance-calendar-grid"></div>
+              </div>
               <div id="attendanceList" class="attendance-list"></div>
             </div>
           </section>
@@ -725,6 +752,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-28"></script>
+    <script src="app.js?v=20260317-29"></script>
   </body>
 </html>
