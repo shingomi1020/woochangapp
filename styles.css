@@ -4446,3 +4446,14 @@ body[data-device="mobile"] .panel-head h2,
 body[data-device="mobile"] .panel-head h3 {
   font-size: 1.2rem;
 }
+
+body[data-device="desktop"] #tasksView[data-board-view="calendar"],
+body[data-device="desktop"] #tasksView[data-board-view="todos"] {
+  grid-template-columns: 1fr !important;
+}
+
+body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-calendar,
+body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-tasks {
+  width: 100%;
+  max-width: 100%;
+}
