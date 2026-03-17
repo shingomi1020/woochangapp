@@ -238,6 +238,18 @@ select:focus-visible {
   margin: 0 auto;
 }
 
+body[data-view="login"] #loginView,
+body[data-view="signup"] #signupView {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+body[data-view="login"] #signupView,
+body[data-view="signup"] #loginView {
+  display: none !important;
+}
+
 .auth-view:not([hidden]) .auth-panel {
   display: block !important;
 }
@@ -3505,6 +3517,20 @@ body[data-device="mobile"] .site-menu::-webkit-scrollbar {
 
 body[data-device="mobile"] .site-menu-link {
   flex: 0 0 auto;
+}
+
+body[data-device="mobile"] #loginView,
+body[data-device="mobile"] #signupView {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 6px;
+}
+
+body[data-device="mobile"] #loginView .auth-panel,
+body[data-device="mobile"] #signupView .auth-panel {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 0;
 }
 
 body[data-device="mobile"] .site-actions {

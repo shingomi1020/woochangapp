@@ -471,6 +471,7 @@ function handleWorkspaceTabInteraction(event) {
 
 workspaceTabs.forEach((tab) => {
   tab.addEventListener("click", handleWorkspaceTabInteraction);
+  tab.addEventListener("pointerup", handleWorkspaceTabInteraction);
   tab.addEventListener("touchend", handleWorkspaceTabInteraction, { passive: false });
 });
 
@@ -1952,6 +1953,8 @@ function renderStandaloneViews(activeView) {
   pageViews.forEach((section) => {
     section.hidden = true;
     section.style.removeProperty("display");
+    section.style.removeProperty("visibility");
+    section.style.removeProperty("opacity");
   });
 
   if (tasksView && boardViews.includes(activeView)) {
@@ -1964,6 +1967,8 @@ function renderStandaloneViews(activeView) {
     targetView.hidden = false;
     if (["login", "signup"].includes(activeView)) {
       targetView.style.display = "grid";
+      targetView.style.visibility = "visible";
+      targetView.style.opacity = "1";
     }
   }
 
@@ -1971,12 +1976,16 @@ function renderStandaloneViews(activeView) {
     loginView.hidden = activeView !== "login";
     if (activeView === "login") {
       loginView.style.display = "grid";
+      loginView.style.visibility = "visible";
+      loginView.style.opacity = "1";
     }
   }
   if (signupView) {
     signupView.hidden = activeView !== "signup";
     if (activeView === "signup") {
       signupView.style.display = "grid";
+      signupView.style.visibility = "visible";
+      signupView.style.opacity = "1";
     }
   }
 }
