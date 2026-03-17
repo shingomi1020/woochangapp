@@ -258,6 +258,19 @@ function loadPayrollStatusMap() {
   }
 }
 
+function loadTaskOrderMap() {
+  try {
+    const raw = JSON.parse(window.localStorage.getItem("flowboard-task-order-map") || "{}");
+    return raw && typeof raw === "object" ? raw : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveTaskOrderMap() {
+  window.localStorage.setItem("flowboard-task-order-map", JSON.stringify(state.taskOrderMap));
+}
+
 function loadMembers() {
   try {
     const raw = JSON.parse(window.localStorage.getItem("flowboard-members") || "[]");
@@ -302,9 +315,11 @@ const state = {
   attendanceEmployeeFilter: "all",
     attendanceStatusFilter: "all",
     employeeDetailId: null,
-    employeeDocuments: [],
-    selectedEmployeeDocumentId: null,
-    payrollStatusMap: loadPayrollStatusMap(),
+  employeeDocuments: [],
+  selectedEmployeeDocumentId: null,
+  payrollStatusMap: loadPayrollStatusMap(),
+  taskOrderMap: loadTaskOrderMap(),
+  draggedTaskId: null,
   };
 
 setConnectionState("checking", text.booting);
@@ -1047,7 +1062,7 @@ function renderTasks() {
     return;
   }
 
-  const filteredTasks = getVisibleTasks();
+  const filteredTasks = getSortedTasks(getVisibleTasks());
 
   if (!filteredTasks.length) {
     const message =
@@ -1063,7 +1078,7 @@ function renderTasks() {
   taskList.innerHTML = filteredTasks
     .map(
       (task, index) => `
-        <article class="task-item ${task.done ? "is-done" : ""} priority-${task.priority} ${isOverdue(task) ? "is-overdue" : ""} ${isTodayTask(task) ? "is-today-deadline" : ""}" style="animation-delay:${index * 80}ms">
+        <article class="task-item ${task.done ? "is-done" : ""} priority-${task.priority} ${isOverdue(task) ? "is-overdue" : ""} ${isTodayTask(task) ? "is-today-deadline" : ""}" style="animation-delay:${index * 80}ms" draggable="true" data-task-id="${task.id}">
           <button
             class="check-btn"
             type="button"
@@ -1214,6 +1229,44 @@ function renderTasks() {
       renderAll();
     });
   });
+
+  taskList.querySelectorAll("[data-task-id]").forEach((item) => {
+    item.addEventListener("dragstart", () => {
+      state.draggedTaskId = item.dataset.taskId;
+      item.classList.add("is-dragging");
+    });
+
+    item.addEventListener("dragend", () => {
+      state.draggedTaskId = null;
+      item.classList.remove("is-dragging");
+      taskList.querySelectorAll(".is-drop-target").forEach((target) => target.classList.remove("is-drop-target"));
+    });
+
+    item.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      if (!state.draggedTaskId || state.draggedTaskId === item.dataset.taskId) {
+        return;
+      }
+      taskList.querySelectorAll(".is-drop-target").forEach((target) => target.classList.remove("is-drop-target"));
+      item.classList.add("is-drop-target");
+    });
+
+    item.addEventListener("dragleave", () => {
+      item.classList.remove("is-drop-target");
+    });
+
+    item.addEventListener("drop", (event) => {
+      event.preventDefault();
+      item.classList.remove("is-drop-target");
+      if (!state.draggedTaskId || state.draggedTaskId === item.dataset.taskId) {
+        return;
+      }
+      reorderVisibleTasks(state.draggedTaskId, item.dataset.taskId);
+      state.draggedTaskId = null;
+      renderAll();
+      showToast("할 일 순서를 변경했습니다.");
+    });
+  });
 }
 
 function updateMetrics() {
@@ -1283,14 +1336,7 @@ function updateCalendarHint() {
 }
 
 function getTasksByDate(dateKey) {
-  return getActiveTasks()
-    .filter((task) => task.dueDate === dateKey)
-    .sort(
-      (a, b) =>
-        Number(a.done) - Number(b.done) ||
-        priorityWeight(a.priority) - priorityWeight(b.priority) ||
-        a.title.localeCompare(b.title, "ko")
-    );
+  return getSortedTasks(getActiveTasks().filter((task) => task.dueDate === dateKey));
 }
 
 function createDayConfig(date, isOutside) {
@@ -1374,6 +1420,7 @@ async function loadTasks() {
   }
 
   state.tasks = (data ?? []).map(mapTaskRecord);
+  normalizeTaskOrderMap();
   state.isLoading = false;
   setConnectionState("ready", text.connectionReady);
   renderAll();
@@ -1397,6 +1444,12 @@ function addDaysToDateKey(date, days) {
   const value = new Date(date);
   value.setDate(value.getDate() + days);
   return formatDateKey(value);
+}
+
+function daysBetween(startDate, endDate) {
+  const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+  return Math.round((end.getTime() - start.getTime()) / 86400000);
 }
 
 function formatLongDate(date) {
@@ -2996,6 +3049,127 @@ function renderEmployeeInfoPage() {
       showToast("증빙서류를 업로드했습니다.");
     });
   });
+}
+
+function getStatusSortWeight(task) {
+  if (task.status === "todo") {
+    return 0;
+  }
+  if (task.status === "paused") {
+    return 1;
+  }
+  return 2;
+}
+
+function getDeadlineSortWeight(task) {
+  if (task.status === "done") {
+    return 4;
+  }
+  if (isOverdue(task)) {
+    return 0;
+  }
+  if (isTodayTask(task)) {
+    return 1;
+  }
+  const dueOffset = daysBetween(today, new Date(`${task.dueDate}T00:00:00`));
+  if (dueOffset <= 2) {
+    return 2;
+  }
+  return 3;
+}
+
+function getTaskAutoSortKey(task) {
+  return [
+    getStatusSortWeight(task),
+    getDeadlineSortWeight(task),
+    priorityWeight(task.priority),
+    task.dueDate || "9999-99-99",
+    task.receivedDate || "9999-99-99",
+    (task.client || "").toLowerCase(),
+    (task.description || task.title || "").toLowerCase(),
+    String(task.id),
+  ];
+}
+
+function compareTaskAutoOrder(a, b) {
+  const aKey = getTaskAutoSortKey(a);
+  const bKey = getTaskAutoSortKey(b);
+
+  for (let index = 0; index < aKey.length; index += 1) {
+    if (aKey[index] < bKey[index]) {
+      return -1;
+    }
+    if (aKey[index] > bKey[index]) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+function compareTasks(a, b) {
+  const aManual = state.taskOrderMap[String(a.id)];
+  const bManual = state.taskOrderMap[String(b.id)];
+  const aHasManual = Number.isFinite(aManual);
+  const bHasManual = Number.isFinite(bManual);
+
+  if (aHasManual && bHasManual && aManual !== bManual) {
+    return aManual - bManual;
+  }
+
+  if (aHasManual && !bHasManual) {
+    return -1;
+  }
+
+  if (!aHasManual && bHasManual) {
+    return 1;
+  }
+
+  return compareTaskAutoOrder(a, b);
+}
+
+function getSortedTasks(tasks) {
+  return [...tasks].sort(compareTasks);
+}
+
+function normalizeTaskOrderMap() {
+  const activeIds = new Set(getActiveTasks().map((task) => String(task.id)));
+  state.taskOrderMap = Object.fromEntries(
+    Object.entries(state.taskOrderMap).filter(([id, order]) => activeIds.has(id) && Number.isFinite(order))
+  );
+  saveTaskOrderMap();
+}
+
+function reorderVisibleTasks(draggedId, targetId) {
+  const visibleIds = getSortedTasks(getVisibleTasks()).map((task) => String(task.id));
+  const allOrderedIds = getSortedTasks(getActiveTasks()).map((task) => String(task.id));
+  const orderedIds = [...visibleIds];
+  const fromIndex = orderedIds.indexOf(String(draggedId));
+  const toIndex = orderedIds.indexOf(String(targetId));
+
+  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) {
+    return;
+  }
+
+  const [movedId] = orderedIds.splice(fromIndex, 1);
+  orderedIds.splice(toIndex, 0, movedId);
+
+  const nextIds = [];
+  allOrderedIds.forEach((id) => {
+    if (visibleIds.includes(id)) {
+      if (!nextIds.includes(orderedIds[0])) {
+        nextIds.push(orderedIds.shift());
+      }
+      return;
+    }
+    nextIds.push(id);
+  });
+
+  state.taskOrderMap = {};
+  nextIds.forEach((id, index) => {
+    state.taskOrderMap[id] = index;
+  });
+  saveTaskOrderMap();
 }
 
 function printPayrollView() {

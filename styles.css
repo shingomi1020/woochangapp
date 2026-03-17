@@ -4930,3 +4930,36 @@ body[data-device="mobile"] .panel-calendar .day-card {
 body[data-device="mobile"] .panel-calendar .mini-event {
   background: #f5f7fb !important;
 }
+
+.task-item {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
+}
+
+.task-item[draggable="true"] {
+  cursor: grab;
+}
+
+.task-item[draggable="true"] .task-client,
+.task-item[draggable="true"] .task-description {
+  cursor: inherit;
+}
+
+.task-item.is-dragging {
+  opacity: 0.55;
+  transform: scale(0.985);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.task-item.is-drop-target {
+  border-color: rgba(47, 99, 233, 0.28) !important;
+  box-shadow: 0 0 0 2px rgba(47, 99, 233, 0.08);
+  transform: translateY(-2px);
+}
+
+.task-item.is-overdue {
+  border-left: 4px solid #e35d5d;
+}
+
+.task-item.is-today-deadline:not(.is-overdue) {
+  border-left: 4px solid #f59e0b;
+}
