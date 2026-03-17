@@ -60,6 +60,7 @@ const tasksView = document.getElementById("tasksView");
 const boardViews = ["calendar", "todos"];
 const clientView = document.getElementById("clientView");
 const hrView = document.getElementById("hrView");
+const employeeinfoView = document.getElementById("employeeinfoView");
 const loginView = document.getElementById("loginView");
 const signupView = document.getElementById("signupView");
 const membersView = document.getElementById("membersView");
@@ -137,6 +138,15 @@ const hrMonthlyOvertimeHours = document.getElementById("hrMonthlyOvertimeHours")
 const hrMonthlyPayrollTotal = document.getElementById("hrMonthlyPayrollTotal");
 const printPayrollBtn = document.getElementById("printPayrollBtn");
 const payrollConfirmedCount = document.getElementById("payrollConfirmedCount");
+const employeeInfoBackBtn = document.getElementById("employeeInfoBackBtn");
+const employeeInfoEditBtn = document.getElementById("employeeInfoEditBtn");
+const employeeInfoEmpty = document.getElementById("employeeInfoEmpty");
+const employeeInfoDesktopList = document.getElementById("employeeInfoDesktopList");
+const employeeInfoDesktopSummary = document.getElementById("employeeInfoDesktopSummary");
+const employeeInfoDesktopSections = document.getElementById("employeeInfoDesktopSections");
+const employeeInfoMobileSelector = document.getElementById("employeeInfoMobileSelector");
+const employeeInfoMobileHero = document.getElementById("employeeInfoMobileHero");
+const employeeInfoMobileSections = document.getElementById("employeeInfoMobileSections");
 const employeeModal = document.getElementById("employeeModal");
 const employeeModalBackdrop = document.getElementById("employeeModalBackdrop");
 const employeeModalCloseBtn = document.getElementById("employeeModalCloseBtn");
@@ -715,6 +725,17 @@ employeeDetailCloseBtn.addEventListener("click", () => {
 
 employeeDetailModalBackdrop.addEventListener("click", () => {
   closeEmployeeDetailModal();
+});
+
+employeeInfoBackBtn?.addEventListener("click", () => {
+  switchView("hr");
+});
+
+employeeInfoEditBtn?.addEventListener("click", () => {
+  const employee = getSelectedEmployee();
+  if (employee) {
+    openEmployeeModal(employee);
+  }
 });
 
 employeeModalCloseBtn.addEventListener("click", () => {
@@ -1787,9 +1808,9 @@ function getRoleLabel(role) {
 
 function isViewAllowedForRole(view) {
   const allowed = {
-    admin: ["tasks", "calendar", "todos", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"],
-    employee: ["tasks", "calendar", "todos", "client", "hr", "payroll", "login", "signup"],
-    freelancer: ["tasks", "calendar", "todos", "client", "hr", "payroll", "login", "signup"],
+    admin: ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "estimate", "statement", "payroll", "members", "login", "signup"],
+    employee: ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "payroll", "login", "signup"],
+    freelancer: ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "payroll", "login", "signup"],
   };
   return allowed[state.currentRole]?.includes(view);
 }
@@ -2512,6 +2533,275 @@ function closeEmployeeDetailModal() {
   employeeDetailBody.innerHTML = "";
 }
 
+function getSelectedEmployee() {
+  if (!state.employees.length) {
+    return null;
+  }
+
+  return (
+    state.employees.find((employee) => String(employee.id) === String(state.employeeDetailId)) ||
+    state.employees[0]
+  );
+}
+
+function buildEmployeeMonthSummary(employee) {
+  const records = state.attendanceRecords
+    .filter((record) => String(record.employeeId) === String(employee.id) && record.workDate.startsWith(state.payrollMonth))
+    .sort((a, b) => `${b.workDate}${b.clockIn}`.localeCompare(`${a.workDate}${a.clockIn}`));
+  const payrollItem = buildPayrollSummary().find((item) => String(item.employee.id) === String(employee.id));
+  const statusCounts = records.reduce(
+    (acc, record) => {
+      const summary = calculateAttendance(record, employee);
+      acc[summary.attendanceStatus] = (acc[summary.attendanceStatus] || 0) + 1;
+      acc.totalHours += summary.totalHours;
+      return acc;
+    },
+    { normal: 0, late: 0, early: 0, absent: 0, totalHours: 0 }
+  );
+
+  return {
+    records,
+    payrollItem,
+    statusCounts,
+  };
+}
+
+function renderEmployeeStatusCalendar(employee) {
+  const monthDate = new Date(`${state.payrollMonth}-01T00:00:00`);
+  const startDay = new Date(monthDate);
+  startDay.setDate(1);
+  startDay.setDate(startDay.getDate() - startDay.getDay());
+
+  const recordsByDate = new Map(
+    state.attendanceRecords
+      .filter(
+        (record) =>
+          String(record.employeeId) === String(employee.id) &&
+          record.workDate.startsWith(`${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, "0")}`)
+      )
+      .map((record) => {
+        const summary = calculateAttendance(record, employee);
+        return [record.workDate, { record, summary }];
+      })
+  );
+
+  const weekdayLabels = ["일", "월", "화", "수", "목", "금", "토"]
+    .map((label) => `<span class="employee-month-weekday">${label}</span>`)
+    .join("");
+
+  const cells = Array.from({ length: 35 }, (_, index) => {
+    const currentDate = new Date(startDay);
+    currentDate.setDate(startDay.getDate() + index);
+    const dateKey = formatDateKey(currentDate);
+    const recordInfo = recordsByDate.get(dateKey);
+    const isCurrentMonth = currentDate.getMonth() === monthDate.getMonth();
+    const status = recordInfo?.summary.attendanceStatus || "";
+    return `
+      <article class="employee-month-cell${isCurrentMonth ? "" : " is-outside"}${status ? ` is-${status}` : ""}">
+        <span class="employee-month-date">${currentDate.getDate()}</span>
+        ${
+          recordInfo
+            ? `<span class="employee-month-state">${getAttendanceStatusLabel(recordInfo.summary.attendanceStatus)}</span>
+               <span class="employee-month-time">${recordInfo.record.clockIn} · ${recordInfo.record.clockOut}</span>`
+            : `<span class="employee-month-state empty">${isCurrentMonth ? "기록 없음" : ""}</span>`
+        }
+      </article>
+    `;
+  }).join("");
+
+  return `
+    <div class="employee-month-calendar">
+      <div class="employee-month-weekdays">${weekdayLabels}</div>
+      <div class="employee-month-grid">${cells}</div>
+    </div>
+  `;
+}
+
+function renderEmployeeInfoPage() {
+  if (!employeeInfoEmpty || !employeeInfoDesktopList || !employeeInfoDesktopSummary || !employeeInfoDesktopSections || !employeeInfoMobileSelector || !employeeInfoMobileHero || !employeeInfoMobileSections) {
+    return;
+  }
+
+  if (employeeInfoEditBtn) {
+    employeeInfoEditBtn.hidden = state.currentRole !== "admin";
+  }
+
+  if (!state.employees.length) {
+    employeeInfoEmpty.hidden = false;
+    employeeInfoDesktopList.innerHTML = "";
+    employeeInfoDesktopSummary.innerHTML = "";
+    employeeInfoDesktopSections.innerHTML = "";
+    employeeInfoMobileSelector.innerHTML = "";
+    employeeInfoMobileHero.innerHTML = "";
+    employeeInfoMobileSections.innerHTML = "";
+    return;
+  }
+
+  employeeInfoEmpty.hidden = true;
+  const employee = getSelectedEmployee();
+  state.employeeDetailId = employee.id;
+  const monthSummary = buildEmployeeMonthSummary(employee);
+
+  const listMarkup = state.employees
+    .map((item) => {
+      const isActive = String(item.id) === String(employee.id);
+      return `
+        <button class="employee-info-list-item${isActive ? " is-active" : ""}" type="button" data-employee-info-id="${item.id}">
+          <strong>${escapeHtml(item.name)}</strong>
+          <span>${item.employmentType === "insured" ? "4대보험 직원" : "프리랜서"}</span>
+        </button>
+      `;
+    })
+    .join("");
+
+  employeeInfoDesktopList.innerHTML = listMarkup;
+  employeeInfoMobileSelector.innerHTML = `<div class="employee-info-mobile-rail">${listMarkup}</div>`;
+
+  const insuredLabel = employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서";
+  const totalPay = monthSummary.payrollItem?.totalPay || 0;
+  const netPay = monthSummary.payrollItem?.netPay || 0;
+  const firstLetter = escapeHtml(employee.name.slice(0, 1) || "직");
+
+  employeeInfoDesktopSummary.innerHTML = `
+    <div class="employee-profile-desktop">
+      <div class="employee-profile-avatar">${firstLetter}</div>
+      <div class="employee-profile-copy">
+        <p class="section-label">직원 기본 프로필</p>
+        <h3>${escapeHtml(employee.name)}</h3>
+        <p>${insuredLabel}</p>
+        <div class="employee-profile-meta">
+          <span class="task-date-chip">기본급 ${formatCurrency(employee.baseSalary)}</span>
+          <span class="task-date-chip">야근 ${formatCurrency(employee.overtimeRate)}/h</span>
+          <span class="task-date-chip">주말 ${formatCurrency(employee.weekendRate)}/h</span>
+        </div>
+      </div>
+      <div class="employee-profile-stats">
+        <article class="attendance-summary-card">
+          <span class="metric-label">이번 달 예상 총급여</span>
+          <strong>${formatCurrency(totalPay)}</strong>
+          <small>기본급 + 야근 + 주말 수당</small>
+        </article>
+        <article class="attendance-summary-card">
+          <span class="metric-label">이번 달 실지급 예상</span>
+          <strong>${formatCurrency(netPay)}</strong>
+          <small>${state.payrollMonth} 기준 공제 반영</small>
+        </article>
+      </div>
+    </div>
+  `;
+
+  const recordsMarkup = monthSummary.records.length
+    ? monthSummary.records
+        .slice(0, 6)
+        .map((record) => {
+          const summary = calculateAttendance(record, employee);
+          return `
+            <article class="employee-record-item">
+              <div>
+                <strong>${formatLongDate(new Date(`${record.workDate}T00:00:00`))}</strong>
+                <p>${record.clockIn} - ${record.clockOut}</p>
+              </div>
+              <div class="employee-record-pills">
+                <span class="attendance-status-pill ${summary.attendanceStatus}">${getAttendanceStatusLabel(summary.attendanceStatus)}</span>
+                <span class="task-date-chip">총 ${summary.totalHours.toFixed(1)}시간</span>
+              </div>
+            </article>
+          `;
+        })
+        .join("")
+    : `<div class="empty-state">이번 달 근태 기록이 아직 없습니다.</div>`;
+
+  const sectionsMarkup = `
+    <div class="employee-info-section-grid">
+      <section class="employee-info-section-card">
+        <div class="employee-info-section-head">
+          <div>
+            <p class="section-label">기본정보</p>
+            <h3>인사 정보 요약</h3>
+          </div>
+        </div>
+        <div class="employee-info-facts">
+          <div><span>구분</span><strong>${insuredLabel}</strong></div>
+          <div><span>기본급</span><strong>${formatCurrency(employee.baseSalary)}</strong></div>
+          <div><span>야근 수당</span><strong>${formatCurrency(employee.overtimeRate)}/h</strong></div>
+          <div><span>주말 수당</span><strong>${formatCurrency(employee.weekendRate)}/h</strong></div>
+          <div><span>이번 달 기록</span><strong>${monthSummary.records.length}건</strong></div>
+          <div><span>총 근무</span><strong>${monthSummary.statusCounts.totalHours.toFixed(1)}시간</strong></div>
+        </div>
+      </section>
+      <section class="employee-info-section-card">
+        <div class="employee-info-section-head">
+          <div>
+            <p class="section-label">근태 흐름</p>
+            <h3>${state.payrollMonth} 월간 달력</h3>
+          </div>
+        </div>
+        <div class="employee-status-overview">
+          <span class="attendance-status-pill normal">정상 ${monthSummary.statusCounts.normal}</span>
+          <span class="attendance-status-pill late">지각 ${monthSummary.statusCounts.late}</span>
+          <span class="attendance-status-pill early">조퇴 ${monthSummary.statusCounts.early}</span>
+          <span class="attendance-status-pill absent">결근 ${monthSummary.statusCounts.absent}</span>
+        </div>
+        ${renderEmployeeStatusCalendar(employee)}
+      </section>
+      <section class="employee-info-section-card">
+        <div class="employee-info-section-head">
+          <div>
+            <p class="section-label">최근 기록</p>
+            <h3>출퇴근 상세</h3>
+          </div>
+        </div>
+        <div class="employee-record-list">${recordsMarkup}</div>
+      </section>
+      <section class="employee-info-section-card">
+        <div class="employee-info-section-head">
+          <div>
+            <p class="section-label">운영 안내</p>
+            <h3>다음 확장 예정</h3>
+          </div>
+        </div>
+        <div class="employee-info-notes">
+          <p>증빙서류 업로드, 급여계좌, 부양가족, 공지 열람 같은 세부 인사정보는 이 페이지를 기준으로 확장할 수 있게 준비해두었습니다.</p>
+          <div class="employee-profile-meta">
+            <span class="task-date-chip">증빙서류</span>
+            <span class="task-date-chip">급여계좌</span>
+            <span class="task-date-chip">부양가족</span>
+            <span class="task-date-chip">공지 확인</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  `;
+
+  employeeInfoDesktopSections.innerHTML = sectionsMarkup;
+
+  employeeInfoMobileHero.innerHTML = `
+    <section class="panel employee-info-mobile-card">
+      <div class="employee-mobile-profile">
+        <div class="employee-mobile-avatar">${firstLetter}</div>
+        <div>
+          <p class="section-label">직원 프로필</p>
+          <h3>${escapeHtml(employee.name)}</h3>
+          <p>${insuredLabel}</p>
+        </div>
+      </div>
+      <div class="employee-profile-meta">
+        <span class="task-date-chip">기본급 ${formatCurrency(employee.baseSalary)}</span>
+        <span class="task-date-chip">실지급 ${formatCurrency(netPay)}</span>
+      </div>
+    </section>
+  `;
+
+  employeeInfoMobileSections.innerHTML = sectionsMarkup;
+
+  document.querySelectorAll("[data-employee-info-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.employeeDetailId = button.dataset.employeeInfoId;
+      renderEmployeeInfoPage();
+    });
+  });
+}
+
 function printPayrollView() {
   document.body.classList.add("print-payroll");
   window.print();
@@ -3082,16 +3372,18 @@ function renderEmployees() {
   employeeList.querySelectorAll("[data-employee-action='detail']").forEach((button) => {
     button.addEventListener("click", () => {
       const employee = state.employees.find((item) => String(item.id) === String(button.dataset.id));
-      if (employee) {
-        if (attendanceCalendarEmployeeSelect) {
-          attendanceCalendarEmployeeSelect.value = String(employee.id);
+        if (employee) {
+          if (attendanceCalendarEmployeeSelect) {
+            attendanceCalendarEmployeeSelect.value = String(employee.id);
+          }
+          renderAttendanceCalendar();
+          state.employeeDetailId = employee.id;
+          renderEmployeeInfoPage();
+          switchView("employeeinfo");
         }
-        renderAttendanceCalendar();
-        openEmployeeDetailModal(employee);
-      }
+      });
     });
-  });
-}
+  }
 
 function renderAttendanceList() {
   if (!state.attendanceRecords.length) {
@@ -3195,6 +3487,7 @@ function renderHrWorkspace() {
   renderEditAttendanceEmployeeSelect();
   renderAttendanceFilterOptions();
   renderEmployees();
+  renderEmployeeInfoPage();
   renderPayrollSummary();
   renderAttendanceList();
   renderAttendanceSummary();
@@ -3262,7 +3555,7 @@ printPayrollBtn.addEventListener("click", () => {
   printPayrollView();
 });
 const initialHashView = window.location.hash.replace("#", "");
-const initialView = ["tasks", "calendar", "todos", "client", "hr", "estimate", "statement", "payroll", "members", "login", "signup"].includes(
+const initialView = ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "estimate", "statement", "payroll", "members", "login", "signup"].includes(
   initialHashView
 )
   ? initialHashView

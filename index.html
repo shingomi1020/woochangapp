@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-  <link rel="stylesheet" href="styles.css?v=20260317-34" />
+  <link rel="stylesheet" href="styles.css?v=20260317-35" />
   </head>
   <body>
     <div class="app-shell">
@@ -34,6 +34,7 @@
             <button class="site-menu-link active" type="button" data-view="calendar" data-role-visible="admin,employee,freelancer">캘린더</button>
             <button class="site-menu-link" type="button" data-view="todos" data-role-visible="admin,employee,freelancer">투두리스트</button>
             <button class="site-menu-link" type="button" data-view="hr" data-role-visible="admin,employee,freelancer">인사 관리</button>
+            <button class="site-menu-link" type="button" data-view="employeeinfo" data-role-visible="admin,employee,freelancer">직원정보</button>
             <button class="site-menu-link" type="button" data-view="estimate" data-role-visible="admin">견적서</button>
             <button class="site-menu-link" type="button" data-view="statement" data-role-visible="admin">거래명세서</button>
             <button class="site-menu-link" type="button" data-view="payroll" data-role-visible="admin,employee,freelancer">급여 관리</button>
@@ -92,7 +93,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 34</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 35</p>
           </div>
         </div>
 
@@ -507,9 +508,63 @@
             </div>
           </section>
         </section>
-      </section>
 
-      <section id="estimateView" class="hr-workspace app-view" hidden>
+        <section id="employeeinfoView" class="hr-workspace app-view employee-info-view" hidden>
+          <section class="panel employee-info-hero reveal">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">직원정보 관리</p>
+                <h2>직원의 인사정보를 한 화면에서 관리</h2>
+                <p class="modal-subtitle">PC에서는 목록과 상세를 함께 보고, 모바일에서는 프로필 카드와 섹션 카드 중심으로 확인할 수 있습니다.</p>
+              </div>
+              <div class="employee-info-actions">
+                <button id="employeeInfoBackBtn" type="button" class="ghost-btn">인사관리로 돌아가기</button>
+                <button id="employeeInfoEditBtn" type="button" class="submit-btn task-submit">직원 정보 수정</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="employeeInfoEmpty" class="panel reveal" hidden>
+            <div class="empty-state">등록된 직원이 아직 없습니다. 인사 관리에서 직원을 먼저 등록해 주세요.</div>
+          </section>
+
+          <section class="employee-info-desktop reveal">
+            <aside class="panel employee-info-sidebar">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">직원 목록</p>
+                  <h3>빠른 전환</h3>
+                </div>
+              </div>
+              <div id="employeeInfoDesktopList" class="employee-info-list"></div>
+            </aside>
+
+            <div class="employee-info-main">
+              <section class="panel employee-info-profile-card">
+                <div id="employeeInfoDesktopSummary"></div>
+              </section>
+              <section class="panel employee-info-sections">
+                <div id="employeeInfoDesktopSections"></div>
+              </section>
+            </div>
+          </section>
+
+          <section class="employee-info-mobile reveal">
+            <div class="panel employee-info-mobile-top">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">직원 선택</p>
+                  <h3>모바일 직원정보</h3>
+                </div>
+              </div>
+              <div id="employeeInfoMobileSelector" class="employee-info-mobile-selector"></div>
+            </div>
+            <div id="employeeInfoMobileHero"></div>
+            <div id="employeeInfoMobileSections" class="employee-info-mobile-sections"></div>
+          </section>
+        </section>
+
+        <section id="estimateView" class="hr-workspace app-view" hidden>
         <section class="panel hr-hero reveal">
           <div class="panel-head">
             <div>
@@ -939,6 +994,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-  <script src="app.js?v=20260317-34"></script>
+    <script src="app.js?v=20260317-35"></script>
   </body>
 </html>
