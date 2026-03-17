@@ -2294,6 +2294,22 @@ function renderEmployeeSelect() {
   ].join("");
 }
 
+function renderEditAttendanceEmployeeSelect() {
+  if (!editAttendanceEmployeeSelect) {
+    return;
+  }
+
+  if (!state.employees.length) {
+    editAttendanceEmployeeSelect.innerHTML = `<option value="">직원을 먼저 등록해 주세요</option>`;
+    return;
+  }
+
+  editAttendanceEmployeeSelect.innerHTML = [
+    `<option value="">직원을 선택해 주세요</option>`,
+    ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
+  ].join("");
+}
+
 
 function openEmployeeModal(employee) {
   state.editingEmployeeId = employee.id;
