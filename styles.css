@@ -4011,8 +4011,8 @@ body[data-device="mobile"] .employee-info-list-item {
   --accent-soft-2: #f6f8fc;
   --danger: #cf6666;
   --danger-soft: #fcf3f3;
-  --shadow: 0 8px 20px rgba(22, 39, 72, 0.05);
-  --shadow-strong: 0 12px 28px rgba(22, 39, 72, 0.08);
+  --shadow: none;
+  --shadow-strong: none;
 }
 
 html,
@@ -4046,7 +4046,7 @@ body {
 .archive-panel,
 .auth-panel {
   background: #ffffff !important;
-  box-shadow: var(--shadow) !important;
+  box-shadow: none !important;
   border: 1px solid var(--line) !important;
 }
 
@@ -4073,7 +4073,7 @@ body {
 .site-menu-link.active {
   background: #eef3ff !important;
   color: var(--accent-strong) !important;
-  box-shadow: inset 0 0 0 1px rgba(47, 99, 233, 0.12) !important;
+  box-shadow: none !important;
 }
 
 .session-badge,
@@ -4100,6 +4100,7 @@ body {
   background: #eef2f8 !important;
   color: var(--accent) !important;
   border: 1px solid rgba(47, 99, 233, 0.08);
+  box-shadow: none !important;
 }
 
 .hero-copy-wrap,
@@ -5411,4 +5412,54 @@ body[data-device="desktop"] #employeeinfoView .employee-info-facts {
 body[data-device="desktop"] #employeeinfoView .employee-record-item {
   padding: 12px 14px;
   border-radius: 12px;
+}
+
+/* Flat UI cleanup */
+:root {
+  --shadow: none;
+  --shadow-strong: none;
+}
+
+.site-nav-inner,
+.site-nav,
+.hero-copy-wrap,
+.hero-copy-wrap::before,
+.hero-copy-wrap::after,
+.metric-card,
+.metric-card::before,
+.panel,
+.schedule-card,
+.archive-panel,
+.auth-panel,
+.employee-info-sidebar,
+.employee-info-mobile-top,
+.employee-info-mobile-card,
+.employee-info-profile-card,
+.employee-info-section-card,
+.attendance-calendar-panel,
+.attendance-table-wrap,
+.day-card,
+.employee-month-cell,
+.employee-doc-item,
+.calendar-nav,
+.calendar-view-switch,
+.ghost-btn,
+.submit-btn,
+.task-status-chip,
+.task-priority-chip,
+.task-date-chip,
+.mini-event,
+.employee-record-item,
+.employee-card,
+.member-card,
+.attendance-summary-card,
+.payroll-summary-card,
+.notice-card {
+  box-shadow: none !important;
+}
+
+.hero-copy-wrap::before,
+.hero-copy-wrap::after,
+.metric-card::before {
+  display: none !important;
 }
