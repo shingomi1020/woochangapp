@@ -64,10 +64,13 @@ const attendanceDateInput = document.getElementById("attendanceDateInput");
 const attendanceClockInInput = document.getElementById("attendanceClockInInput");
 const attendanceClockOutInput = document.getElementById("attendanceClockOutInput");
 const attendanceList = document.getElementById("attendanceList");
+const attendanceSummaryCards = document.getElementById("attendanceSummaryCards");
 const attendanceMonthFilterInput = document.getElementById("attendanceMonthFilterInput");
 const attendanceEmployeeFilterSelect = document.getElementById("attendanceEmployeeFilterSelect");
 const attendanceStatusFilterSelect = document.getElementById("attendanceStatusFilterSelect");
 const monthlyPayrollTotal = document.getElementById("monthlyPayrollTotal");
+const payrollEmployeeCount = document.getElementById("payrollEmployeeCount");
+const monthlyWeekendHours = document.getElementById("monthlyWeekendHours");
 const employeeModal = document.getElementById("employeeModal");
 const employeeModalBackdrop = document.getElementById("employeeModalBackdrop");
 const employeeModalCloseBtn = document.getElementById("employeeModalCloseBtn");
@@ -1120,6 +1123,7 @@ function renderHrWorkspace() {
   renderEmployees();
   renderPayrollSummary();
   renderAttendanceList();
+  renderAttendanceSummary();
   updateHrMetrics();
 }
 
@@ -1224,19 +1228,11 @@ function updateHrMetrics() {
   employeeCount.textContent = `${state.employees.length}`;
   attendanceTodayCount.textContent = `${state.attendanceRecords.filter((item) => item.workDate === formatDateKey(today)).length}`;
 
-  const currentMonthKey = state.payrollMonth;
-  const overtimeHours = state.attendanceRecords.reduce((total, record) => {
-    if (!record.workDate.startsWith(currentMonthKey)) {
-      return total;
-    }
-    const employee = state.employees.find((item) => String(item.id) === String(record.employeeId));
-    return total + calculateAttendance(record, employee).overtimeHours;
-  }, 0);
-
-  monthlyOvertimeHours.textContent = `${overtimeHours.toFixed(1)}h`;
-  monthlyPayrollTotal.textContent = formatCurrency(
-    buildPayrollSummary().reduce((sum, item) => sum + item.totalPay, 0)
-  );
+  const payrollSummary = buildPayrollSummary();
+  monthlyOvertimeHours.textContent = `${payrollSummary.reduce((sum, item) => sum + item.overtimeHours, 0).toFixed(1)}h`;
+  monthlyWeekendHours.textContent = `${payrollSummary.reduce((sum, item) => sum + item.weekendHours, 0).toFixed(1)}h`;
+  monthlyPayrollTotal.textContent = formatCurrency(payrollSummary.reduce((sum, item) => sum + item.totalPay, 0));
+  payrollEmployeeCount.textContent = `${payrollSummary.length}`;
 }
 
 function calculateAttendance(record, employee) {
@@ -1330,6 +1326,10 @@ function renderPayrollSummary() {
             </div>
             <span class="task-date-chip">${item.employee.employmentType === "freelancer" ? "프리랜서" : "4대보험 적용 직원"}</span>
           </div>
+          <div class="payroll-total-row">
+            <strong>${formatCurrency(item.totalPay)}</strong>
+            <span>${item.overtimeHours.toFixed(1)}h 야근 · ${item.weekendHours.toFixed(1)}h 주말</span>
+          </div>
           <div class="employee-pay-grid">
             <span>기본급 ${formatCurrency(item.employee.baseSalary)}</span>
             <span>야근 수당 ${formatCurrency(item.overtimePay)}</span>
@@ -1340,6 +1340,79 @@ function renderPayrollSummary() {
       `
     )
     .join("");
+}
+
+function renderAttendanceSummary() {
+  if (!attendanceSummaryCards) {
+    return;
+  }
+
+  const filteredRecords = getFilteredAttendanceRecords();
+  if (!filteredRecords.length) {
+    attendanceSummaryCards.innerHTML = `
+      <article class="attendance-summary-card">
+        <span class="metric-label">현재 조회 결과</span>
+        <strong>0건</strong>
+        <small>필터에 맞는 출퇴근 기록이 없습니다.</small>
+      </article>
+    `;
+    return;
+  }
+
+  const totals = filteredRecords.reduce(
+    (acc, record) => {
+      const employee = state.employees.find((item) => String(item.id) === String(record.employeeId));
+      const summary = calculateAttendance(record, employee);
+      acc.records += 1;
+      acc.totalHours += summary.totalHours;
+      acc.overtimeHours += summary.overtimeHours;
+      if (summary.attendanceStatus === "late") acc.late += 1;
+      if (summary.attendanceStatus === "early") acc.early += 1;
+      if (summary.attendanceStatus === "absent") acc.absent += 1;
+      return acc;
+    },
+    { records: 0, totalHours: 0, overtimeHours: 0, late: 0, early: 0, absent: 0 }
+  );
+
+  attendanceSummaryCards.innerHTML = `
+    <article class="attendance-summary-card">
+      <span class="metric-label">조회 기록</span>
+      <strong>${totals.records}건</strong>
+      <small>현재 필터 기준 출퇴근 기록 수</small>
+    </article>
+    <article class="attendance-summary-card">
+      <span class="metric-label">총 근무 시간</span>
+      <strong>${totals.totalHours.toFixed(1)}h</strong>
+      <small>필터에 포함된 전체 근무 시간</small>
+    </article>
+    <article class="attendance-summary-card">
+      <span class="metric-label">야근 누적</span>
+      <strong>${totals.overtimeHours.toFixed(1)}h</strong>
+      <small>18시 이후 누적 시간</small>
+    </article>
+    <article class="attendance-summary-card">
+      <span class="metric-label">근태 이슈</span>
+      <strong>${totals.late + totals.early + totals.absent}건</strong>
+      <small>지각 ${totals.late} · 조퇴 ${totals.early} · 결근 ${totals.absent}</small>
+    </article>
+  `;
+}
+
+function getFilteredAttendanceRecords() {
+  return state.attendanceRecords
+    .slice()
+    .sort((a, b) => `${b.workDate}${b.clockIn}`.localeCompare(`${a.workDate}${a.clockIn}`))
+    .filter((record) => {
+      if (state.attendanceMonthFilter && !record.workDate.startsWith(state.attendanceMonthFilter)) {
+        return false;
+      }
+      if (state.attendanceEmployeeFilter !== "all" && String(record.employeeId) !== String(state.attendanceEmployeeFilter)) {
+        return false;
+      }
+      const employee = state.employees.find((item) => String(item.id) === String(record.employeeId));
+      const summary = calculateAttendance(record, employee);
+      return state.attendanceStatusFilter === "all" || summary.attendanceStatus === state.attendanceStatusFilter;
+    });
 }
 
 function timeToMinutes(value) {
@@ -1815,26 +1888,15 @@ function renderEmployees() {
 function renderAttendanceList() {
   if (!state.attendanceRecords.length) {
     attendanceList.innerHTML = `<div class="empty-state">출근기록부가 비어 있습니다. 직원과 출퇴근 시간을 입력해 주세요.</div>`;
+    renderAttendanceSummary();
     return;
   }
 
-  const filteredRecords = state.attendanceRecords
-    .slice()
-    .sort((a, b) => `${b.workDate}${b.clockIn}`.localeCompare(`${a.workDate}${a.clockIn}`))
-    .filter((record) => {
-      if (state.attendanceMonthFilter && !record.workDate.startsWith(state.attendanceMonthFilter)) {
-        return false;
-      }
-      if (state.attendanceEmployeeFilter !== "all" && String(record.employeeId) !== String(state.attendanceEmployeeFilter)) {
-        return false;
-      }
-      const employee = state.employees.find((item) => String(item.id) === String(record.employeeId));
-      const summary = calculateAttendance(record, employee);
-      return state.attendanceStatusFilter === "all" || summary.attendanceStatus === state.attendanceStatusFilter;
-    });
+  const filteredRecords = getFilteredAttendanceRecords();
 
   if (!filteredRecords.length) {
     attendanceList.innerHTML = `<div class="empty-state">현재 필터에 맞는 출근기록이 없습니다. 조회 월이나 상태를 바꿔 보세요.</div>`;
+    renderAttendanceSummary();
     return;
   }
 
@@ -1854,14 +1916,25 @@ function renderAttendanceList() {
               <button class="ghost-btn attendance-edit-btn" type="button" data-attendance-action="edit" data-id="${record.id}">수정</button>
             </div>
           </div>
-          <div class="attendance-times">
-            <span>출근 ${record.clockIn}</span>
-            <span>퇴근 ${record.clockOut}</span>
-            <span>총 ${summary.totalHours.toFixed(1)}시간</span>
+          <div class="attendance-main-grid">
+            <div class="attendance-time-block">
+              <span class="attendance-time-label">출근</span>
+              <strong>${record.clockIn}</strong>
+            </div>
+            <div class="attendance-time-block">
+              <span class="attendance-time-label">퇴근</span>
+              <strong>${record.clockOut}</strong>
+            </div>
+            <div class="attendance-time-block highlight">
+              <span class="attendance-time-label">총 근무</span>
+              <strong>${summary.totalHours.toFixed(1)}시간</strong>
+            </div>
           </div>
           <div class="attendance-pay-grid">
-            <span>야근 ${summary.overtimeHours.toFixed(1)}시간 / ${formatCurrency(summary.overtimePay)}</span>
-            <span>주말 ${summary.weekendHours.toFixed(1)}시간 / ${formatCurrency(summary.weekendPay)}</span>
+            <span>야근 ${summary.overtimeHours.toFixed(1)}시간</span>
+            <span>야근 수당 ${formatCurrency(summary.overtimePay)}</span>
+            <span>주말 ${summary.weekendHours.toFixed(1)}시간</span>
+            <span>주말 수당 ${formatCurrency(summary.weekendPay)}</span>
           </div>
           <div class="attendance-insight">
             <span class="task-date-chip">${getAttendanceStatusLabel(summary.attendanceStatus)}</span>
@@ -1872,6 +1945,8 @@ function renderAttendanceList() {
       `;
     })
     .join("");
+
+  renderAttendanceSummary();
 
   attendanceList.querySelectorAll("[data-attendance-action='edit']").forEach((button) => {
     button.addEventListener("click", () => {

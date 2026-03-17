@@ -547,6 +547,40 @@ h2 {
   gap: 12px;
 }
 
+.payroll-summary-list {
+  gap: 16px;
+}
+
+.attendance-summary-grid,
+.payroll-hero-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.attendance-summary-card {
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #f9fbff, #f2f7ff);
+  border: 1px solid rgba(47, 99, 233, 0.08);
+  display: grid;
+  gap: 8px;
+}
+
+.attendance-summary-card strong,
+.payroll-total-row strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: -0.04em;
+  color: var(--accent-deep);
+}
+
+.attendance-summary-card small,
+.payroll-total-row span {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .attendance-ledger-hint {
   margin: 0;
   color: var(--muted);
@@ -569,6 +603,38 @@ h2 {
 .attendance-card {
   display: grid;
   gap: 14px;
+}
+
+.attendance-main-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.attendance-time-block {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(244, 248, 255, 0.9);
+  border: 1px solid rgba(47, 99, 233, 0.08);
+}
+
+.attendance-time-block.highlight {
+  background: linear-gradient(180deg, rgba(228, 238, 255, 0.96), rgba(242, 247, 255, 0.96));
+  border-color: rgba(47, 99, 233, 0.16);
+}
+
+.attendance-time-block strong {
+  font-size: 1.28rem;
+  color: var(--accent-deep);
+}
+
+.attendance-time-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .employee-card-head,
@@ -638,7 +704,6 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 12px;
   color: var(--muted);
 }
 
@@ -666,6 +731,14 @@ h2 {
 
 .payroll-card {
   background: linear-gradient(180deg, #ffffff, #f4f8ff);
+}
+
+.payroll-total-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0 4px;
 }
 
 .attendance-late {
@@ -1504,6 +1577,12 @@ h2 {
     align-items: flex-start;
   }
 
+  .attendance-main-grid,
+  .attendance-summary-grid,
+  .payroll-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
   .attendance-card-tools {
     width: 100%;
     justify-items: stretch;
@@ -1530,6 +1609,11 @@ h2 {
 
   .workspace-nav {
     flex-wrap: wrap;
+  }
+
+  .payroll-total-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

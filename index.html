@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260317-19" />
+    <link rel="stylesheet" href="styles.css?v=20260317-24" />
   </head>
   <body>
     <div class="app-shell">
@@ -73,7 +73,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-17 23</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-17 24</p>
           </div>
         </div>
 
@@ -315,19 +315,6 @@
               </div>
             </form>
             <div id="employeeList" class="employee-list"></div>
-            <div class="attendance-ledger">
-              <div class="schedule-head">
-                <div>
-                  <p class="section-label">월별 급여 요약</p>
-                  <h3>직원별 예상 지급액</h3>
-                </div>
-                <label class="field hr-filter-field">
-                  <span>급여 기준 월</span>
-                  <input id="payrollMonthInput" type="month" />
-                </label>
-              </div>
-              <div id="payrollSummaryList" class="employee-list"></div>
-            </div>
           </section>
 
           <section class="panel reveal delay-2">
@@ -371,6 +358,7 @@
                 </div>
                 <p class="attendance-ledger-hint">기록 카드에서 바로 수정 버튼을 눌러 시간을 고칠 수 있습니다.</p>
               </div>
+              <div id="attendanceSummaryCards" class="attendance-summary-grid"></div>
               <div class="attendance-filters">
                 <label class="field hr-filter-field">
                   <span>조회 월</span>
@@ -428,10 +416,46 @@
           <div class="panel-head">
             <div>
               <p class="section-label">급여 관리</p>
-              <h2>급여 페이지 준비 중</h2>
+              <h2>월별 급여 정산 보드</h2>
             </div>
+            <label class="field hr-filter-field">
+              <span>급여 기준 월</span>
+              <input id="payrollMonthInput" type="month" />
+            </label>
           </div>
-          <div class="empty-state">직원별 급여 계산과 월별 정산 화면은 이 메뉴에서 이어서 확장할 수 있습니다.</div>
+          <div class="payroll-hero-grid">
+            <article class="metric-card">
+              <span class="metric-label">이번 달 예상 총급여</span>
+              <strong id="monthlyPayrollTotal">₩0</strong>
+              <small>기본급 + 야근 + 주말 수당 합산</small>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">급여 대상 직원</span>
+              <strong id="payrollEmployeeCount">0</strong>
+              <small>현재 기준 월에 집계되는 직원 수</small>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">이번 달 야근 시간</span>
+              <strong id="monthlyOvertimeHours">0h</strong>
+              <small>18시 이후 누적 시간</small>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">이번 달 주말 근무</span>
+              <strong id="monthlyWeekendHours">0h</strong>
+              <small>주말 근무 누적 시간</small>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel reveal delay-1">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">월별 급여 요약</p>
+              <h3>직원별 예상 지급액</h3>
+            </div>
+            <p class="attendance-ledger-hint">직원별 기본급, 야근, 주말 수당 합계를 한 번에 확인할 수 있습니다.</p>
+          </div>
+          <div id="payrollSummaryList" class="employee-list payroll-summary-list"></div>
         </section>
       </section>
     </div>
@@ -594,6 +618,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260317-23"></script>
+    <script src="app.js?v=20260317-24"></script>
   </body>
 </html>
