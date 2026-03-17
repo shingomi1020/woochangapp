@@ -1333,8 +1333,9 @@ async function saveAttendance() {
   const workDate = attendanceDateInput.value;
   const clockIn = attendanceClockInInput.value;
   const clockOut = attendanceClockOutInput.value;
+  const normalizedEmployeeId = Number(employeeId);
 
-  if (!employeeId || !workDate || !clockIn || !clockOut || clockOut <= clockIn) {
+  if (!employeeId || !workDate || !clockIn || !clockOut || clockOut <= clockIn || !Number.isFinite(normalizedEmployeeId)) {
     return;
   }
 
@@ -1344,7 +1345,7 @@ async function saveAttendance() {
       Prefer: "return=representation",
     },
     body: JSON.stringify({
-      employee_id: employeeId,
+      employee_id: normalizedEmployeeId,
       work_date: workDate,
       clock_in: clockIn,
       clock_out: clockOut,
@@ -1375,30 +1376,42 @@ async function updateAttendance() {
   const workDate = editAttendanceDateInput.value;
   const clockIn = editAttendanceClockInInput.value;
   const clockOut = editAttendanceClockOutInput.value;
+  const normalizedEmployeeId = Number(employeeId);
 
-  if (!employeeId || !workDate || !clockIn || !clockOut || clockOut <= clockIn) {
+  if (!employeeId || !workDate || !clockIn || !clockOut || clockOut <= clockIn || !Number.isFinite(normalizedEmployeeId)) {
     return;
   }
 
-  const { data, error } = await requestTasks(`/rest/v1/attendance_records?id=eq.${state.editingAttendanceId}`, {
-    method: "PATCH",
-    headers: {
-      Prefer: "return=representation",
-    },
-    body: JSON.stringify({
-      employee_id: employeeId,
-      work_date: workDate,
-      clock_in: clockIn,
-      clock_out: clockOut,
-    }),
-  });
+  const { data, error } = await requestTasks(
+    `/rest/v1/attendance_records?id=eq.${state.editingAttendanceId}&select=*`,
+    {
+      method: "PATCH",
+      headers: {
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify({
+        employee_id: normalizedEmployeeId,
+        work_date: workDate,
+        clock_in: clockIn,
+        clock_out: clockOut,
+      }),
+    }
+  );
 
   if (error) {
     handleSupabaseError("Failed to update attendance:", error);
     return;
   }
 
-  const savedRecord = mapAttendanceRecord(Array.isArray(data) ? data[0] : data);
+  const rawRecord = Array.isArray(data) ? data[0] : data;
+  if (!rawRecord) {
+    await loadHrData();
+    closeAttendanceModal();
+    showToast("출퇴근 기록을 다시 불러왔습니다.");
+    return;
+  }
+
+  const savedRecord = mapAttendanceRecord(rawRecord);
   state.attendanceRecords = state.attendanceRecords.map((record) =>
     String(record.id) === String(savedRecord.id) ? savedRecord : record
   );
