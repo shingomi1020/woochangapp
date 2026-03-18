@@ -4296,13 +4296,6 @@ printPayrollBtn.addEventListener("click", () => {
   printPayrollView();
 });
 const initialHashView = window.location.hash.replace("#", "");
-const initialView = ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "estimate", "statement", "payroll", "members", "login", "signup"].includes(
-  initialHashView
-)
-  ? initialHashView
-  : isAuthenticated()
-    ? "calendar"
-    : getGuestLandingView();
 
 async function initApp() {
   syncDeviceMode();
@@ -4314,7 +4307,16 @@ async function initApp() {
   applyRoleAccess();
   renderMembers();
   renderHrWorkspace();
-  const resolvedInitialView = isAuthenticated() ? initialView : getViewForUnauthenticated(initialView);
+  const preferredInitialView = ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "estimate", "statement", "payroll", "members", "login", "signup"].includes(
+    initialHashView
+  )
+    ? initialHashView
+    : isAuthenticated()
+      ? "calendar"
+      : getGuestLandingView();
+  const resolvedInitialView = isAuthenticated()
+    ? preferredInitialView
+    : getViewForUnauthenticated(preferredInitialView);
   switchView(resolvedInitialView, false);
   await loadHrData();
   await loadTasks();
