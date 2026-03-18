@@ -1,3 +1,19 @@
+create table if not exists public.member_accounts (
+  id text primary key,
+  name text not null default '',
+  login_id text not null unique,
+  password text not null default '',
+  role text not null default 'employee' check (role in ('admin', 'employee', 'freelancer')),
+  department text not null default '',
+  title text not null default '',
+  phone text not null default '',
+  note text not null default '',
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists member_accounts_login_id_idx on public.member_accounts(login_id);
+
 create table if not exists public.employees (
   id bigint generated always as identity primary key,
   name text not null,

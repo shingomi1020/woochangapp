@@ -384,6 +384,25 @@ function loadCurrentUser() {
   }
 }
 
+function mapMemberRecord(record) {
+  if (!record) {
+    return null;
+  }
+
+  return {
+    id: String(record.id),
+    name: record.name || "",
+    loginId: record.login_id || "",
+    password: record.password || "",
+    role: record.role || "employee",
+    department: record.department || "",
+    title: record.title || "",
+    phone: record.phone || "",
+    note: record.note || "",
+    isActive: record.is_active !== false,
+  };
+}
+
 const state = {
   viewDate: new Date(currentMonth),
   selectedDateKey: formatDateKey(today),
@@ -544,7 +563,7 @@ signupForm?.addEventListener("submit", async (event) => {
     return;
   }
 
-  state.members.unshift({
+  const savedMember = await createMemberRecord({
     id: `member-${Date.now()}`,
     name,
     loginId,
@@ -553,9 +572,13 @@ signupForm?.addEventListener("submit", async (event) => {
     isActive: true,
     createdAt: new Date().toISOString(),
   });
+  if (!savedMember) {
+    return;
+  }
+  state.members.unshift(savedMember);
   saveMembers();
-  if (role === "employee" || role === "freelancer") {
-    await upsertLinkedEmployeeForMember(state.members[0]);
+  if (savedMember.role === "employee" || savedMember.role === "freelancer") {
+    await upsertLinkedEmployeeForMember(savedMember);
   }
   renderMembers();
   renderHrWorkspace();
@@ -606,6 +629,12 @@ editMemberForm?.addEventListener("submit", async (event) => {
     member.password = nextPassword;
   }
 
+  const savedMember = await updateMemberRecord(member);
+  if (!savedMember) {
+    return;
+  }
+  Object.assign(member, savedMember);
+
   if (state.currentUser?.id === member.id) {
     state.currentUser = {
       ...state.currentUser,
@@ -632,12 +661,16 @@ editMemberForm?.addEventListener("submit", async (event) => {
   showToast("회원 정보를 수정했습니다.");
 });
 
-editMemberDeleteBtn?.addEventListener("click", () => {
+editMemberDeleteBtn?.addEventListener("click", async () => {
   if (!state.editingMemberId) {
     return;
   }
   const member = state.members.find((item) => item.id === state.editingMemberId);
   if (!member || member.loginId === "admin") {
+    return;
+  }
+  const deleted = await deleteMemberRecord(member.id);
+  if (!deleted) {
     return;
   }
 
@@ -1714,6 +1747,127 @@ function saveSessionUser() {
   window.localStorage.setItem("flowboard-session-user", JSON.stringify(state.currentUser));
 }
 
+async function loadMembersData() {
+  const localMembers = loadMembers();
+  const { data, error } = await requestTasks("/rest/v1/member_accounts?select=*&order=created_at.asc");
+
+  if (error) {
+    state.members = localMembers;
+    saveMembers();
+    handleSupabaseError("Failed to load members:", error);
+    return;
+  }
+
+  const remoteMembers = (data ?? []).map(mapMemberRecord).filter(Boolean);
+
+  if (!remoteMembers.length && localMembers.length) {
+    const migrationResult = await migrateLocalMembersToSupabase(localMembers);
+    state.members = migrationResult.length ? migrationResult : localMembers;
+  } else {
+    state.members = remoteMembers;
+  }
+
+  saveMembers();
+}
+
+async function migrateLocalMembersToSupabase(localMembers) {
+  const payload = localMembers.map((member) => ({
+    id: String(member.id),
+    name: member.name || "",
+    login_id: member.loginId || "",
+    password: member.password || "",
+    role: member.role || "employee",
+    department: member.department || "",
+    title: member.title || "",
+    phone: member.phone || "",
+    note: member.note || "",
+    is_active: member.isActive !== false,
+  }));
+
+  const { data, error } = await requestTasks("/rest/v1/member_accounts", {
+    method: "POST",
+    headers: {
+      Prefer: "resolution=merge-duplicates,return=representation",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to migrate local members:", error);
+    return [];
+  }
+
+  return (data ?? []).map(mapMemberRecord).filter(Boolean);
+}
+
+async function createMemberRecord(member) {
+  const { data, error } = await requestTasks("/rest/v1/member_accounts", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
+      id: String(member.id),
+      name: member.name || "",
+      login_id: member.loginId || "",
+      password: member.password || "",
+      role: member.role || "employee",
+      department: member.department || "",
+      title: member.title || "",
+      phone: member.phone || "",
+      note: member.note || "",
+      is_active: member.isActive !== false,
+    }),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to create member:", error);
+    return null;
+  }
+
+  return mapMemberRecord(Array.isArray(data) ? data[0] : data);
+}
+
+async function updateMemberRecord(member) {
+  const { data, error } = await requestTasks(`/rest/v1/member_accounts?id=eq.${encodeURIComponent(String(member.id))}&select=*`, {
+    method: "PATCH",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
+      name: member.name || "",
+      login_id: member.loginId || "",
+      password: member.password || "",
+      role: member.role || "employee",
+      department: member.department || "",
+      title: member.title || "",
+      phone: member.phone || "",
+      note: member.note || "",
+      is_active: member.isActive !== false,
+    }),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to update member:", error);
+    return null;
+  }
+
+  return mapMemberRecord(Array.isArray(data) ? data[0] : data);
+}
+
+async function deleteMemberRecord(memberId) {
+  const { error } = await requestTasks(`/rest/v1/member_accounts?id=eq.${encodeURIComponent(String(memberId))}`, {
+    method: "DELETE",
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to delete member:", error);
+    return false;
+  }
+
+  return true;
+}
+
 function ensureDefaultAdmin() {
   const sessionExists = state.currentUser && state.members.some(
     (member) => member.id === state.currentUser.id && member.isActive !== false
@@ -1858,12 +2012,19 @@ function renderMembers() {
   });
 
   memberList.querySelectorAll("[data-member-role]").forEach((select) => {
-    select.addEventListener("change", () => {
+    select.addEventListener("change", async () => {
       const member = state.members.find((item) => item.id === select.dataset.memberRole);
       if (!member) {
         return;
       }
       member.role = select.value;
+      const savedMember = await updateMemberRecord(member);
+      if (!savedMember) {
+        await loadMembersData();
+        renderMembers();
+        return;
+      }
+      Object.assign(member, savedMember);
       if (state.currentUser?.id === member.id) {
         state.currentUser.role = member.role;
         saveSessionUser();
@@ -1877,7 +2038,7 @@ function renderMembers() {
   });
 
   memberList.querySelectorAll("[data-member-toggle]").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const member = state.members.find((item) => item.id === button.dataset.memberToggle);
       if (!member) {
         return;
@@ -1887,6 +2048,14 @@ function renderMembers() {
         return;
       }
       member.isActive = member.isActive === false;
+      const savedMember = await updateMemberRecord(member);
+      if (!savedMember) {
+        member.isActive = member.isActive === false;
+        await loadMembersData();
+        renderMembers();
+        return;
+      }
+      Object.assign(member, savedMember);
       if (state.currentUser?.id === member.id && member.isActive === false) {
         logoutCurrentUser(true);
         return;
@@ -1898,7 +2067,11 @@ function renderMembers() {
   });
 
   memberList.querySelectorAll("[data-member-delete]").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
+      const deleted = await deleteMemberRecord(button.dataset.memberDelete);
+      if (!deleted) {
+        return;
+      }
       state.members = state.members.filter((member) => member.id !== button.dataset.memberDelete);
       saveMembers();
       renderMembers();
@@ -4084,12 +4257,6 @@ if (attendanceCalendarMonthInput) {
   attendanceCalendarMonthInput.value = state.attendanceMonthFilter;
 }
 payrollMonthInput.value = state.payrollMonth;
-syncDeviceMode();
-syncSignupRoleUi();
-syncFormMode();
-loadHrState();
-applyRoleAccess();
-renderHrWorkspace();
 employeeForm.addEventListener(
   "submit",
   (event) => {
@@ -4136,6 +4303,21 @@ const initialView = ["tasks", "calendar", "todos", "client", "hr", "employeeinfo
   : isAuthenticated()
     ? "calendar"
     : getGuestLandingView();
-switchView(isAuthenticated() ? initialView : getViewForUnauthenticated(initialView), false);
-loadHrData();
-loadTasks();
+
+async function initApp() {
+  syncDeviceMode();
+  syncFormMode();
+  await loadMembersData();
+  ensureDefaultAdmin();
+  syncSignupRoleUi();
+  loadHrState();
+  applyRoleAccess();
+  renderMembers();
+  renderHrWorkspace();
+  const resolvedInitialView = isAuthenticated() ? initialView : getViewForUnauthenticated(initialView);
+  switchView(resolvedInitialView, false);
+  await loadHrData();
+  await loadTasks();
+}
+
+void initApp();
