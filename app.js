@@ -2958,7 +2958,7 @@ function switchView(view, shouldSyncHash = true) {
   const isBoardView = boardViews.includes(view);
   pageHero.hidden = !isBoardView;
   if (workspaceHub) {
-    workspaceHub.hidden = !isAuthenticated() || ["login", "signup"].includes(view);
+    workspaceHub.hidden = !isAuthenticated() || ["login", "signup", "calendar", "todos"].includes(view);
   }
   renderStandaloneViews(view);
   if (["login", "signup"].includes(view)) {
