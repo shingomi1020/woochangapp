@@ -198,7 +198,6 @@ const authSensitiveTabs = document.querySelectorAll("[data-auth-visible]");
 const pageViews = document.querySelectorAll(".app-view");
 const roleSections = document.querySelectorAll("[data-role-section]");
 const roleSwitcher = document.querySelector(".role-switcher");
-const roleValue = document.getElementById("roleValue");
 const sessionBadge = document.getElementById("sessionBadge");
 const sessionUserName = document.getElementById("sessionUserName");
 const sessionUserMeta = document.getElementById("sessionUserMeta");
@@ -206,12 +205,8 @@ const logoutBtn = document.getElementById("logoutBtn");
 const tasksView = document.getElementById("tasksView");
 const boardViews = ["calendar", "todos"];
 const clientView = document.getElementById("clientView");
-const hrView = document.getElementById("hrView");
-const employeeinfoView = document.getElementById("employeeinfoView");
-const portfolioView = document.getElementById("portfolioView");
 const loginView = document.getElementById("loginView");
 const signupView = document.getElementById("signupView");
-const membersView = document.getElementById("membersView");
 const loginForm = document.getElementById("loginForm");
 const loginIdInput = document.getElementById("loginIdInput");
 const loginPasswordInput = document.getElementById("loginPasswordInput");
@@ -371,9 +366,7 @@ const editAttendanceDeleteBtn = document.getElementById("editAttendanceDeleteBtn
 const employeeDetailModal = document.getElementById("employeeDetailModal");
 const employeeDetailModalBackdrop = document.getElementById("employeeDetailModalBackdrop");
 const employeeDetailCloseBtn = document.getElementById("employeeDetailCloseBtn");
-const employeeDetailTitle = document.getElementById("employeeDetailTitle");
-  const employeeDetailSubtitle = document.getElementById("employeeDetailSubtitle");
-  const employeeDetailBody = document.getElementById("employeeDetailBody");
+const employeeDetailBody = document.getElementById("employeeDetailBody");
 const attachmentPreviewModal = document.getElementById("attachmentPreviewModal");
 const attachmentPreviewBackdrop = document.getElementById("attachmentPreviewBackdrop");
 const attachmentPreviewCloseBtn = document.getElementById("attachmentPreviewCloseBtn");
@@ -443,7 +436,7 @@ function loadArchivedTaskIds() {
   try {
     const raw = JSON.parse(window.localStorage.getItem("flowboard-archived-task-ids") || "[]");
     return Array.isArray(raw) ? raw.map(String) : [];
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -451,7 +444,7 @@ function loadArchivedTaskIds() {
 function loadPayrollStatusMap() {
   try {
     return JSON.parse(window.localStorage.getItem("flowboard-payroll-status-map") || "{}");
-  } catch (error) {
+  } catch {
     return {};
   }
 }
@@ -460,7 +453,7 @@ function loadTaskOrderMap() {
   try {
     const raw = JSON.parse(window.localStorage.getItem("flowboard-task-order-map") || "{}");
     return raw && typeof raw === "object" ? raw : {};
-  } catch (error) {
+  } catch {
     return {};
   }
 }
@@ -567,7 +560,7 @@ function loadMembers() {
   try {
     const raw = JSON.parse(window.localStorage.getItem("flowboard-members") || "[]");
     return Array.isArray(raw) ? raw : [];
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -575,7 +568,7 @@ function loadMembers() {
 function loadCurrentUser() {
   try {
     return JSON.parse(window.localStorage.getItem("flowboard-session-user") || "null");
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -2269,12 +2262,6 @@ function formatDateKey(date) {
   return `${year}-${month}-${day}`;
 }
 
-function addDaysToDateKey(date, days) {
-  const value = new Date(date);
-  value.setDate(value.getDate() + days);
-  return formatDateKey(value);
-}
-
 function daysBetween(startDate, endDate) {
   const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
   const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
@@ -2470,12 +2457,14 @@ function closeAttachmentPreviewModal() {
   document.body.classList.toggle("modal-open", hasOpenModal);
 }
 
+/* Legacy preview implementation kept disabled after attachment preview refactor.
 function openAttachmentPreviewModal(attachment) {
   if (!attachmentPreviewModal || !attachment?.fileData) {
     return;
   }
 
   state.previewAttachmentId = attachment.id;
+  state.previewAttachmentRecord = attachment;
   state.previewAttachmentRecord = attachment;
   state.previewAttachmentRecord = attachment;
   attachmentPreviewTitle.textContent = attachment.fileName || "첨부파일 보기";
@@ -2502,6 +2491,7 @@ function openAttachmentPreviewModal(attachment) {
   attachmentPreviewModal.hidden = false;
   document.body.classList.add("modal-open");
 }
+*/
 
 function saveMembers() {
   window.localStorage.setItem("flowboard-members", JSON.stringify(state.members));
@@ -3231,6 +3221,7 @@ function makeLocalAttachmentPreview(file, fileData, overrides = {}) {
   };
 }
 
+/* Legacy attachment rendering retained disabled after panel rewrite.
 function renderPendingAttachmentCollection(target, attachments, options = {}) {
   if (!target) {
     return;
@@ -3262,6 +3253,7 @@ function renderPendingAttachmentCollection(target, attachments, options = {}) {
     })
     .join("");
 }
+*/
 
 function getAttachmentKindLabel(mimeType) {
   if (String(mimeType || "").startsWith("image/")) {
@@ -3282,6 +3274,7 @@ async function readFileAsDataUrl(file) {
   });
 }
 
+/* Legacy attachment preprocessing retained disabled after compression update.
 async function blobToDataUrl(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -3406,6 +3399,7 @@ async function appendPendingAttachments(files, mode = "create") {
 
   renderTaskAttachmentPanels();
 }
+*/
 
 function removePendingAttachment(attachmentId, mode = "create") {
   if (mode === "edit") {
@@ -3418,6 +3412,7 @@ function removePendingAttachment(attachmentId, mode = "create") {
   renderTaskAttachmentPanels();
 }
 
+/* Legacy attachment panel renderer retained disabled after previewable portfolio support.
 function renderTaskAttachmentPanels() {
   renderPendingAttachmentCollection(taskPendingAttachmentList, state.pendingTaskAttachments, { removeAction: "create" });
   if (editTaskExistingAttachmentList && state.editingTaskId !== null) {
@@ -3428,6 +3423,7 @@ function renderTaskAttachmentPanels() {
   renderAttachmentUsage();
   bindAttachmentRemoveButtons();
 }
+*/
 
 function bindAttachmentRemoveButtons() {
   document.querySelectorAll("[data-attachment-remove]").forEach((button) => {
@@ -3931,7 +3927,7 @@ function loadHrState() {
   try {
     state.employees = JSON.parse(window.localStorage.getItem("flowboard-employees") || "[]");
     state.attendanceRecords = JSON.parse(window.localStorage.getItem("flowboard-attendance") || "[]");
-  } catch (error) {
+  } catch {
     state.employees = [];
     state.attendanceRecords = [];
   }
@@ -4303,6 +4299,7 @@ async function saveBatchAttendance() {
   showToast("출퇴근 기록을 일괄 저장했습니다.");
 }
 
+/* Legacy employee detail modal retained disabled after employee info page redesign.
 function openEmployeeDetailModal(employee) {
   state.employeeDetailId = employee.id;
   const records = state.attendanceRecords
@@ -4368,6 +4365,7 @@ function openEmployeeDetailModal(employee) {
   document.body.classList.add("modal-open");
 }
 
+*/
 function closeEmployeeDetailModal() {
   state.employeeDetailId = null;
   employeeDetailModal.hidden = true;
