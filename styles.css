@@ -987,6 +987,9 @@ h2 {
   display: grid;
   gap: 8px;
   min-width: 0;
+  max-width: 100%;
+  align-content: start;
+  overflow: hidden;
 }
 
 .employee-info-facts span {
@@ -999,6 +1002,7 @@ h2 {
   color: var(--accent-deep);
   font-size: 1rem;
   line-height: 1.4;
+  white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
@@ -5497,6 +5501,7 @@ body[data-device="desktop"] #employeeinfoView .employee-record-item {
 ) {
   min-width: 0;
   max-width: 100%;
+  overflow: hidden;
 }
 
 :where(
@@ -5527,6 +5532,29 @@ body[data-device="desktop"] #employeeinfoView .employee-record-item {
 ) :where(strong, span, p, a, button, label, small) {
   max-width: 100%;
   min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+:where(
+  .employee-info-facts strong,
+  .employee-info-list-item strong,
+  .employee-info-list-item span,
+  .member-card strong,
+  .member-card span,
+  .member-profile-line,
+  .member-profile-note,
+  .employee-doc-item strong,
+  .employee-doc-item span,
+  .task-description,
+  .task-description-primary,
+  .schedule-description-strong,
+  .day-card .mini-event-text,
+  .day-card .mini-event-client
+) {
+  max-width: 100%;
+  white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
