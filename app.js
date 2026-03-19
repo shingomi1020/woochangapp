@@ -102,11 +102,14 @@ function ensurePortfolioNavigationAndView() {
                     <small>이미지, PDF, 일반 파일 / 파일당 10MB / 붙여넣기 가능</small>
                   </div>
                 </div>
-                <label id="portfolioAttachmentDropzone" class="attachment-dropzone" tabindex="0">
-                  <input id="portfolioAttachmentInput" type="file" multiple hidden />
+                <input id="portfolioAttachmentInput" type="file" multiple hidden />
+                <label id="portfolioAttachmentDropzone" class="attachment-dropzone" tabindex="0" role="button" aria-label="포트폴리오 첨부 업로드" for="portfolioAttachmentInput">
                   <strong>파일을 끌어놓거나 클릭해 추가</strong>
                   <small>스크린샷은 Ctrl+V로 바로 넣을 수 있습니다.</small>
                 </label>
+                <div class="attachment-actions">
+                  <label for="portfolioAttachmentInput" class="attachment-browse-btn">파일 선택</label>
+                </div>
                 <div class="storage-summary">
                   <div class="storage-summary-head">
                     <strong id="portfolioStorageSummary">0 MB / 1 GB</strong>
@@ -315,6 +318,7 @@ const portfolioNoteInput = document.getElementById("portfolioNoteInput");
 const portfolioAttachmentDropzone = document.getElementById("portfolioAttachmentDropzone");
 const portfolioAttachmentInput = document.getElementById("portfolioAttachmentInput");
 const portfolioPendingAttachmentList = document.getElementById("portfolioPendingAttachmentList");
+let portfolioAttachmentBrowseButton = document.getElementById("portfolioAttachmentBrowseButton");
 const portfolioList = document.getElementById("portfolioList");
 const portfolioCount = document.getElementById("portfolioCount");
 const portfolioImageCount = document.getElementById("portfolioImageCount");
@@ -322,6 +326,25 @@ const portfolioStorageUsage = document.getElementById("portfolioStorageUsage");
 const portfolioStorageRemaining = document.getElementById("portfolioStorageRemaining");
 const portfolioStorageSummary = document.getElementById("portfolioStorageSummary");
 const portfolioStorageBar = document.getElementById("portfolioStorageBar");
+
+if (portfolioAttachmentDropzone) {
+  portfolioAttachmentDropzone.removeAttribute("for");
+  portfolioAttachmentDropzone.setAttribute("aria-label", "포트폴리오 첨부 업로드");
+  portfolioAttachmentDropzone.innerHTML = `
+    <strong>파일을 끌어놓거나 클릭해 추가</strong>
+    <span>스크린샷은 Ctrl+V로 바로 넣을 수 있습니다.</span>
+  `;
+}
+
+const portfolioAttachmentActions = portfolioPendingAttachmentList?.previousElementSibling;
+if (portfolioAttachmentActions && !portfolioAttachmentBrowseButton) {
+  portfolioAttachmentBrowseButton = document.createElement("button");
+  portfolioAttachmentBrowseButton.id = "portfolioAttachmentBrowseButton";
+  portfolioAttachmentBrowseButton.type = "button";
+  portfolioAttachmentBrowseButton.className = "attachment-browse-btn";
+  portfolioAttachmentBrowseButton.textContent = "파일 선택";
+  portfolioAttachmentActions.replaceChildren(portfolioAttachmentBrowseButton);
+}
 const employeeModal = document.getElementById("employeeModal");
 const employeeModalBackdrop = document.getElementById("employeeModalBackdrop");
 const employeeModalCloseBtn = document.getElementById("employeeModalCloseBtn");
@@ -1140,6 +1163,10 @@ editTaskAttachmentInput?.addEventListener("change", (event) => {
 portfolioAttachmentInput?.addEventListener("change", (event) => {
   appendPendingAttachments(event.target.files || [], "portfolio");
   portfolioAttachmentInput.value = "";
+});
+
+portfolioAttachmentBrowseButton?.addEventListener("click", () => {
+  portfolioAttachmentInput?.click();
 });
 
 bindAttachmentDropzone(taskAttachmentDropzone, "create");
@@ -3681,14 +3708,19 @@ async function appendPendingAttachments(files, mode = "create") {
       continue;
     }
 
-    const preview = await prepareAttachmentPayload(file);
-    if (nextUsageBytes + Number(preview.fileSize || 0) > ATTACHMENT_FREE_QUOTA_BYTES) {
-      showToast("무료 1GB 첨부 한도를 초과할 수 있어 업로드할 수 없습니다.");
-      continue;
-    }
+    try {
+      const preview = await prepareAttachmentPayload(file);
+      if (nextUsageBytes + Number(preview.fileSize || 0) > ATTACHMENT_FREE_QUOTA_BYTES) {
+        showToast("무료 1GB 첨부 한도를 초과할 수 있어 업로드할 수 없습니다.");
+        continue;
+      }
 
-    targetCollection.push(preview);
-    nextUsageBytes += preview.fileSize;
+      targetCollection.push(preview);
+      nextUsageBytes += preview.fileSize;
+    } catch (error) {
+      console.error("Failed to prepare attachment:", error);
+      showToast("첨부파일을 읽거나 처리하지 못했습니다.");
+    }
   }
 
   renderTaskAttachmentPanels();

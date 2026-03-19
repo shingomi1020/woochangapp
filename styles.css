@@ -5612,6 +5612,26 @@ body[data-device="desktop"] #employeeinfoView .employee-record-item {
   gap: 10px;
 }
 
+.attachment-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.attachment-browse-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line, #dfe6f4);
+  background: #fff;
+  color: var(--text-primary, #24324b);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .attachment-dropzone {
   display: grid;
   gap: 4px;
