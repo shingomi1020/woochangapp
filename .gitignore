@@ -1,1 +1,5 @@
 .codex/
+.tools/node/
+node_modules/
+playwright-report/
+test-results/
