@@ -83,7 +83,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-20 101</p>
+            <p id="buildStamp" class="build-stamp">Build 2026-03-20 102</p>
           </div>
         </div>
 
@@ -194,9 +194,9 @@
                 <button id="nextMonthBtn" class="ghost-btn" type="button">다음</button>
               </div>
               <div class="calendar-view-switch" role="tablist" aria-label="캘린더 보기 전환">
-                <button class="chip active" type="button" data-calendar-view="month">월간</button>
-                <button class="chip" type="button" data-calendar-view="week">주간</button>
-                <button class="chip" type="button" data-calendar-view="list">리스트</button>
+                <button class="chip active" type="button" role="tab" aria-selected="true" tabindex="0" aria-controls="calendarGrid" data-calendar-view="month">월간</button>
+                <button class="chip" type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="calendarGrid" data-calendar-view="week">주간</button>
+                <button class="chip" type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="calendarGrid" data-calendar-view="list">리스트</button>
               </div>
             </div>
           </div>
@@ -240,10 +240,10 @@
               <h2>오늘의 할 일</h2>
             </div>
             <div class="task-filter" role="tablist" aria-label="할 일 필터">
-              <button class="chip active" data-filter="all" type="button">전체</button>
-              <button class="chip" data-filter="active" type="button">진행 중</button>
-              <button class="chip" data-filter="paused" type="button">보류</button>
-              <button class="chip" data-filter="done" type="button">완료</button>
+              <button class="chip active" data-filter="all" type="button" role="tab" aria-selected="true" tabindex="0" aria-controls="taskList">전체</button>
+              <button class="chip" data-filter="active" type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="taskList">진행 중</button>
+              <button class="chip" data-filter="paused" type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="taskList">보류</button>
+              <button class="chip" data-filter="done" type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="taskList">완료</button>
             </div>
           </div>
 
@@ -1166,6 +1166,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260319-99"></script>
+    <script src="app.js?v=20260320-102"></script>
   </body>
 </html>

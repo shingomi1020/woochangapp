@@ -717,7 +717,12 @@ workspaceShortcutButtons.forEach((button) => {
 calendarViewButtons.forEach((button) => {
   button.addEventListener("click", () => {
     state.calendarMode = button.dataset.calendarView;
-    calendarViewButtons.forEach((item) => item.classList.toggle("active", item === button));
+    calendarViewButtons.forEach((item) => {
+      const isActive = item === button;
+      item.classList.toggle("active", isActive);
+      item.setAttribute("aria-selected", String(isActive));
+      item.setAttribute("tabindex", isActive ? "0" : "-1");
+    });
     renderCalendar();
   });
 });
@@ -1323,7 +1328,12 @@ attendanceForm.addEventListener("submit", (event) => {
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
     state.taskFilter = button.dataset.filter;
-    filterButtons.forEach((chip) => chip.classList.toggle("active", chip === button));
+    filterButtons.forEach((chip) => {
+      const isActive = chip === button;
+      chip.classList.toggle("active", isActive);
+      chip.setAttribute("aria-selected", String(isActive));
+      chip.setAttribute("tabindex", isActive ? "0" : "-1");
+    });
     renderTasks();
   });
 });

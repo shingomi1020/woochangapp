@@ -2,13 +2,24 @@
   "name": "woochangapp-e2e",
   "private": true,
   "scripts": {
+    "lint": "eslint app.js playwright.config.mjs eslint.config.mjs scripts/**/*.mjs tests/**/*.mjs",
     "serve:e2e": "node scripts/static-server.mjs",
-    "test:e2e": "playwright test",
-    "test:e2e:headed": "playwright test --headed",
+    "test:e2e": "playwright test tests/app.smoke.spec.mjs",
+    "test:a11y": "playwright test tests/app.a11y.spec.mjs",
+    "test:playwright": "playwright test",
+    "test:e2e:headed": "playwright test tests/app.smoke.spec.mjs --headed",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "test:lighthouse": "node scripts/run-lighthouse.mjs",
+    "test:verify": "npm run lint && npm run test:e2e && npm run test:a11y"
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.2"
+    "@axe-core/playwright": "^4.11.1",
+    "@eslint/js": "^10.0.1",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.58.2",
+    "eslint": "^10.0.3",
+    "globals": "^17.4.0",
+    "lighthouse": "^13.0.3"
   }
 }
