@@ -7993,3 +7993,44 @@ body[data-device="desktop"] .site-nav #logoutBtn {
   padding: 0 20px !important;
   white-space: nowrap !important;
 }
+
+.site-nav .role-switcher {
+  display: none !important;
+}
+
+.site-nav .icon-chip,
+body[data-device] .site-nav .icon-chip {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #f8fafc !important;
+}
+
+.site-nav .site-menu,
+body[data-device] .site-nav .site-menu {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.site-nav .site-menu-link,
+body[data-device] .site-nav .site-menu-link {
+  color: rgba(226, 232, 240, 0.78) !important;
+}
+
+.site-nav .site-menu-link:hover,
+body[data-device] .site-nav .site-menu-link:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+}
+
+.site-nav .site-menu-link.active,
+body[data-device] .site-nav .site-menu-link.active {
+  background: #dbe4ec !important;
+  border-color: #dbe4ec !important;
+  color: #1f2f45 !important;
+}
+
+.site-nav .site-menu-link.active svg,
+.site-nav .icon-chip svg {
+  fill: currentColor !important;
+}

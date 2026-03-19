@@ -2681,10 +2681,7 @@ function renderSessionUi() {
   sessionUserName.textContent = state.currentUser.name;
   sessionUserMeta.textContent = `${getRoleLabel(state.currentUser.role)} · ${state.currentUser.loginId}`;
   if (roleSwitcher) {
-    roleSwitcher.hidden = false;
-  }
-  if (roleValue) {
-    roleValue.textContent = getRoleLabel(state.currentRole);
+    roleSwitcher.hidden = true;
   }
 }
 
