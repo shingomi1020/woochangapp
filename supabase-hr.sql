@@ -90,3 +90,29 @@ create table if not exists public.task_attachments (
 
 create index if not exists task_attachments_task_id_idx on public.task_attachments(task_id);
 create index if not exists task_attachments_purge_after_idx on public.task_attachments(purge_after);
+
+create table if not exists public.portfolio_items (
+  id bigint generated always as identity primary key,
+  client_name text not null default '',
+  project_name text not null default '',
+  work_date date,
+  size_spec text not null default '',
+  post_processing text not null default '',
+  material text not null default '',
+  note text not null default '',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.portfolio_attachments (
+  id bigint generated always as identity primary key,
+  portfolio_id bigint not null references public.portfolio_items(id) on delete cascade,
+  file_name text not null,
+  mime_type text not null default '',
+  file_data text not null,
+  file_size bigint not null default 0,
+  is_image boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists portfolio_attachments_portfolio_id_idx
+on public.portfolio_attachments(portfolio_id);

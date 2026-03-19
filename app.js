@@ -1,3 +1,147 @@
+function ensurePortfolioNavigationAndView() {
+  const siteMenu = document.querySelector(".site-menu");
+  if (siteMenu && !siteMenu.querySelector('[data-view="portfolio"]')) {
+    const portfolioButton = document.createElement("button");
+    portfolioButton.className = "site-menu-link";
+    portfolioButton.type = "button";
+    portfolioButton.dataset.view = "portfolio";
+    portfolioButton.dataset.roleVisible = "admin,employee,freelancer";
+    portfolioButton.textContent = "포트폴리오";
+    const estimateButton = siteMenu.querySelector('[data-view="estimate"]');
+    if (estimateButton) {
+      siteMenu.insertBefore(portfolioButton, estimateButton);
+    } else {
+      siteMenu.appendChild(portfolioButton);
+    }
+  }
+
+  if (document.getElementById("portfolioView")) {
+    return;
+  }
+
+  const estimateView = document.getElementById("estimateView");
+  if (!estimateView) {
+    return;
+  }
+
+  estimateView.insertAdjacentHTML(
+    "beforebegin",
+    `
+      <section id="portfolioView" class="hr-workspace app-view portfolio-view" hidden>
+        <section class="panel hr-hero reveal">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">포트폴리오</p>
+              <h2>작업 결과 아카이브</h2>
+              <p class="modal-subtitle">업체명, 작업일시, 규격, 후가공, 기타사항과 함께 이미지와 파일을 저장합니다.</p>
+            </div>
+          </div>
+          <div class="payroll-hero-grid portfolio-metrics">
+            <article class="metric-card">
+              <span class="metric-label">등록 작업</span>
+              <strong id="portfolioCount">0</strong>
+              <small>저장된 포트폴리오 수</small>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">이미지 첨부</span>
+              <strong id="portfolioImageCount">0</strong>
+              <small>미리보기 가능한 이미지 수</small>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">첨부 사용량</span>
+              <strong id="portfolioStorageUsage">0 MB</strong>
+              <small id="portfolioStorageRemaining">남은 용량 1 GB</small>
+            </article>
+          </div>
+        </section>
+
+        <section class="portfolio-layout reveal delay-1">
+          <section class="panel portfolio-form-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">신규 등록</p>
+                <h3>포트폴리오 추가</h3>
+              </div>
+            </div>
+            <form id="portfolioForm" class="task-form portfolio-form">
+              <div class="task-form-grid portfolio-form-grid">
+                <label class="field">
+                  <span>업체명</span>
+                  <input id="portfolioClientInput" type="text" maxlength="60" autocomplete="off" required />
+                </label>
+                <label class="field">
+                  <span>작업명</span>
+                  <input id="portfolioProjectInput" type="text" maxlength="80" autocomplete="off" required />
+                </label>
+                <label class="field">
+                  <span>작업일시</span>
+                  <input id="portfolioWorkDateInput" type="date" />
+                </label>
+                <label class="field">
+                  <span>규격</span>
+                  <input id="portfolioSizeInput" type="text" maxlength="80" placeholder="예: 900x1800 / A3 / 3T" />
+                </label>
+                <label class="field">
+                  <span>후가공</span>
+                  <input id="portfolioFinishInput" type="text" maxlength="100" placeholder="예: 코팅, 타공, 재단" />
+                </label>
+                <label class="field">
+                  <span>소재/기타</span>
+                  <input id="portfolioMaterialInput" type="text" maxlength="100" placeholder="예: 현수막천 / 포맥스 / PET" />
+                </label>
+                <label class="field task-form-wide">
+                  <span>기타사항</span>
+                  <textarea id="portfolioNoteInput" rows="4" maxlength="600" placeholder="작업 메모, 후속 참고사항, 납품 특이사항"></textarea>
+                </label>
+              </div>
+
+              <div class="attachment-field">
+                <div class="task-attachments-head">
+                  <div>
+                    <span>첨부 파일</span>
+                    <small>이미지, PDF, 일반 파일 / 파일당 10MB / 붙여넣기 가능</small>
+                  </div>
+                </div>
+                <label id="portfolioAttachmentDropzone" class="attachment-dropzone" tabindex="0">
+                  <input id="portfolioAttachmentInput" type="file" multiple hidden />
+                  <strong>파일을 끌어놓거나 클릭해 추가</strong>
+                  <small>스크린샷은 Ctrl+V로 바로 넣을 수 있습니다.</small>
+                </label>
+                <div class="storage-summary">
+                  <div class="storage-summary-head">
+                    <strong id="portfolioStorageSummary">0 MB / 1 GB</strong>
+                    <span class="storage-summary-caption">포트폴리오 첨부 사용량</span>
+                  </div>
+                  <div class="storage-track">
+                    <span id="portfolioStorageBar" class="storage-fill" style="width:0%"></span>
+                  </div>
+                </div>
+                <div id="portfolioPendingAttachmentList" class="attachment-list"></div>
+              </div>
+
+              <div class="task-form-actions">
+                <button id="portfolioSubmitBtn" type="submit" class="submit-btn task-submit">저장</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel portfolio-list-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">보관 목록</p>
+                <h3>포트폴리오 기록</h3>
+              </div>
+            </div>
+            <div id="portfolioList" class="portfolio-list"></div>
+          </section>
+        </section>
+      </section>
+    `
+  );
+}
+
+ensurePortfolioNavigationAndView();
+
 const calendarGrid = document.getElementById("calendarGrid");
 const monthLabel = document.getElementById("monthLabel");
 const selectedDateLabel = document.getElementById("selectedDateLabel");
@@ -72,6 +216,7 @@ const boardViews = ["calendar", "todos"];
 const clientView = document.getElementById("clientView");
 const hrView = document.getElementById("hrView");
 const employeeinfoView = document.getElementById("employeeinfoView");
+const portfolioView = document.getElementById("portfolioView");
 const loginView = document.getElementById("loginView");
 const signupView = document.getElementById("signupView");
 const membersView = document.getElementById("membersView");
@@ -159,6 +304,24 @@ const employeeInfoDesktopSections = document.getElementById("employeeInfoDesktop
 const employeeInfoMobileSelector = document.getElementById("employeeInfoMobileSelector");
 const employeeInfoMobileHero = document.getElementById("employeeInfoMobileHero");
 const employeeInfoMobileSections = document.getElementById("employeeInfoMobileSections");
+const portfolioForm = document.getElementById("portfolioForm");
+const portfolioClientInput = document.getElementById("portfolioClientInput");
+const portfolioProjectInput = document.getElementById("portfolioProjectInput");
+const portfolioWorkDateInput = document.getElementById("portfolioWorkDateInput");
+const portfolioSizeInput = document.getElementById("portfolioSizeInput");
+const portfolioFinishInput = document.getElementById("portfolioFinishInput");
+const portfolioMaterialInput = document.getElementById("portfolioMaterialInput");
+const portfolioNoteInput = document.getElementById("portfolioNoteInput");
+const portfolioAttachmentDropzone = document.getElementById("portfolioAttachmentDropzone");
+const portfolioAttachmentInput = document.getElementById("portfolioAttachmentInput");
+const portfolioPendingAttachmentList = document.getElementById("portfolioPendingAttachmentList");
+const portfolioList = document.getElementById("portfolioList");
+const portfolioCount = document.getElementById("portfolioCount");
+const portfolioImageCount = document.getElementById("portfolioImageCount");
+const portfolioStorageUsage = document.getElementById("portfolioStorageUsage");
+const portfolioStorageRemaining = document.getElementById("portfolioStorageRemaining");
+const portfolioStorageSummary = document.getElementById("portfolioStorageSummary");
+const portfolioStorageBar = document.getElementById("portfolioStorageBar");
 const employeeModal = document.getElementById("employeeModal");
 const employeeModalBackdrop = document.getElementById("employeeModalBackdrop");
 const employeeModalCloseBtn = document.getElementById("employeeModalCloseBtn");
@@ -442,6 +605,8 @@ const state = {
   employees: [],
   attendanceRecords: [],
   taskAttachments: [],
+  portfolioItems: [],
+  portfolioAttachments: [],
   editingEmployeeId: null,
   editingAttendanceId: null,
   editingMemberId: null,
@@ -458,7 +623,9 @@ const state = {
   taskOrderMap: loadTaskOrderMap(),
   pendingTaskAttachments: [],
   pendingEditTaskAttachments: [],
+  pendingPortfolioAttachments: [],
   previewAttachmentId: null,
+  previewAttachmentRecord: null,
   draggedTaskId: null,
 };
 
@@ -719,7 +886,7 @@ editMemberDeleteBtn?.addEventListener("click", async () => {
 
 window.addEventListener("hashchange", () => {
   const nextView = window.location.hash.replace("#", "") || "calendar";
-  if (["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "estimate", "statement", "payroll", "members", "login", "signup"].includes(nextView)) {
+  if (["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "portfolio", "estimate", "statement", "payroll", "members", "login", "signup"].includes(nextView)) {
     switchView(nextView, false);
   }
 });
@@ -837,6 +1004,11 @@ taskCancelBtn.addEventListener("click", () => {
   showToast(text.cancelEditLabel);
 });
 
+portfolioForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  await savePortfolioItem();
+});
+
 editTaskForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -923,7 +1095,7 @@ function bindAttachmentDropzone(dropzone, mode) {
     return;
   }
 
-  const input = mode === "edit" ? editTaskAttachmentInput : taskAttachmentInput;
+  const input = mode === "edit" ? editTaskAttachmentInput : mode === "portfolio" ? portfolioAttachmentInput : taskAttachmentInput;
 
   dropzone.addEventListener("click", () => {
     input?.click();
@@ -965,11 +1137,17 @@ editTaskAttachmentInput?.addEventListener("change", (event) => {
   editTaskAttachmentInput.value = "";
 });
 
+portfolioAttachmentInput?.addEventListener("change", (event) => {
+  appendPendingAttachments(event.target.files || [], "portfolio");
+  portfolioAttachmentInput.value = "";
+});
+
 bindAttachmentDropzone(taskAttachmentDropzone, "create");
 bindAttachmentDropzone(editTaskAttachmentDropzone, "edit");
+bindAttachmentDropzone(portfolioAttachmentDropzone, "portfolio");
 
 document.addEventListener("paste", (event) => {
-  if (!["todos", "calendar"].includes(state.currentView) && !(state.editingTaskId !== null && !editModal.hidden)) {
+  if (!["todos", "calendar", "portfolio"].includes(state.currentView) && !(state.editingTaskId !== null && !editModal.hidden)) {
     return;
   }
   const items = Array.from(event.clipboardData?.items || []);
@@ -978,7 +1156,7 @@ document.addEventListener("paste", (event) => {
     return;
   }
 
-  const mode = !editModal.hidden && state.editingTaskId !== null ? "edit" : "create";
+  const mode = state.currentView === "portfolio" ? "portfolio" : !editModal.hidden && state.editingTaskId !== null ? "edit" : "create";
   appendPendingAttachments(files, mode);
 });
 
@@ -1178,6 +1356,7 @@ function renderAll() {
   renderTasks();
   renderArchivedTasks();
   renderClientDetailView();
+  renderPortfolioPage();
   updateMetrics();
   renderTaskAttachmentPanels();
   renderAttachmentUsage();
@@ -1786,6 +1965,249 @@ async function loadTasks() {
   renderAll();
 }
 
+function mapPortfolioRecord(record) {
+  if (!record) {
+    return null;
+  }
+
+  return {
+    id: record.id,
+    clientName: record.client_name || "",
+    projectName: record.project_name || "",
+    workDate: record.work_date || "",
+    sizeSpec: record.size_spec || "",
+    postProcessing: record.post_processing || "",
+    material: record.material || "",
+    note: record.note || "",
+    createdAt: record.created_at || new Date().toISOString(),
+  };
+}
+
+function mapPortfolioAttachmentRecord(record) {
+  if (!record) {
+    return null;
+  }
+
+  return {
+    id: record.id,
+    portfolioId: record.portfolio_id,
+    fileName: record.file_name || "파일",
+    mimeType: record.mime_type || "",
+    fileData: record.file_data || "",
+    fileSize: Number(record.file_size || 0),
+    isImage: record.is_image === true || String(record.mime_type || "").startsWith("image/"),
+    createdAt: record.created_at || new Date().toISOString(),
+  };
+}
+
+function getPortfolioAttachments(portfolioId) {
+  return state.portfolioAttachments.filter((attachment) => String(attachment.portfolioId) === String(portfolioId));
+}
+
+function getPortfolioAttachmentUsage() {
+  const uploadedBytes = state.portfolioAttachments.reduce((sum, attachment) => sum + Number(attachment.fileSize || 0), 0);
+  const pendingBytes = state.pendingPortfolioAttachments.reduce((sum, attachment) => sum + Number(attachment.fileSize || 0), 0);
+  const usedBytes = uploadedBytes + pendingBytes;
+  const remainingBytes = Math.max(0, ATTACHMENT_FREE_QUOTA_BYTES - usedBytes);
+  const percent = Math.min(100, Math.round((usedBytes / ATTACHMENT_FREE_QUOTA_BYTES) * 100));
+  return { usedBytes, remainingBytes, percent };
+}
+
+function renderPortfolioAttachmentUsage() {
+  if (!portfolioStorageSummary || !portfolioStorageBar || !portfolioStorageRemaining || !portfolioStorageUsage) {
+    return;
+  }
+
+  const usage = getPortfolioAttachmentUsage();
+  portfolioStorageSummary.textContent = `${formatFileSize(usage.usedBytes)} / 1 GB`;
+  portfolioStorageBar.style.width = `${usage.percent}%`;
+  portfolioStorageRemaining.textContent = `남은 용량 ${formatFileSize(usage.remainingBytes)}`;
+  portfolioStorageUsage.textContent = formatFileSize(usage.usedBytes);
+}
+
+async function uploadPortfolioAttachments(portfolioId, attachments) {
+  if (!attachments.length) {
+    return [];
+  }
+
+  const payload = attachments.map((attachment) => ({
+    portfolio_id: Number(portfolioId),
+    file_name: attachment.fileName,
+    mime_type: attachment.mimeType,
+    file_data: attachment.fileData,
+    file_size: Number(attachment.fileSize || 0),
+    is_image: attachment.isImage === true,
+  }));
+
+  const { data, error } = await requestTasks("/rest/v1/portfolio_attachments", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to upload portfolio attachments:", error);
+    return [];
+  }
+
+  return (data ?? []).map(mapPortfolioAttachmentRecord).filter(Boolean);
+}
+
+async function loadPortfolioData() {
+  const [itemsResult, attachmentsResult] = await Promise.all([
+    requestTasks("/rest/v1/portfolio_items?select=*&order=work_date.desc,created_at.desc"),
+    requestTasks("/rest/v1/portfolio_attachments?select=*&order=created_at.desc"),
+  ]);
+
+  if (itemsResult.error) {
+    handleSupabaseError("Failed to load portfolio items:", itemsResult.error);
+    return;
+  }
+
+  state.portfolioItems = (itemsResult.data ?? []).map(mapPortfolioRecord).filter(Boolean);
+
+  if (attachmentsResult.error) {
+    handleSupabaseError("Failed to load portfolio attachments:", attachmentsResult.error);
+  } else {
+    state.portfolioAttachments = (attachmentsResult.data ?? []).map(mapPortfolioAttachmentRecord).filter(Boolean);
+  }
+
+  renderPortfolioPage();
+}
+
+function renderPortfolioPage() {
+  if (!portfolioList) {
+    return;
+  }
+
+  if (portfolioCount) {
+    portfolioCount.textContent = String(state.portfolioItems.length);
+  }
+  if (portfolioImageCount) {
+    const imageCount = state.portfolioAttachments.filter((attachment) => attachment.isImage).length;
+    portfolioImageCount.textContent = String(imageCount);
+  }
+  renderPortfolioAttachmentUsage();
+
+  if (!state.portfolioItems.length) {
+    portfolioList.innerHTML = `<article class="portfolio-empty">등록된 포트폴리오가 없습니다. 첫 작업 결과물을 등록해 보세요.</article>`;
+    bindAttachmentPreviewButtons();
+    return;
+  }
+
+  portfolioList.innerHTML = state.portfolioItems
+    .map((item) => {
+      const attachments = getPortfolioAttachments(item.id);
+      const previewImage = attachments.find((attachment) => attachment.isImage && attachment.fileData);
+      const meta = [
+        item.workDate ? `작업일 ${escapeHtml(item.workDate)}` : "",
+        item.sizeSpec ? `규격 ${escapeHtml(item.sizeSpec)}` : "",
+        item.postProcessing ? `후가공 ${escapeHtml(item.postProcessing)}` : "",
+        item.material ? `기타 ${escapeHtml(item.material)}` : "",
+      ]
+        .filter(Boolean)
+        .map((value) => `<span class="portfolio-meta-chip">${value}</span>`)
+        .join("");
+      const attachmentMarkup = attachments.length
+        ? attachments
+            .map((attachment) => {
+              const attr = `data-portfolio-attachment-open="${attachment.id}"`;
+              const preview = attachment.isImage
+                ? `<img class="attachment-chip-thumb" src="${attachment.fileData}" alt="${escapeHtml(attachment.fileName)}" />`
+                : `<span class="attachment-chip-icon">${getAttachmentKindLabel(attachment.mimeType)}</span>`;
+              return `
+                <button type="button" class="portfolio-attachment-pill" ${attr}>
+                  ${preview}
+                  <span>${escapeHtml(attachment.fileName)}</span>
+                </button>
+              `;
+            })
+            .join("")
+        : `<span class="portfolio-attachment-empty">첨부 없음</span>`;
+
+      return `
+        <article class="portfolio-card">
+          <div class="portfolio-card-media">
+            ${
+              previewImage
+                ? `<button type="button" class="portfolio-card-image" data-portfolio-attachment-open="${previewImage.id}">
+                    <img src="${previewImage.fileData}" alt="${escapeHtml(item.clientName || item.projectName || "포트폴리오 이미지")}" />
+                  </button>`
+                : `<div class="portfolio-card-placeholder">이미지 없음</div>`
+            }
+          </div>
+          <div class="portfolio-card-body">
+            <div class="portfolio-card-head">
+              <div>
+                <strong class="portfolio-card-client">${escapeHtml(item.clientName || "업체명 미입력")}</strong>
+                <p class="portfolio-card-project">${escapeHtml(item.projectName || "작업명 미입력")}</p>
+              </div>
+            </div>
+            <div class="portfolio-meta">${meta || `<span class="portfolio-meta-chip">추가 정보 없음</span>`}</div>
+            <p class="portfolio-note">${escapeHtml(item.note || "기타사항 없음")}</p>
+            <div class="portfolio-attachments">${attachmentMarkup}</div>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  bindAttachmentPreviewButtons();
+}
+
+async function savePortfolioItem() {
+  const clientName = portfolioClientInput?.value.trim() || "";
+  const projectName = portfolioProjectInput?.value.trim() || "";
+  const workDate = portfolioWorkDateInput?.value || null;
+  const sizeSpec = portfolioSizeInput?.value.trim() || "";
+  const postProcessing = portfolioFinishInput?.value.trim() || "";
+  const material = portfolioMaterialInput?.value.trim() || "";
+  const note = portfolioNoteInput?.value.trim() || "";
+
+  if (!clientName || !projectName) {
+    showToast("업체명과 작업명을 먼저 입력해 주세요.");
+    return;
+  }
+
+  const { data, error } = await requestTasks("/rest/v1/portfolio_items", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
+      client_name: clientName,
+      project_name: projectName,
+      work_date: workDate,
+      size_spec: sizeSpec,
+      post_processing: postProcessing,
+      material,
+      note,
+    }),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to insert portfolio item:", error);
+    return;
+  }
+
+  const savedItem = mapPortfolioRecord(Array.isArray(data) ? data[0] : data);
+  if (!savedItem) {
+    showToast("포트폴리오 저장 결과를 불러오지 못했습니다.");
+    return;
+  }
+
+  const uploadedAttachments = await uploadPortfolioAttachments(savedItem.id, state.pendingPortfolioAttachments);
+  state.portfolioItems.unshift(savedItem);
+  state.portfolioAttachments = [...uploadedAttachments, ...state.portfolioAttachments];
+  state.pendingPortfolioAttachments = [];
+  portfolioForm?.reset();
+  renderPortfolioPage();
+  renderTaskAttachmentPanels();
+  showToast("포트폴리오를 저장했습니다.");
+}
+
 function focusToday() {
   state.viewDate = new Date(today.getFullYear(), today.getMonth(), 1);
   state.selectedDateKey = formatDateKey(today);
@@ -1959,7 +2381,14 @@ function closeMemberModal() {
 }
 
 function getPreviewAttachment() {
-  return state.taskAttachments.find((attachment) => String(attachment.id) === String(state.previewAttachmentId)) || null;
+  if (state.previewAttachmentRecord) {
+    return state.previewAttachmentRecord;
+  }
+  return (
+    state.taskAttachments.find((attachment) => String(attachment.id) === String(state.previewAttachmentId)) ||
+    state.portfolioAttachments.find((attachment) => String(attachment.id) === String(state.previewAttachmentId)) ||
+    null
+  );
 }
 
 function downloadAttachmentFile(attachment) {
@@ -1982,6 +2411,7 @@ function closeAttachmentPreviewModal() {
   }
 
   state.previewAttachmentId = null;
+  state.previewAttachmentRecord = null;
   attachmentPreviewModal.hidden = true;
   attachmentPreviewCanvas.innerHTML = "";
   attachmentPreviewName.textContent = "-";
@@ -1999,10 +2429,13 @@ function openAttachmentPreviewModal(attachment) {
   }
 
   state.previewAttachmentId = attachment.id;
+  state.previewAttachmentRecord = attachment;
+  state.previewAttachmentRecord = attachment;
   attachmentPreviewTitle.textContent = attachment.fileName || "첨부파일 보기";
   attachmentPreviewSubtitle.textContent = attachment.isImage
     ? "이미지를 크게 확인할 수 있습니다."
     : "일반 파일은 미리보기 제한이 있어 새 창에서 열 수 있습니다.";
+  state.previewAttachmentRecord = attachment;
   attachmentPreviewName.textContent = attachment.fileName || "-";
   attachmentPreviewType.textContent = attachment.mimeType || getAttachmentKindLabel(attachment.mimeType);
   attachmentPreviewSize.textContent = formatFileSize(attachment.fileSize || 0);
@@ -2523,9 +2956,9 @@ function getRoleLabel(role) {
 
 function isViewAllowedForRole(view) {
   const allowed = {
-    admin: ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "estimate", "statement", "payroll", "members", "login", "signup"],
-    employee: ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "payroll", "login", "signup"],
-    freelancer: ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "payroll", "login", "signup"],
+    admin: ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "portfolio", "estimate", "statement", "payroll", "members", "login", "signup"],
+    employee: ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "portfolio", "payroll", "login", "signup"],
+    freelancer: ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "portfolio", "payroll", "login", "signup"],
   };
   return allowed[state.currentRole]?.includes(view);
 }
@@ -2874,8 +3307,13 @@ async function appendPendingAttachments(files, mode = "create") {
     return;
   }
 
-  const targetCollection = mode === "edit" ? state.pendingEditTaskAttachments : state.pendingTaskAttachments;
-  const usage = getAttachmentUsage();
+  const targetCollection =
+    mode === "edit"
+      ? state.pendingEditTaskAttachments
+      : mode === "portfolio"
+        ? state.pendingPortfolioAttachments
+        : state.pendingTaskAttachments;
+  const usage = mode === "portfolio" ? getPortfolioAttachmentUsage() : getAttachmentUsage();
   let nextUsageBytes = usage.usedBytes + targetCollection.reduce((sum, item) => sum + Number(item.fileSize || 0), 0);
 
   for (const file of list) {
@@ -2899,6 +3337,8 @@ async function appendPendingAttachments(files, mode = "create") {
 function removePendingAttachment(attachmentId, mode = "create") {
   if (mode === "edit") {
     state.pendingEditTaskAttachments = state.pendingEditTaskAttachments.filter((item) => item.tempId !== attachmentId);
+  } else if (mode === "portfolio") {
+    state.pendingPortfolioAttachments = state.pendingPortfolioAttachments.filter((item) => item.tempId !== attachmentId);
   } else {
     state.pendingTaskAttachments = state.pendingTaskAttachments.filter((item) => item.tempId !== attachmentId);
   }
@@ -2920,7 +3360,11 @@ function bindAttachmentRemoveButtons() {
   document.querySelectorAll("[data-attachment-remove]").forEach((button) => {
     button.addEventListener("click", () => {
       const attachmentId = button.dataset.attachmentRemove;
-      const mode = button.closest("#editTaskPendingAttachmentList") ? "edit" : "create";
+      const mode = button.closest("#editTaskPendingAttachmentList")
+        ? "edit"
+        : button.closest("#portfolioPendingAttachmentList")
+          ? "portfolio"
+          : "create";
       removePendingAttachment(attachmentId, mode);
     });
   });
@@ -3052,6 +3496,18 @@ function bindAttachmentPreviewButtons() {
       openAttachmentPreviewModal(attachment);
     });
   });
+
+  document.querySelectorAll("[data-portfolio-attachment-open]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const attachment = state.portfolioAttachments.find(
+        (item) => String(item.id) === String(button.dataset.portfolioAttachmentOpen)
+      );
+      if (!attachment?.fileData) {
+        return;
+      }
+      openAttachmentPreviewModal(attachment);
+    });
+  });
 }
 
 function renderTaskAttachmentPanels() {
@@ -3061,7 +3517,12 @@ function renderTaskAttachmentPanels() {
     renderPendingAttachmentCollection(editTaskExistingAttachmentList, existing, { previewable: true });
   }
   renderPendingAttachmentCollection(editTaskPendingAttachmentList, state.pendingEditTaskAttachments, { removeAction: "edit" });
+  renderPendingAttachmentCollection(portfolioPendingAttachmentList, state.pendingPortfolioAttachments, {
+    removeAction: "portfolio",
+    previewable: true,
+  });
   renderAttachmentUsage();
+  renderPortfolioAttachmentUsage();
   bindAttachmentRemoveButtons();
   bindAttachmentPreviewButtons();
 }
@@ -5191,7 +5652,7 @@ async function initApp() {
   applyRoleAccess();
   renderMembers();
   renderHrWorkspace();
-  const preferredInitialView = ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "estimate", "statement", "payroll", "members", "login", "signup"].includes(
+  const preferredInitialView = ["tasks", "calendar", "todos", "client", "hr", "employeeinfo", "portfolio", "estimate", "statement", "payroll", "members", "login", "signup"].includes(
     initialHashView
   )
     ? initialHashView
@@ -5204,6 +5665,7 @@ async function initApp() {
   switchView(resolvedInitialView, false);
   await loadHrData();
   await loadTasks();
+  await loadPortfolioData();
 }
 
 void initApp();
