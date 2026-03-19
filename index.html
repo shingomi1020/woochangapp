@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
@@ -18,195 +18,158 @@
       <div class="ambient ambient-b"></div>
 
       <header class="site-nav reveal">
-        <div class="site-nav-inner topbar-shell">
-          <div class="topbar-brand-row">
-            <div class="site-brand topbar-brand">
-              <span class="icon-chip brand-chip">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M7 3h10v2h3a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1h3V3Zm2 2h6V5H9v0Zm10 2H5v12h14V7ZM7 10h10v2H7v-2Zm0 4h7v2H7v-2Z" />
-                </svg>
-              </span>
-              <div>
-                <strong>FlowBoard</strong>
-                <p>일정, 작업, 인사 운영을 한 흐름으로 관리하는 업무관리 앱</p>
-              </div>
-            </div>
-            <div class="topbar-meta">
-              <div class="role-switcher" hidden>
-                <span>권한</span>
-                <strong id="roleValue">관리자</strong>
-              </div>
-              <div id="sessionBadge" class="session-badge" hidden>
-                <strong id="sessionUserName">게스트</strong>
-                <span id="sessionUserMeta">로그인이 필요합니다.</span>
-              </div>
-              <button id="logoutBtn" type="button" class="ghost-btn" hidden>로그아웃</button>
+        <div class="site-nav-inner">
+          <div class="site-brand">
+            <span class="icon-chip">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 3h10v2h3a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1h3V3Zm2 2h6V5H9v0Zm10 2H5v12h14V7ZM7 10h10v2H7v-2Zm0 4h7v2H7v-2Z" />
+              </svg>
+            </span>
+            <div>
+              <strong>FlowBoard</strong>
+              <p>업무와 인사를 한 곳에서</p>
             </div>
           </div>
-          <div class="topbar-nav-row">
-            <nav class="site-menu topbar-nav" aria-label="주요 메뉴">
-              <button class="site-menu-link active" type="button" data-view="calendar" data-role-visible="admin,employee,freelancer">대시보드</button>
-              <button class="site-menu-link" type="button" data-view="todos" data-role-visible="admin,employee,freelancer">작업</button>
-              <button class="site-menu-link" type="button" data-view="hr" data-role-visible="admin,employee,freelancer">운영</button>
-              <button class="site-menu-link" type="button" data-view="payroll" data-role-visible="admin,employee,freelancer">급여</button>
-              <button class="site-menu-link" type="button" data-view="members" data-role-visible="admin">팀</button>
-              <button class="site-menu-link" type="button" data-view="login" data-auth-visible="guest">로그인</button>
-              <button class="site-menu-link" type="button" data-view="signup" data-auth-visible="guest">가입</button>
-            </nav>
+          <nav class="site-menu" aria-label="상단 메뉴">
+            <button class="site-menu-link active" type="button" data-view="calendar" data-role-visible="admin,employee,freelancer">캘린더</button>
+            <button class="site-menu-link" type="button" data-view="todos" data-role-visible="admin,employee,freelancer">투두리스트</button>
+            <button class="site-menu-link" type="button" data-view="hr" data-role-visible="admin,employee,freelancer">인사 관리</button>
+            <button class="site-menu-link" type="button" data-view="employeeinfo" data-role-visible="admin,employee,freelancer">직원정보</button>
+            <button class="site-menu-link" type="button" data-view="estimate" data-role-visible="admin">견적서</button>
+            <button class="site-menu-link" type="button" data-view="statement" data-role-visible="admin">거래명세서</button>
+            <button class="site-menu-link" type="button" data-view="payroll" data-role-visible="admin,employee,freelancer">급여 관리</button>
+            <button class="site-menu-link" type="button" data-view="members" data-role-visible="admin">회원관리</button>
+            <button class="site-menu-link" type="button" data-view="login" data-auth-visible="guest">로그인</button>
+            <button class="site-menu-link" type="button" data-view="signup" data-auth-visible="guest">회원가입</button>
+          </nav>
+          <div class="site-actions">
+            <div id="sessionBadge" class="session-badge" hidden>
+              <strong id="sessionUserName">게스트</strong>
+              <span id="sessionUserMeta">로그인이 필요합니다</span>
+            </div>
+          <div class="role-switcher" hidden>
+            <span>권한</span>
+            <strong id="roleValue">관리자</strong>
+          </div>
+            <button id="logoutBtn" type="button" class="ghost-btn" hidden>로그아웃</button>
           </div>
         </div>
       </header>
 
-      <header class="hero reveal work-hero">
-        <section class="hero-copy-wrap hero-shell">
+      <header class="hero reveal">
+        <div class="hero-copy-wrap">
           <div class="hero-badge">
             <span class="icon-chip">
               <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 5a2 2 0 0 1 2-2h5l2 2h5a2 2 0 0 1 2 2v2H4V5Zm0 5h16v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-9Zm3 3h4v2H7v-2Zm0 4h8v2H7v-2Z" />
+                <path d="M7 3h10v2h3a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1h3V3Zm2 2h6V5H9v0Zm10 2H5v12h14V7ZM7 10h10v2H7v-2Zm0 4h7v2H7v-2Z" />
               </svg>
             </span>
-            <p class="eyebrow">Work Management Hub</p>
+            <p class="eyebrow">업무 + 마감 캘린더</p>
           </div>
-          <div class="hero-copy-stack">
-            <div>
-              <h1>오늘 해야 할 일과 운영 흐름을 한 화면에서.</h1>
-              <p class="hero-copy">캘린더와 투두리스트를 중심에 두고, 운영과 급여 기능은 더 단순한 흐름으로 정리했습니다. 자주 쓰는 화면은 바로 이동하고, 부가 기능은 보조 진입점으로 묶었습니다.</p>
-            </div>
-            <div class="hero-actions">
-              <button id="focusTodayBtn" class="hero-btn primary" type="button">
-                <span class="btn-icon">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2h3V2Zm13 8H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM6 8h12V6H6v2Zm5 4h2v4h-2v-4Z" />
-                  </svg>
-                </span>
-                오늘 일정 보기
-              </button>
-              <button id="focusInputBtn" class="hero-btn secondary" type="button">
-                <span class="btn-icon">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7V4Z" />
-                  </svg>
-                </span>
-                새 작업 등록
-              </button>
-            </div>
+          <h1>FlowBoard</h1>
+          <p class="hero-copy">투두리스트를 기준으로 마감 일정까지 한 번에 보는 업무 보드</p>
+          <div class="hero-actions">
+            <button id="focusTodayBtn" class="hero-btn primary" type="button">
+              <span class="btn-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2h3V2Zm13 8H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM6 8h12V6H6v2Zm5 4h2v4h-2v-4Z" />
+                </svg>
+              </span>
+              오늘 보기
+            </button>
+            <button id="focusInputBtn" class="hero-btn secondary" type="button">
+              <span class="btn-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7V4Z" />
+                </svg>
+              </span>
+              빠른 업무 추가
+            </button>
           </div>
-          <section class="workspace-launcher" aria-label="빠른 이동">
-            <div class="workspace-launcher-head">
-              <div>
-                <p class="section-label">Quick Access</p>
-                <h3>주요 작업 공간</h3>
-              </div>
-            </div>
-            <div class="workspace-shortcuts">
-              <button class="workspace-shortcut" type="button" data-view="calendar" data-role-visible="admin,employee,freelancer">
-                <strong>마감 캘린더</strong>
-                <span>월간 일정과 오늘 마감 업무 확인</span>
-              </button>
-              <button class="workspace-shortcut" type="button" data-view="todos" data-role-visible="admin,employee,freelancer">
-                <strong>투두리스트</strong>
-                <span>업무 등록, 상태 변경, 첨부 관리</span>
-              </button>
-              <button class="workspace-shortcut" type="button" data-view="hr" data-role-visible="admin,employee,freelancer">
-                <strong>운영 관리</strong>
-                <span>직원, 출퇴근, 근태 현황 운영</span>
-              </button>
-              <button class="workspace-shortcut" type="button" data-view="portfolio" data-role-visible="admin,employee,freelancer">
-                <strong>포트폴리오</strong>
-                <span>작업 결과물과 첨부 자료 정리</span>
-              </button>
-              <button class="workspace-shortcut" type="button" data-view="estimate" data-role-visible="admin">
-                <strong>견적 준비</strong>
-                <span>대외 문서 영역의 다음 확장 지점</span>
-              </button>
-              <button class="workspace-shortcut" type="button" data-view="statement" data-role-visible="admin">
-                <strong>거래 명세</strong>
-                <span>거래 문서와 청구 흐름 준비</span>
-              </button>
-            </div>
-          </section>
           <div class="connection-strip">
-            <span id="connectionBadge" class="connection-badge is-checking">연결 상태 확인 중</span>
-            <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하고 있습니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-19 79</p>
+            <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
+            <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
+          <p id="buildStamp" class="build-stamp">Build 2026-03-19 79</p>
           </div>
-        </section>
+        </div>
 
-        <aside class="hero-meta hero-insights">
-          <article class="metric-card insight-card">
+        <div class="hero-meta">
+          <div class="metric-card float-card">
             <span class="metric-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 3h11l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm10 1.5V8h3.5L15 4.5ZM7 11h10v1.8H7V11Zm0 4h10v1.8H7V15Z" />
               </svg>
             </span>
-            <span class="metric-label">남은 작업</span>
+            <span class="metric-label">남은 업무</span>
             <strong id="remainingCount">0</strong>
-            <small>지금 바로 처리해야 할 활성 업무 수</small>
-          </article>
-          <article class="metric-card insight-card">
+            <small>오늘 처리해야 할 핵심 작업</small>
+          </div>
+          <div class="metric-card float-card delay-1">
             <span class="metric-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2h3V2Zm13 8H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM6 8h12V6H6v2Z" />
               </svg>
             </span>
-            <span class="metric-label">이번 달 마감</span>
+            <span class="metric-label">이번 달 마감 업무</span>
             <strong id="monthEventCount">0</strong>
-            <small>현재 보고 있는 달에 등록된 마감 일정 수</small>
-          </article>
-          <article class="metric-card insight-card">
+            <small>현재 보는 달에 마감이 있는 업무 수</small>
+          </div>
+          <div class="metric-card float-card delay-2" hidden>
             <span class="metric-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 4a1 1 0 0 0-1 1v5.4c0 .3.12.58.33.79l3.6 3.6 1.41-1.42L13 11.99V7a1 1 0 0 0-1-1Z" />
               </svg>
             </span>
-            <span class="metric-label">선택한 일정</span>
+            <span class="metric-label">선택한 날짜</span>
             <strong id="selectedDaySummary">0</strong>
-            <small>현재 선택한 날짜에 연결된 업무 수</small>
-          </article>
-        </aside>
-      </header>      <main id="tasksView" class="dashboard app-view" data-board-view="calendar">
+            <small>해당 날짜에 마감인 업무 수</small>
+          </div>
+        </div>
+      </header>
+
+      <main id="tasksView" class="dashboard app-view" data-board-view="calendar">
         <section class="panel panel-calendar reveal delay-1">
           <div class="panel-head">
             <div>
-              <p class="section-label">留덇컧 罹섎┛??/p>
-              <h2 id="monthLabel">2026??3??/h2>
+              <p class="section-label">마감 캘린더</p>
+              <h2 id="monthLabel">2026년 3월</h2>
             </div>
             <div class="calendar-toolbar">
               <div class="calendar-nav">
-                <button id="prevMonthBtn" class="ghost-btn" type="button">?댁쟾</button>
-                <button id="todayBtn" class="ghost-btn primary" type="button">?ㅻ뒛</button>
-                <button id="nextMonthBtn" class="ghost-btn" type="button">?ㅼ쓬</button>
+                <button id="prevMonthBtn" class="ghost-btn" type="button">이전</button>
+                <button id="todayBtn" class="ghost-btn primary" type="button">오늘</button>
+                <button id="nextMonthBtn" class="ghost-btn" type="button">다음</button>
               </div>
-              <div class="calendar-view-switch" role="tablist" aria-label="罹섎┛??蹂닿린 ?꾪솚">
-                <button class="chip active" type="button" data-calendar-view="month">?붽컙</button>
-                <button class="chip" type="button" data-calendar-view="week">二쇨컙</button>
-                <button class="chip" type="button" data-calendar-view="list">由ъ뒪??/button>
+              <div class="calendar-view-switch" role="tablist" aria-label="캘린더 보기 전환">
+                <button class="chip active" type="button" data-calendar-view="month">월간</button>
+                <button class="chip" type="button" data-calendar-view="week">주간</button>
+                <button class="chip" type="button" data-calendar-view="list">리스트</button>
               </div>
             </div>
           </div>
 
           <div class="calendar-topline">
-            <p id="calendarHint" class="calendar-hint">?ㅻ뒛 留덇컧 ?낅Т瑜?癒쇱? ?뺤씤??蹂댁꽭??</p>
+            <p id="calendarHint" class="calendar-hint">오늘 마감 업무를 먼저 확인해 보세요.</p>
           </div>
 
           <div class="calendar-scroll">
             <div class="weekdays" aria-hidden="true">
-              <span>??/span>
-              <span>??/span>
-              <span>??/span>
-              <span>??/span>
-              <span>紐?/span>
-              <span>湲?/span>
-              <span>??/span>
+              <span>일</span>
+              <span>월</span>
+              <span>화</span>
+              <span>수</span>
+              <span>목</span>
+              <span>금</span>
+              <span>토</span>
             </div>
 
-            <div id="calendarGrid" class="calendar-grid" aria-label="?붽컙 留덇컧 罹섎┛??></div>
+            <div id="calendarGrid" class="calendar-grid" aria-label="월간 마감 캘린더"></div>
           </div>
 
           <div class="schedule-card">
             <div class="schedule-head">
               <div>
-                <p class="section-label">?좏깮????/p>
+                <p class="section-label">선택한 날</p>
                 <h3 id="selectedDateLabel"></h3>
               </div>
               <div class="schedule-actions">
@@ -220,31 +183,31 @@
         <section class="panel panel-tasks reveal delay-2">
           <div class="panel-head">
             <div>
-              <p class="section-label">?щ몢由ъ뒪??/p>
-              <h2>?ㅻ뒛??????/h2>
+              <p class="section-label">투두리스트</p>
+              <h2>오늘의 할 일</h2>
             </div>
-            <div class="task-filter" role="tablist" aria-label="?????꾪꽣">
-              <button class="chip active" data-filter="all" type="button">?꾩껜</button>
-              <button class="chip" data-filter="active" type="button">吏꾪뻾 以?/button>
-              <button class="chip" data-filter="paused" type="button">蹂대쪟</button>
-              <button class="chip" data-filter="done" type="button">?꾨즺</button>
+            <div class="task-filter" role="tablist" aria-label="할 일 필터">
+              <button class="chip active" data-filter="all" type="button">전체</button>
+              <button class="chip" data-filter="active" type="button">진행 중</button>
+              <button class="chip" data-filter="paused" type="button">보류</button>
+              <button class="chip" data-filter="done" type="button">완료</button>
             </div>
           </div>
 
           <div class="task-controls">
             <div class="task-controls-grid">
               <label class="field filter-field">
-                <span>嫄곕옒泥??꾪꽣</span>
+                <span>거래처 필터</span>
                 <select id="clientFilterSelect">
-                  <option value="all">?꾩껜 嫄곕옒泥?/option>
+                  <option value="all">전체 거래처</option>
                 </select>
               </label>
               <label class="field search-field">
-                <span>?낅Т 寃??/span>
-                <input id="taskSearchInput" type="search" placeholder="嫄곕옒泥섎챸, ?낅Т ?댁슜?쇰줈 寃?? autocomplete="off" />
+                <span>업무 검색</span>
+                <input id="taskSearchInput" type="search" placeholder="거래처명, 업무 내용으로 검색" autocomplete="off" />
               </label>
               <button id="openArchiveBtn" class="ghost-btn archive-toggle-btn" type="button">
-                蹂닿???
+                보관함
                 <span id="archivedTaskCount" class="archive-count">0</span>
               </button>
             </div>
@@ -254,69 +217,69 @@
             <form id="taskForm" class="task-form">
               <div class="task-form-grid">
                 <label class="field">
-                  <span>嫄곕옒泥섎챸</span>
+                  <span>거래처명</span>
                   <input id="taskClientInput" type="text" maxlength="40" autocomplete="off" required />
                 </label>
                 <label class="field task-form-wide">
-                  <span>?낅Т ?댁슜</span>
-                  <input id="taskDescriptionInput" type="text" placeholder="吏꾪뻾???낅Т ?댁슜???낅젰?섏꽭?? maxlength="180" autocomplete="off" required />
+                  <span>업무 내용</span>
+                  <input id="taskDescriptionInput" type="text" placeholder="진행할 업무 내용을 입력하세요" maxlength="180" autocomplete="off" required />
                 </label>
                 <label class="field">
-                  <span>?묒닔??/span>
+                  <span>접수일</span>
                   <input id="taskReceivedDateInput" type="date" required />
                 </label>
                 <label class="field">
-                  <span>留덇컧??/span>
+                  <span>마감일</span>
                   <input id="taskDueDateInput" type="date" required />
                 </label>
                 <label class="field">
-                  <span>吏꾪뻾 ?곹깭</span>
+                  <span>진행 상태</span>
                   <select id="taskStatusInput">
-                    <option value="todo">吏꾪뻾 以?/option>
-                    <option value="paused">蹂대쪟</option>
-                    <option value="done">?꾨즺</option>
+                    <option value="todo">진행 중</option>
+                    <option value="paused">보류</option>
+                    <option value="done">완료</option>
                   </select>
                 </label>
                 <label class="field">
-                  <span>以묒슂??/span>
+                  <span>중요도</span>
                   <select id="taskPriorityInput">
-                    <option value="high">湲닿툒</option>
-                    <option value="medium" selected>蹂댄넻</option>
-                    <option value="low">??쓬</option>
+                    <option value="high">긴급</option>
+                    <option value="medium" selected>보통</option>
+                    <option value="low">낮음</option>
                   </select>
                 </label>
                 <div class="field task-form-wide attachment-field">
-                  <span>泥⑤??뚯씪</span>
-                  <div id="taskAttachmentDropzone" class="attachment-dropzone" tabindex="0" role="button" aria-label="泥⑤??뚯씪 ?낅줈??>
-                    <strong>?뚯씪???뚯뼱?볤굅???대┃?댁꽌 泥⑤?</strong>
-                    <span>?대?吏, 臾몄꽌 媛??쨌 遺숈뿬?ｊ린(Ctrl+V) 吏??쨌 ?뚯씪??理쒕? 10MB</span>
+                  <span>첨부파일</span>
+                  <div id="taskAttachmentDropzone" class="attachment-dropzone" tabindex="0" role="button" aria-label="첨부파일 업로드">
+                    <strong>파일을 끌어놓거나 클릭해서 첨부</strong>
+                    <span>이미지, 문서 가능 · 붙여넣기(Ctrl+V) 지원 · 파일당 최대 10MB</span>
                     <input id="taskAttachmentInput" type="file" multiple hidden />
                   </div>
                   <div id="taskPendingAttachmentList" class="attachment-list compact"></div>
                 </div>
               </div>
               <div class="task-form-actions">
-                <button id="taskCancelBtn" type="button" class="ghost-btn task-cancel" hidden>痍⑥냼</button>
-                <button id="taskSubmitBtn" type="submit" class="submit-btn task-submit">異붽?</button>
+                <button id="taskCancelBtn" type="button" class="ghost-btn task-cancel" hidden>취소</button>
+                <button id="taskSubmitBtn" type="submit" class="submit-btn task-submit">추가</button>
               </div>
             </form>
             <div class="task-summary-card">
               <div class="task-summary-head">
-                <span class="task-summary-label">吏꾪뻾 ?꾪솴</span>
-                <span id="taskProgressLabel">0 / 0 ?꾨즺</span>
+                <span class="task-summary-label">진행 현황</span>
+                <span id="taskProgressLabel">0 / 0 완료</span>
               </div>
               <div class="progress-track" aria-hidden="true">
                 <div id="taskProgressBar" class="progress-fill"></div>
               </div>
               <div class="storage-summary">
                 <div class="storage-summary-head">
-                  <span>泥⑤? ?ъ슜??/span>
+                  <span>첨부 사용량</span>
                   <strong id="attachmentStorageSummary">0 MB / 1 GB</strong>
                 </div>
                 <div class="progress-track storage-track" aria-hidden="true">
                   <div id="attachmentStorageBar" class="progress-fill"></div>
                 </div>
-                <p id="attachmentStorageRemaining" class="storage-summary-caption">臾대즺 1GB 湲곗? ?⑥? ?⑸웾 1 GB</p>
+                <p id="attachmentStorageRemaining" class="storage-summary-caption">무료 1GB 기준 남은 용량 1 GB</p>
               </div>
             </div>
           </div>
@@ -326,10 +289,10 @@
           <section class="archive-panel" aria-labelledby="archivePanelTitle">
             <div class="panel-head">
               <div>
-                <p class="section-label">?낅Т 蹂닿???/p>
-                <h3 id="archivePanelTitle">?꾨즺 ??蹂닿????낅Т</h3>
+                <p class="section-label">업무 보관함</p>
+                <h3 id="archivePanelTitle">완료 후 보관된 업무</h3>
               </div>
-              <span id="archivedTaskSummary" class="task-date-chip">0嫄?蹂닿?</span>
+              <span id="archivedTaskSummary" class="task-date-chip">0건 보관</span>
             </div>
             <div id="archivedTaskList" class="task-list archive-list"></div>
           </section>
@@ -340,11 +303,11 @@
         <section class="panel hr-hero reveal">
           <div class="panel-head">
             <div>
-              <p class="section-label">嫄곕옒泥??곸꽭</p>
-              <h2 id="clientDetailTitle">嫄곕옒泥??낅Т ?붿빟</h2>
-              <p id="clientDetailSubtitle" class="modal-subtitle">嫄곕옒泥섎? ?좏깮?섎㈃ ?꾩껜 ?낅Т ?먮쫫??蹂????덉뒿?덈떎.</p>
+              <p class="section-label">거래처 상세</p>
+              <h2 id="clientDetailTitle">거래처 업무 요약</h2>
+              <p id="clientDetailSubtitle" class="modal-subtitle">거래처를 선택하면 전체 업무 흐름을 볼 수 있습니다.</p>
             </div>
-            <button id="clientBackBtn" type="button" class="ghost-btn">?낅Т 蹂대뱶濡??뚯븘媛湲?/button>
+            <button id="clientBackBtn" type="button" class="ghost-btn">업무 보드로 돌아가기</button>
           </div>
           <div id="clientDetailMetrics" class="payroll-hero-grid"></div>
         </section>
@@ -353,10 +316,10 @@
           <section id="employeeAdminPanel" class="panel reveal delay-1" data-role-section="admin">
             <div class="panel-head">
               <div>
-                <p class="section-label">?깅줉 ?낅Т</p>
-                <h3 id="clientTaskHeading">嫄곕옒泥??낅Т 紐⑸줉</h3>
+                <p class="section-label">등록 업무</p>
+                <h3 id="clientTaskHeading">거래처 업무 목록</h3>
               </div>
-              <span id="clientTaskCount" class="task-date-chip">0嫄?/span>
+              <span id="clientTaskCount" class="task-date-chip">0건</span>
             </div>
             <div id="clientTaskList" class="task-list"></div>
           </section>
@@ -364,8 +327,8 @@
           <section class="panel reveal delay-2">
             <div class="panel-head">
               <div>
-                <p class="section-label">留덇컧 ?쇱젙</p>
-                <h3>?ㅺ??ㅻ뒗 留덇컧</h3>
+                <p class="section-label">마감 일정</p>
+                <h3>다가오는 마감</h3>
               </div>
             </div>
             <div id="clientDeadlineList" class="schedule-list"></div>
@@ -377,34 +340,34 @@
         <section class="panel hr-hero reveal">
           <div class="panel-head">
             <div>
-              <p class="section-label">?몄궗 愿由?/p>
-              <h2>異쒓렐湲곕줉遺? 湲됱뿬 湲곗?</h2>
+              <p class="section-label">인사 관리</p>
+              <h2>출근기록부와 급여 기준</h2>
             </div>
             <div class="hr-policy">
-              <span class="task-date-chip">?쇨렐 湲곗? 18:00 ?댄썑</span>
-              <span class="task-date-chip">二쇰쭚 ?섎떦 蹂꾨룄 愿由?/span>
+              <span class="task-date-chip">야근 기준 18:00 이후</span>
+              <span class="task-date-chip">주말 수당 별도 관리</span>
             </div>
           </div>
           <div class="hr-metrics">
             <article class="metric-card" hidden>
-              <span class="metric-label">?깅줉 吏곸썝</span>
+              <span class="metric-label">등록 직원</span>
               <strong id="employeeCount">0</strong>
-              <small>4?蹂댄뿕 吏곸썝怨??꾨━?쒖꽌瑜??④퍡 愿由?/small>
+              <small>4대보험 직원과 프리랜서를 함께 관리</small>
             </article>
             <article class="metric-card" hidden>
-              <span class="metric-label">?ㅻ뒛 異쒓렐 湲곕줉</span>
+              <span class="metric-label">오늘 출근 기록</span>
               <strong id="attendanceTodayCount">0</strong>
-              <small>?ㅻ뒛 ?좎쭨 湲곗? 異쒗눜洹??낅젰 嫄댁닔</small>
+              <small>오늘 날짜 기준 출퇴근 입력 건수</small>
             </article>
             <article class="metric-card" hidden>
-              <span class="metric-label">?대쾲 ???쇨렐 ?쒓컙</span>
+              <span class="metric-label">이번 달 야근 시간</span>
               <strong id="hrMonthlyOvertimeHours">0h</strong>
-              <small>18???댄썑 ?꾩쟻 ?쒓컙</small>
+              <small>18시 이후 누적 시간</small>
             </article>
             <article class="metric-card" hidden>
-              <span class="metric-label">?대쾲 ???덉긽 湲됱뿬</span>
-              <strong id="hrMonthlyPayrollTotal">??</strong>
-              <small>湲곕낯湲?+ ?쇨렐 + 二쇰쭚 ?섎떦 ?⑹궛</small>
+              <span class="metric-label">이번 달 예상 급여</span>
+              <strong id="hrMonthlyPayrollTotal">₩0</strong>
+              <small>기본급 + 야근 + 주말 수당 합산</small>
             </article>
           </div>
         </section>
@@ -413,44 +376,44 @@
           <section class="panel reveal delay-1">
             <div class="panel-head">
               <div>
-                <p class="section-label">吏곸썝 ?깅줉</p>
-                <h3>吏곸썝蹂?湲곕낯湲됯낵 ?섎떦 湲곗?</h3>
+                <p class="section-label">직원 등록</p>
+                <h3>직원별 기본급과 수당 기준</h3>
               </div>
             </div>
             <form id="employeeForm" class="hr-form">
               <div class="task-form-grid hr-form-grid">
                 <label class="field">
-                  <span>吏곸썝紐?/span>
+                  <span>직원명</span>
                   <input id="employeeNameInput" type="text" maxlength="30" autocomplete="off" required />
                 </label>
                 <label class="field">
-                  <span>援щ텇</span>
+                  <span>구분</span>
                   <select id="employeeTypeInput">
-                    <option value="insured">4?蹂댄뿕 ?곸슜 吏곸썝</option>
-                    <option value="freelancer">?꾨━?쒖꽌</option>
+                    <option value="insured">4대보험 적용 직원</option>
+                    <option value="freelancer">프리랜서</option>
                   </select>
                 </label>
                 <label class="field task-form-wide">
-                  <span>?곌껐 ?뚯썝 怨꾩젙</span>
+                  <span>연결 회원 계정</span>
                   <select id="employeeMemberInput">
-                    <option value="">?곌껐 ????/option>
+                    <option value="">연결 안 함</option>
                   </select>
                 </label>
                 <label class="field">
-                  <span>湲곕낯湲?/span>
+                  <span>기본급</span>
                   <input id="employeeBaseSalaryInput" type="number" min="0" step="10000" required />
                 </label>
                 <label class="field">
-                  <span>?쇨렐 ?섎떦 (?쒓컙??</span>
+                  <span>야근 수당 (시간당)</span>
                   <input id="employeeOvertimeRateInput" type="number" min="0" step="1000" required />
                 </label>
                 <label class="field">
-                  <span>二쇰쭚 ?섎떦 (?쒓컙??</span>
+                  <span>주말 수당 (시간당)</span>
                   <input id="employeeWeekendRateInput" type="number" min="0" step="1000" required />
                 </label>
               </div>
               <div class="task-form-actions">
-                <button type="submit" class="submit-btn task-submit">吏곸썝 ?깅줉</button>
+                <button type="submit" class="submit-btn task-submit">직원 등록</button>
               </div>
             </form>
             <div id="employeeList" class="employee-list"></div>
@@ -459,108 +422,108 @@
           <section class="panel reveal delay-2">
             <div class="panel-head">
               <div>
-                <p class="section-label">異쒗눜洹?湲곕줉</p>
-                <h3>吏곸썝蹂?異쒓렐湲곕줉遺 ?낅젰</h3>
+                <p class="section-label">출퇴근 기록</p>
+                <h3>직원별 출근기록부 입력</h3>
               </div>
             </div>
             <form id="attendanceForm" class="hr-form">
               <div class="task-form-grid hr-form-grid">
                 <label class="field task-form-wide">
-                  <span>吏곸썝 ?좏깮</span>
+                  <span>직원 선택</span>
                   <select id="attendanceEmployeeSelect" required>
-                    <option value="">吏곸썝??癒쇱? ?깅줉??二쇱꽭??/option>
+                    <option value="">직원을 먼저 등록해 주세요</option>
                   </select>
                 </label>
                 <label class="field">
-                  <span>洹쇰Т??/span>
+                  <span>근무일</span>
                   <input id="attendanceDateInput" type="date" required />
                 </label>
                 <label class="field">
-                  <span>異쒓렐 ?쒓컙</span>
+                  <span>출근 시간</span>
                   <input id="attendanceClockInInput" type="time" required />
                 </label>
                 <label class="field">
-                  <span>?닿렐 ?쒓컙</span>
+                  <span>퇴근 시간</span>
                   <input id="attendanceClockOutInput" type="time" required />
                 </label>
               </div>
               <div class="task-form-actions">
-                <button type="submit" class="submit-btn task-submit">異쒗눜洹?湲곕줉 ???/button>
+                <button type="submit" class="submit-btn task-submit">출퇴근 기록 저장</button>
               </div>
             </form>
 
             <div class="attendance-ledger batch-ledger">
               <div class="schedule-head">
                 <div>
-                  <p class="section-label">?쇨큵 ?낅젰</p>
-                  <h3>媛숈? ?좎쭨???щ윭 吏곸썝 湲곕줉 異붽?</h3>
+                  <p class="section-label">일괄 입력</p>
+                  <h3>같은 날짜에 여러 직원 기록 추가</h3>
                 </div>
                 <label class="field hr-filter-field">
-                  <span>?쇨큵 ?낅젰 ?좎쭨</span>
+                  <span>일괄 입력 날짜</span>
                   <input id="attendanceBatchDateInput" type="date" />
                 </label>
               </div>
               <div id="attendanceBatchList" class="attendance-batch-list"></div>
               <div class="task-form-actions">
-                <button id="saveBatchAttendanceBtn" type="button" class="submit-btn task-submit">?쇨큵 湲곕줉 ???/button>
+                <button id="saveBatchAttendanceBtn" type="button" class="submit-btn task-submit">일괄 기록 저장</button>
               </div>
             </div>
 
             <div class="attendance-ledger">
               <div class="schedule-head">
                 <div>
-                  <p class="section-label">異쒓렐湲곕줉遺</p>
-                  <h3>吏곸썝蹂?洹쇰Т ?붿빟</h3>
+                  <p class="section-label">출근기록부</p>
+                  <h3>직원별 근무 요약</h3>
                 </div>
-                <p class="attendance-ledger-hint">湲곕줉 移대뱶?먯꽌 諛붾줈 ?섏젙 踰꾪듉???뚮윭 ?쒓컙??怨좎튌 ???덉뒿?덈떎.</p>
+                <p class="attendance-ledger-hint">기록 카드에서 바로 수정 버튼을 눌러 시간을 고칠 수 있습니다.</p>
               </div>
               <div id="attendanceSummaryCards" class="attendance-summary-grid"></div>
               <div class="attendance-filters">
                 <label class="field hr-filter-field">
-                  <span>議고쉶 ??/span>
+                  <span>조회 월</span>
                   <input id="attendanceMonthFilterInput" type="month" />
                 </label>
                 <label class="field hr-filter-field">
-                  <span>吏곸썝 ?꾪꽣</span>
+                  <span>직원 필터</span>
                   <select id="attendanceEmployeeFilterSelect">
-                    <option value="all">?꾩껜 吏곸썝</option>
+                    <option value="all">전체 직원</option>
                   </select>
                 </label>
                 <label class="field hr-filter-field">
-                  <span>洹쇳깭 ?곹깭</span>
+                  <span>근태 상태</span>
                   <select id="attendanceStatusFilterSelect">
-                    <option value="all">?꾩껜 ?곹깭</option>
-                    <option value="normal">?뺤긽</option>
-                    <option value="late">吏媛?/option>
-                    <option value="early">議고눜</option>
-                    <option value="absent">寃곌렐</option>
+                    <option value="all">전체 상태</option>
+                    <option value="normal">정상</option>
+                    <option value="late">지각</option>
+                    <option value="early">조퇴</option>
+                    <option value="absent">결근</option>
                   </select>
                 </label>
               </div>
               <div class="attendance-calendar-panel">
                 <div class="schedule-head attendance-calendar-head">
                   <div>
-                    <p class="section-label">?붽컙 洹쇳깭 ?щ젰</p>
-                    <h3 id="attendanceCalendarLabel">吏곸썝蹂??붽컙 洹쇳깭 ?먮쫫</h3>
+                    <p class="section-label">월간 근태 달력</p>
+                    <h3 id="attendanceCalendarLabel">직원별 월간 근태 흐름</h3>
                   </div>
                   <div class="attendance-calendar-controls">
                     <label class="field hr-filter-field">
-                      <span>吏곸썝 ?좏깮</span>
+                      <span>직원 선택</span>
                       <select id="attendanceCalendarEmployeeSelect">
-                        <option value="">吏곸썝???좏깮??二쇱꽭??/option>
+                        <option value="">직원을 선택해 주세요</option>
                       </select>
                     </label>
                     <label class="field hr-filter-field">
-                      <span>議고쉶 ??/span>
+                      <span>조회 월</span>
                       <input id="attendanceCalendarMonthInput" type="month" />
                     </label>
                   </div>
                 </div>
                 <div class="attendance-calendar-legend" aria-hidden="true">
-                  <span class="attendance-legend-item normal">?뺤긽</span>
-                  <span class="attendance-legend-item late">吏媛?/span>
-                  <span class="attendance-legend-item early">議고눜</span>
-                  <span class="attendance-legend-item absent">寃곌렐</span>
+                  <span class="attendance-legend-item normal">정상</span>
+                  <span class="attendance-legend-item late">지각</span>
+                  <span class="attendance-legend-item early">조퇴</span>
+                  <span class="attendance-legend-item absent">결근</span>
                 </div>
                 <div id="attendanceCalendarGrid" class="attendance-calendar-grid"></div>
               </div>
@@ -574,27 +537,27 @@
           <section class="panel employee-info-hero reveal">
             <div class="panel-head">
               <div>
-                <p class="section-label">吏곸썝?뺣낫 愿由?/p>
-                <h2>吏곸썝???몄궗?뺣낫瑜????붾㈃?먯꽌 愿由?/h2>
-                <p class="modal-subtitle">PC?먯꽌??紐⑸줉怨??곸꽭瑜??④퍡 蹂닿퀬, 紐⑤컮?쇱뿉?쒕뒗 ?꾨줈??移대뱶? ?뱀뀡 移대뱶 以묒떖?쇰줈 ?뺤씤?????덉뒿?덈떎.</p>
+                <p class="section-label">직원정보 관리</p>
+                <h2>직원의 인사정보를 한 화면에서 관리</h2>
+                <p class="modal-subtitle">PC에서는 목록과 상세를 함께 보고, 모바일에서는 프로필 카드와 섹션 카드 중심으로 확인할 수 있습니다.</p>
               </div>
               <div class="employee-info-actions">
-                <button id="employeeInfoBackBtn" type="button" class="ghost-btn">?몄궗愿由щ줈 ?뚯븘媛湲?/button>
-                <button id="employeeInfoEditBtn" type="button" class="submit-btn task-submit">吏곸썝 ?뺣낫 ?섏젙</button>
+                <button id="employeeInfoBackBtn" type="button" class="ghost-btn">인사관리로 돌아가기</button>
+                <button id="employeeInfoEditBtn" type="button" class="submit-btn task-submit">직원 정보 수정</button>
               </div>
             </div>
           </section>
 
           <section id="employeeInfoEmpty" class="panel reveal" hidden>
-            <div class="empty-state">?깅줉??吏곸썝???꾩쭅 ?놁뒿?덈떎. ?몄궗 愿由ъ뿉??吏곸썝??癒쇱? ?깅줉??二쇱꽭??</div>
+            <div class="empty-state">등록된 직원이 아직 없습니다. 인사 관리에서 직원을 먼저 등록해 주세요.</div>
           </section>
 
           <section class="employee-info-desktop reveal">
             <aside class="panel employee-info-sidebar">
               <div class="panel-head">
                 <div>
-                  <p class="section-label">吏곸썝 紐⑸줉</p>
-                  <h3>鍮좊Ⅸ ?꾪솚</h3>
+                  <p class="section-label">직원 목록</p>
+                  <h3>빠른 전환</h3>
                 </div>
               </div>
               <div id="employeeInfoDesktopList" class="employee-info-list"></div>
@@ -614,8 +577,8 @@
             <div class="panel employee-info-mobile-top">
               <div class="panel-head">
                 <div>
-                  <p class="section-label">吏곸썝 ?좏깮</p>
-                  <h3>紐⑤컮??吏곸썝?뺣낫</h3>
+                  <p class="section-label">직원 선택</p>
+                  <h3>모바일 직원정보</h3>
                 </div>
               </div>
               <div id="employeeInfoMobileSelector" class="employee-info-mobile-selector"></div>
@@ -629,11 +592,11 @@
         <section class="panel hr-hero reveal">
           <div class="panel-head">
             <div>
-              <p class="section-label">寃ъ쟻??/p>
-              <h2>寃ъ쟻???섏씠吏 以鍮?以?/h2>
+              <p class="section-label">견적서</p>
+              <h2>견적서 페이지 준비 중</h2>
             </div>
           </div>
-          <div class="empty-state">寃ъ쟻??湲곕뒫? ?ㅼ쓬 ?④퀎?먯꽌 異붽??????덈룄濡??섏씠吏 援ъ“瑜?癒쇱? ?댁뼱?먯뿀?듬땲??</div>
+          <div class="empty-state">견적서 기능은 다음 단계에서 추가할 수 있도록 페이지 구조를 먼저 열어두었습니다.</div>
         </section>
       </section>
 
@@ -641,11 +604,11 @@
         <section class="panel hr-hero reveal">
           <div class="panel-head">
             <div>
-              <p class="section-label">嫄곕옒紐낆꽭??/p>
-              <h2>嫄곕옒紐낆꽭???섏씠吏 以鍮?以?/h2>
+              <p class="section-label">거래명세서</p>
+              <h2>거래명세서 페이지 준비 중</h2>
             </div>
           </div>
-          <div class="empty-state">嫄곕옒紐낆꽭??湲곕뒫? 媛숈? 硫붾돱 援ъ“ ?덉뿉???댁뼱???뺤옣?????덇쾶 以鍮꾪뻽?듬땲??</div>
+          <div class="empty-state">거래명세서 기능은 같은 메뉴 구조 안에서 이어서 확장할 수 있게 준비했습니다.</div>
         </section>
       </section>
 
@@ -653,42 +616,42 @@
         <section class="panel hr-hero reveal">
           <div class="panel-head">
             <div>
-              <p class="section-label">湲됱뿬 愿由?/p>
-              <h2>?붾퀎 湲됱뿬 ?뺤궛 蹂대뱶</h2>
+              <p class="section-label">급여 관리</p>
+              <h2>월별 급여 정산 보드</h2>
             </div>
             <div class="payroll-actions">
               <label class="field hr-filter-field">
-                <span>湲됱뿬 湲곗? ??/span>
+                <span>급여 기준 월</span>
                 <input id="payrollMonthInput" type="month" />
               </label>
-              <button id="printPayrollBtn" type="button" class="ghost-btn">?붾퀎 異쒕젰</button>
+              <button id="printPayrollBtn" type="button" class="ghost-btn">월별 출력</button>
             </div>
           </div>
           <div class="payroll-hero-grid">
             <article class="metric-card">
-              <span class="metric-label">?대쾲 ???덉긽 珥앷툒??/span>
-              <strong id="monthlyPayrollTotal">??</strong>
-              <small>湲곕낯湲?+ ?쇨렐 + 二쇰쭚 ?섎떦 ?⑹궛</small>
+              <span class="metric-label">이번 달 예상 총급여</span>
+              <strong id="monthlyPayrollTotal">₩0</strong>
+              <small>기본급 + 야근 + 주말 수당 합산</small>
             </article>
             <article class="metric-card">
-              <span class="metric-label">湲됱뿬 ???吏곸썝</span>
+              <span class="metric-label">급여 대상 직원</span>
               <strong id="payrollEmployeeCount">0</strong>
-              <small>?꾩옱 湲곗? ?붿뿉 吏묎퀎?섎뒗 吏곸썝 ??/small>
+              <small>현재 기준 월에 집계되는 직원 수</small>
             </article>
             <article class="metric-card" hidden>
-              <span class="metric-label">?대쾲 ???쇨렐 ?쒓컙</span>
+              <span class="metric-label">이번 달 야근 시간</span>
               <strong id="monthlyOvertimeHours">0h</strong>
-              <small>18???댄썑 ?꾩쟻 ?쒓컙</small>
+              <small>18시 이후 누적 시간</small>
             </article>
             <article class="metric-card" hidden>
-              <span class="metric-label">?대쾲 ??二쇰쭚 洹쇰Т</span>
+              <span class="metric-label">이번 달 주말 근무</span>
               <strong id="monthlyWeekendHours">0h</strong>
-              <small>二쇰쭚 洹쇰Т ?꾩쟻 ?쒓컙</small>
+              <small>주말 근무 누적 시간</small>
             </article>
             <article class="metric-card">
-              <span class="metric-label">湲됱뿬 ?뺤젙 ?곹깭</span>
+              <span class="metric-label">급여 확정 상태</span>
               <strong id="payrollConfirmedCount">0 / 0</strong>
-              <small>?뺤젙 ?먮뒗 吏湲??꾨즺 泥섎━??吏곸썝 ??/small>
+              <small>확정 또는 지급 완료 처리된 직원 수</small>
             </article>
           </div>
         </section>
@@ -696,10 +659,10 @@
         <section class="panel reveal delay-1">
           <div class="panel-head">
             <div>
-              <p class="section-label">?붾퀎 湲됱뿬 ?붿빟</p>
-              <h3>吏곸썝蹂??덉긽 吏湲됱븸</h3>
+              <p class="section-label">월별 급여 요약</p>
+              <h3>직원별 예상 지급액</h3>
             </div>
-            <p class="attendance-ledger-hint">吏곸썝蹂?湲곕낯湲? ?쇨렐, 二쇰쭚 ?섎떦 ?⑷퀎瑜???踰덉뿉 ?뺤씤?????덉뒿?덈떎.</p>
+            <p class="attendance-ledger-hint">직원별 기본급, 야근, 주말 수당 합계를 한 번에 확인할 수 있습니다.</p>
           </div>
           <div id="payrollSummaryList" class="employee-list payroll-summary-list"></div>
         </section>
@@ -708,28 +671,28 @@
         <section class="panel auth-panel reveal">
           <div class="panel-head">
             <div>
-              <p class="section-label">濡쒓렇??/p>
-              <h2>?대???濡쒓렇??/h2>
-              <p class="modal-subtitle">?꾩씠?붿? 鍮꾨?踰덊샇留뚯쑝濡?媛꾨떒???묒냽?????덇쾶 援ъ꽦?덉뒿?덈떎.</p>
+              <p class="section-label">로그인</p>
+              <h2>내부용 로그인</h2>
+              <p class="modal-subtitle">아이디와 비밀번호만으로 간단히 접속할 수 있게 구성했습니다.</p>
             </div>
           </div>
           <form id="loginForm" class="auth-form">
             <label class="field">
-              <span>?꾩씠??/span>
+              <span>아이디</span>
               <input id="loginIdInput" type="text" maxlength="40" autocomplete="username" required />
             </label>
             <label class="field">
-              <span>鍮꾨?踰덊샇</span>
+              <span>비밀번호</span>
               <input id="loginPasswordInput" type="password" maxlength="60" autocomplete="current-password" required />
             </label>
             <div class="task-form-actions auth-actions">
-              <button type="submit" class="submit-btn task-submit">濡쒓렇??/button>
-              <button id="moveSignupBtn" type="button" class="ghost-btn">?뚯썝媛?낆쑝濡??대룞</button>
+              <button type="submit" class="submit-btn task-submit">로그인</button>
+              <button id="moveSignupBtn" type="button" class="ghost-btn">회원가입으로 이동</button>
             </div>
           </form>
           <div class="auth-help">
-            <p>珥덇린 愿由ъ옄 鍮꾨?踰덊샇???붾㈃??怨듦컻?섏? ?딆뒿?덈떎.</p>
-            <p>泥?怨꾩젙???꾩슂??寃쎌슦 ?뚯썝媛?낆뿉??愿由ъ옄 沅뚰븳?쇰줈 吏곸젒 ?앹꽦??二쇱꽭??</p>
+            <p>초기 관리자 비밀번호는 화면에 공개하지 않습니다.</p>
+            <p>첫 계정이 필요한 경우 회원가입에서 관리자 권한으로 직접 생성해 주세요.</p>
           </div>
         </section>
       </section>
@@ -738,36 +701,36 @@
         <section class="panel auth-panel reveal">
           <div class="panel-head">
             <div>
-              <p class="section-label">?뚯썝媛??/p>
-              <h2>媛꾨떒 ?뚯썝 ?깅줉</h2>
-              <p id="signupGuideText" class="modal-subtitle">?대??⑹씠???꾩닔 ?뺣낫留?諛쏆뒿?덈떎. ?대쫫, ?꾩씠?? 鍮꾨?踰덊샇, 沅뚰븳留??덉쑝硫??⑸땲??</p>
+              <p class="section-label">회원가입</p>
+              <h2>간단 회원 등록</h2>
+              <p id="signupGuideText" class="modal-subtitle">내부용이라 필수 정보만 받습니다. 이름, 아이디, 비밀번호, 권한만 있으면 됩니다.</p>
             </div>
           </div>
           <form id="signupForm" class="auth-form">
             <div class="task-form-grid auth-form-grid">
               <label class="field">
-                <span>?대쫫</span>
+                <span>이름</span>
                 <input id="signupNameInput" type="text" maxlength="30" autocomplete="name" required />
               </label>
               <label class="field">
-                <span>?꾩씠??/span>
+                <span>아이디</span>
                 <input id="signupIdInput" type="text" maxlength="40" autocomplete="username" required />
               </label>
               <label class="field">
-                <span>鍮꾨?踰덊샇</span>
+                <span>비밀번호</span>
                 <input id="signupPasswordInput" type="password" maxlength="60" autocomplete="new-password" required />
               </label>
               <label class="field">
-                <span>沅뚰븳</span>
+                <span>권한</span>
                 <select id="signupRoleInput">
-                  <option value="employee">吏곸썝</option>
-                  <option value="freelancer">?꾨━?쒖꽌</option>
+                  <option value="employee">직원</option>
+                  <option value="freelancer">프리랜서</option>
                 </select>
               </label>
             </div>
             <div class="task-form-actions auth-actions">
-              <button type="submit" class="submit-btn task-submit">?뚯썝 ?깅줉</button>
-              <button id="moveLoginBtn" type="button" class="ghost-btn">濡쒓렇?몄쑝濡??대룞</button>
+              <button type="submit" class="submit-btn task-submit">회원 등록</button>
+              <button id="moveLoginBtn" type="button" class="ghost-btn">로그인으로 이동</button>
             </div>
           </form>
         </section>
@@ -777,34 +740,34 @@
         <section class="panel hr-hero reveal">
           <div class="panel-head">
             <div>
-              <p class="section-label">?뚯썝愿由?/p>
-              <h2>怨꾩젙怨?沅뚰븳 愿由?/h2>
-              <p class="modal-subtitle">?대???怨꾩젙??媛꾨떒??愿由ы븷 ???덈뒗 ?붾㈃?낅땲??</p>
+              <p class="section-label">회원관리</p>
+              <h2>계정과 권한 관리</h2>
+              <p class="modal-subtitle">내부용 계정을 간단히 관리할 수 있는 화면입니다.</p>
             </div>
           </div>
           <div class="payroll-hero-grid">
             <article class="metric-card">
-              <span class="metric-label">?꾩껜 ?뚯썝</span>
+              <span class="metric-label">전체 회원</span>
               <strong id="memberCount">0</strong>
-              <small>?깅줉???꾩껜 怨꾩젙 ??/small>
+              <small>등록된 전체 계정 수</small>
             </article>
             <article class="metric-card">
-              <span class="metric-label">?쒖꽦 ?뚯썝</span>
+              <span class="metric-label">활성 회원</span>
               <strong id="activeMemberCount">0</strong>
-              <small>?꾩옱 ?ъ슜 媛?ν븳 怨꾩젙 ??/small>
+              <small>현재 사용 가능한 계정 수</small>
             </article>
             <article class="metric-card">
-              <span class="metric-label">愿由ъ옄</span>
+              <span class="metric-label">관리자</span>
               <strong id="adminMemberCount">0</strong>
-              <small>愿由?沅뚰븳??媛吏?怨꾩젙 ??/small>
+              <small>관리 권한을 가진 계정 수</small>
             </article>
           </div>
         </section>
         <section class="panel reveal delay-1">
           <div class="panel-head">
             <div>
-              <p class="section-label">?뚯썝 紐⑸줉</p>
-              <h3>怨꾩젙 ?곹깭 蹂寃?/h3>
+              <p class="section-label">회원 목록</p>
+              <h3>계정 상태 변경</h3>
             </div>
           </div>
           <div id="memberList" class="member-list"></div>
@@ -817,11 +780,11 @@
       <div class="modal-dialog attendance-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="memberModalTitle">
         <div class="modal-head">
           <div>
-            <p class="section-label">?뚯썝 ?섏젙</p>
-            <h3 id="memberModalTitle">怨꾩젙怨?吏곸썝 ?뺣낫 ?섏젙</h3>
-            <p class="modal-subtitle">鍮꾨?踰덊샇, 沅뚰븳, 遺?? ?곕씫泥?媛숈? ?대???湲곕낯 ?뺣낫瑜??④퍡 愿由ы빀?덈떎.</p>
+            <p class="section-label">회원 수정</p>
+            <h3 id="memberModalTitle">계정과 직원 정보 수정</h3>
+            <p class="modal-subtitle">비밀번호, 권한, 부서, 연락처 같은 내부용 기본 정보를 함께 관리합니다.</p>
           </div>
-          <button id="memberModalCloseBtn" type="button" class="ghost-btn icon-only" aria-label="?뚯썝 ?섏젙 李??リ린">
+          <button id="memberModalCloseBtn" type="button" class="ghost-btn icon-only" aria-label="회원 수정 창 닫기">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z" />
             </svg>
@@ -830,53 +793,53 @@
         <form id="editMemberForm" class="task-form modal-task-form">
           <div class="task-form-grid hr-form-grid">
             <label class="field">
-              <span>?대쫫</span>
+              <span>이름</span>
               <input id="editMemberNameInput" type="text" maxlength="30" required />
             </label>
             <label class="field">
-              <span>?꾩씠??/span>
+              <span>아이디</span>
               <input id="editMemberLoginIdInput" type="text" maxlength="40" required />
             </label>
             <label class="field">
-              <span>??鍮꾨?踰덊샇</span>
-              <input id="editMemberPasswordInput" type="password" maxlength="60" placeholder="蹂寃쏀븷 ?뚮쭔 ?낅젰" />
+              <span>새 비밀번호</span>
+              <input id="editMemberPasswordInput" type="password" maxlength="60" placeholder="변경할 때만 입력" />
             </label>
             <label class="field">
-              <span>沅뚰븳</span>
+              <span>권한</span>
               <select id="editMemberRoleInput">
-                <option value="admin">愿由ъ옄</option>
-                <option value="employee">吏곸썝</option>
-                <option value="freelancer">?꾨━?쒖꽌</option>
+                <option value="admin">관리자</option>
+                <option value="employee">직원</option>
+                <option value="freelancer">프리랜서</option>
               </select>
             </label>
             <label class="field">
-              <span>遺??/span>
+              <span>부서</span>
               <input id="editMemberDepartmentInput" type="text" maxlength="40" />
             </label>
             <label class="field">
-              <span>吏곸콉</span>
+              <span>직책</span>
               <input id="editMemberTitleInput" type="text" maxlength="40" />
             </label>
             <label class="field">
-              <span>?곕씫泥?/span>
+              <span>연락처</span>
               <input id="editMemberPhoneInput" type="text" maxlength="30" />
             </label>
             <label class="field">
-              <span>?곹깭</span>
+              <span>상태</span>
               <select id="editMemberActiveInput">
-                <option value="true">?쒖꽦</option>
-                <option value="false">鍮꾪솢??/option>
+                <option value="true">활성</option>
+                <option value="false">비활성</option>
               </select>
             </label>
             <label class="field task-form-wide">
-              <span>硫붾え</span>
+              <span>메모</span>
               <input id="editMemberNoteInput" type="text" maxlength="120" />
             </label>
           </div>
           <div class="task-form-actions attendance-modal-actions">
-            <button id="editMemberDeleteBtn" type="button" class="ghost-btn danger-soft">?뚯썝 ??젣</button>
-            <button id="editMemberCancelBtn" type="button" class="ghost-btn">痍⑥냼</button>
-            <button type="submit" class="submit-btn task-submit">???/button>
+            <button id="editMemberDeleteBtn" type="button" class="ghost-btn danger-soft">회원 삭제</button>
+            <button id="editMemberCancelBtn" type="button" class="ghost-btn">취소</button>
+            <button type="submit" class="submit-btn task-submit">저장</button>
           </div>
         </form>
       </div>
@@ -887,11 +850,11 @@
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
         <div class="modal-head">
           <div>
-            <p class="section-label">?낅Т ?섏젙</p>
-            <h3 id="editModalTitle">?꾩옱 ?낅Т ?섏젙</h3>
-            <p id="editModalSubtitle" class="modal-subtitle">?섏젙 以묒씤 ?낅Т ?뺣낫瑜??뺤씤?섍퀬 ??ν븯?몄슂.</p>
+            <p class="section-label">업무 수정</p>
+            <h3 id="editModalTitle">현재 업무 수정</h3>
+            <p id="editModalSubtitle" class="modal-subtitle">수정 중인 업무 정보를 확인하고 저장하세요.</p>
           </div>
-          <button id="editModalCloseBtn" type="button" class="ghost-btn icon-only" aria-label="?섏젙 李??リ린">
+          <button id="editModalCloseBtn" type="button" class="ghost-btn icon-only" aria-label="수정 창 닫기">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z" />
             </svg>
@@ -900,42 +863,42 @@
         <form id="editTaskForm" class="task-form modal-task-form">
           <div class="task-form-grid">
             <label class="field">
-              <span>嫄곕옒泥섎챸</span>
+              <span>거래처명</span>
               <input id="editTaskClientInput" type="text" maxlength="40" autocomplete="off" required />
             </label>
             <label class="field">
-              <span>?낅Т ?댁슜</span>
+              <span>업무 내용</span>
               <input id="editTaskDescriptionInput" type="text" maxlength="180" autocomplete="off" required />
             </label>
             <label class="field">
-              <span>?묒닔??/span>
+              <span>접수일</span>
               <input id="editTaskReceivedDateInput" type="date" required />
             </label>
             <label class="field">
-              <span>留덇컧??/span>
+              <span>마감일</span>
               <input id="editTaskDueDateInput" type="date" required />
             </label>
             <label class="field">
-              <span>吏꾪뻾 ?곹깭</span>
+              <span>진행 상태</span>
               <select id="editTaskStatusInput">
-                <option value="todo">吏꾪뻾 以?/option>
-                <option value="paused">蹂대쪟</option>
-                <option value="done">?꾨즺</option>
+                <option value="todo">진행 중</option>
+                <option value="paused">보류</option>
+                <option value="done">완료</option>
               </select>
             </label>
             <label class="field">
-              <span>以묒슂??/span>
+              <span>중요도</span>
               <select id="editTaskPriorityInput">
-                <option value="high">湲닿툒</option>
-                <option value="medium">蹂댄넻</option>
-                <option value="low">??쓬</option>
+                <option value="high">긴급</option>
+                <option value="medium">보통</option>
+                <option value="low">낮음</option>
               </select>
             </label>
             <div class="field task-form-wide attachment-field">
-              <span>泥⑤??뚯씪</span>
-              <div id="editTaskAttachmentDropzone" class="attachment-dropzone" tabindex="0" role="button" aria-label="泥⑤??뚯씪 ?낅줈??>
-                <strong>?뚯씪???뚯뼱?볤굅???대┃?댁꽌 泥⑤?</strong>
-                <span>?대?吏, 臾몄꽌 媛??쨌 遺숈뿬?ｊ린(Ctrl+V) 吏??쨌 ?뚯씪??理쒕? 10MB</span>
+              <span>첨부파일</span>
+              <div id="editTaskAttachmentDropzone" class="attachment-dropzone" tabindex="0" role="button" aria-label="첨부파일 업로드">
+                <strong>파일을 끌어놓거나 클릭해서 첨부</strong>
+                <span>이미지, 문서 가능 · 붙여넣기(Ctrl+V) 지원 · 파일당 최대 10MB</span>
                 <input id="editTaskAttachmentInput" type="file" multiple hidden />
               </div>
               <div id="editTaskExistingAttachmentList" class="attachment-list"></div>
@@ -943,8 +906,8 @@
             </div>
           </div>
           <div class="task-form-actions">
-            <button id="editTaskCancelBtn" type="button" class="ghost-btn task-cancel">痍⑥냼</button>
-            <button type="submit" class="submit-btn task-submit">?섏젙 ???/button>
+            <button id="editTaskCancelBtn" type="button" class="ghost-btn task-cancel">취소</button>
+            <button type="submit" class="submit-btn task-submit">수정 저장</button>
           </div>
         </form>
       </div>
@@ -957,11 +920,11 @@
       <div class="modal-dialog attendance-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="employeeModalTitle">
         <div class="modal-head">
           <div>
-            <p class="section-label">吏곸썝 ?뺣낫 ?섏젙</p>
-            <h3 id="employeeModalTitle">吏곸썝 ?뺣낫 ?섏젙</h3>
-            <p id="employeeModalSubtitle" class="modal-subtitle">湲곕낯湲됯낵 ?섎떦, 怨좎슜 ?뺥깭瑜??섏젙?섍굅????젣?????덉뒿?덈떎.</p>
+            <p class="section-label">직원 정보 수정</p>
+            <h3 id="employeeModalTitle">직원 정보 수정</h3>
+            <p id="employeeModalSubtitle" class="modal-subtitle">기본급과 수당, 고용 형태를 수정하거나 삭제할 수 있습니다.</p>
           </div>
-          <button id="employeeModalCloseBtn" type="button" class="ghost-btn icon-only" aria-label="吏곸썝 ?섏젙 李??リ린">
+          <button id="employeeModalCloseBtn" type="button" class="ghost-btn icon-only" aria-label="직원 수정 창 닫기">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z" />
             </svg>
@@ -970,78 +933,78 @@
         <form id="editEmployeeForm" class="task-form modal-task-form">
           <div class="task-form-grid hr-form-grid">
             <label class="field task-form-wide">
-              <span>吏곸썝紐?/span>
+              <span>직원명</span>
               <input id="editEmployeeNameInput" type="text" maxlength="30" autocomplete="off" required />
             </label>
               <label class="field">
-                <span>援щ텇</span>
+                <span>구분</span>
                 <select id="editEmployeeTypeInput">
-                  <option value="insured">4?蹂댄뿕 ?곸슜 吏곸썝</option>
-                  <option value="freelancer">?꾨━?쒖꽌</option>
+                  <option value="insured">4대보험 적용 직원</option>
+                  <option value="freelancer">프리랜서</option>
                 </select>
               </label>
               <label class="field task-form-wide">
-                <span>?곌껐 ?뚯썝 怨꾩젙</span>
+                <span>연결 회원 계정</span>
                 <select id="editEmployeeMemberInput">
-                  <option value="">?곌껐 ????/option>
+                  <option value="">연결 안 함</option>
                 </select>
               </label>
               <label class="field">
-                <span>湲곕낯湲?/span>
+                <span>기본급</span>
                 <input id="editEmployeeBaseSalaryInput" type="number" min="0" step="10000" required />
               </label>
             <label class="field">
-              <span>?쇨렐 ?섎떦 (?쒓컙??</span>
+              <span>야근 수당 (시간당)</span>
               <input id="editEmployeeOvertimeRateInput" type="number" min="0" step="1000" required />
             </label>
             <label class="field">
-              <span>二쇰쭚 ?섎떦 (?쒓컙??</span>
+              <span>주말 수당 (시간당)</span>
               <input id="editEmployeeWeekendRateInput" type="number" min="0" step="1000" required />
             </label>
             <label class="field">
-              <span>遺??/span>
+              <span>부서</span>
               <input id="editEmployeeDepartmentInput" type="text" maxlength="40" />
             </label>
             <label class="field">
-              <span>吏곸콉</span>
+              <span>직책</span>
               <input id="editEmployeeTitleInput" type="text" maxlength="40" />
             </label>
             <label class="field">
-              <span>?곕씫泥?/span>
+              <span>연락처</span>
               <input id="editEmployeePhoneInput" type="text" maxlength="30" />
             </label>
             <label class="field">
-              <span>?대찓??/span>
+              <span>이메일</span>
               <input id="editEmployeeEmailInput" type="email" maxlength="80" />
             </label>
             <label class="field task-form-wide">
-              <span>二쇱냼</span>
+              <span>주소</span>
               <input id="editEmployeeAddressInput" type="text" maxlength="120" />
             </label>
             <label class="field">
-              <span>??됰챸</span>
+              <span>은행명</span>
               <input id="editEmployeeBankNameInput" type="text" maxlength="40" />
             </label>
             <label class="field">
-              <span>湲됱뿬 怨꾩쥖踰덊샇</span>
+              <span>급여 계좌번호</span>
               <input id="editEmployeeBankAccountInput" type="text" maxlength="40" />
             </label>
             <label class="field">
-              <span>?덇툑二?/span>
+              <span>예금주</span>
               <input id="editEmployeeAccountHolderInput" type="text" maxlength="30" />
             </label>
             <label class="field task-form-wide">
-              <span>遺?묎?議??뺣낫</span>
-              <input id="editEmployeeDependentsInput" type="text" maxlength="120" placeholder="?? 諛곗슦??1紐? ?먮? 2紐? />
+              <span>부양가족 정보</span>
+              <input id="editEmployeeDependentsInput" type="text" maxlength="120" placeholder="예: 배우자 1명, 자녀 2명" />
             </label>
             <label class="field task-form-wide">
-              <span>鍮꾧퀬</span>
+              <span>비고</span>
               <input id="editEmployeeNoteInput" type="text" maxlength="160" />
             </label>
           </div>
           <div class="task-form-actions attendance-modal-actions">
-            <button id="editEmployeeDeleteBtn" type="button" class="ghost-btn danger-soft">吏곸썝 ??젣</button>
-            <button type="submit" class="submit-btn task-submit">?섏젙 ???/button>
+            <button id="editEmployeeDeleteBtn" type="button" class="ghost-btn danger-soft">직원 삭제</button>
+            <button type="submit" class="submit-btn task-submit">수정 저장</button>
           </div>
         </form>
       </div>
@@ -1052,11 +1015,11 @@
       <div class="modal-dialog attendance-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="attendanceModalTitle">
         <div class="modal-head">
           <div>
-            <p class="section-label">異쒗눜洹?湲곕줉 ?섏젙</p>
-            <h3 id="attendanceModalTitle">吏곸썝 異쒗눜洹?湲곕줉 ?섏젙</h3>
-            <p id="attendanceModalSubtitle" class="modal-subtitle">?꾩옱 湲곕줉???섏젙?섍굅????젣?????덉뒿?덈떎.</p>
+            <p class="section-label">출퇴근 기록 수정</p>
+            <h3 id="attendanceModalTitle">직원 출퇴근 기록 수정</h3>
+            <p id="attendanceModalSubtitle" class="modal-subtitle">현재 기록을 수정하거나 삭제할 수 있습니다.</p>
           </div>
-          <button id="attendanceModalCloseBtn" type="button" class="ghost-btn icon-only" aria-label="異쒗눜洹??섏젙 李??リ린">
+          <button id="attendanceModalCloseBtn" type="button" class="ghost-btn icon-only" aria-label="출퇴근 수정 창 닫기">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z" />
             </svg>
@@ -1065,27 +1028,27 @@
         <form id="editAttendanceForm" class="task-form modal-task-form">
           <div class="task-form-grid hr-form-grid">
             <label class="field task-form-wide">
-              <span>吏곸썝 ?좏깮</span>
+              <span>직원 선택</span>
               <select id="editAttendanceEmployeeSelect" required>
-                <option value="">吏곸썝???좏깮?섏꽭??/option>
+                <option value="">직원을 선택하세요</option>
               </select>
             </label>
             <label class="field">
-              <span>洹쇰Т??/span>
+              <span>근무일</span>
               <input id="editAttendanceDateInput" type="date" required />
             </label>
             <label class="field">
-              <span>異쒓렐 ?쒓컙</span>
+              <span>출근 시간</span>
               <input id="editAttendanceClockInInput" type="time" required />
             </label>
             <label class="field">
-              <span>?닿렐 ?쒓컙</span>
+              <span>퇴근 시간</span>
               <input id="editAttendanceClockOutInput" type="time" required />
             </label>
           </div>
           <div class="task-form-actions attendance-modal-actions">
-            <button id="editAttendanceDeleteBtn" type="button" class="ghost-btn danger-soft">湲곕줉 ??젣</button>
-            <button type="submit" class="submit-btn task-submit">?섏젙 ???/button>
+            <button id="editAttendanceDeleteBtn" type="button" class="ghost-btn danger-soft">기록 삭제</button>
+            <button type="submit" class="submit-btn task-submit">수정 저장</button>
           </div>
         </form>
       </div>
@@ -1096,11 +1059,11 @@
       <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="employeeDetailTitle">
         <div class="modal-head">
           <div>
-            <p class="section-label">吏곸썝 ?곸꽭</p>
-            <h3 id="employeeDetailTitle">吏곸썝 洹쇰Т ?곸꽭</h3>
-            <p id="employeeDetailSubtitle" class="modal-subtitle">吏곸썝蹂?洹쇳깭? 湲됱뿬 ?붿빟???뺤씤?????덉뒿?덈떎.</p>
+            <p class="section-label">직원 상세</p>
+            <h3 id="employeeDetailTitle">직원 근무 상세</h3>
+            <p id="employeeDetailSubtitle" class="modal-subtitle">직원별 근태와 급여 요약을 확인할 수 있습니다.</p>
           </div>
-          <button id="employeeDetailCloseBtn" type="button" class="ghost-btn icon-only" aria-label="吏곸썝 ?곸꽭 李??リ린">
+          <button id="employeeDetailCloseBtn" type="button" class="ghost-btn icon-only" aria-label="직원 상세 창 닫기">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z" />
             </svg>
@@ -1115,11 +1078,11 @@
       <div class="modal-dialog attachment-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="attachmentPreviewTitle">
         <div class="modal-head">
           <div>
-            <p class="section-label">泥⑤? 誘몃━蹂닿린</p>
-            <h3 id="attachmentPreviewTitle">泥⑤??뚯씪 蹂닿린</h3>
-            <p id="attachmentPreviewSubtitle" class="modal-subtitle">?대?吏???ш쾶 蹂닿퀬, ?뚯씪? ??李쎌뿉???????덉뒿?덈떎.</p>
+            <p class="section-label">첨부 미리보기</p>
+            <h3 id="attachmentPreviewTitle">첨부파일 보기</h3>
+            <p id="attachmentPreviewSubtitle" class="modal-subtitle">이미지는 크게 보고, 파일은 새 창에서 열 수 있습니다.</p>
           </div>
-          <button id="attachmentPreviewCloseBtn" type="button" class="ghost-btn icon-only" aria-label="泥⑤? 誘몃━蹂닿린 ?リ린">
+          <button id="attachmentPreviewCloseBtn" type="button" class="ghost-btn icon-only" aria-label="첨부 미리보기 닫기">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z" />
             </svg>
@@ -1129,21 +1092,21 @@
           <div id="attachmentPreviewCanvas" class="attachment-preview-canvas"></div>
           <div class="attachment-preview-meta">
             <div class="attachment-preview-row">
-              <span>?뚯씪紐?/span>
+              <span>파일명</span>
               <strong id="attachmentPreviewName">-</strong>
             </div>
             <div class="attachment-preview-row">
-              <span>?뺤떇</span>
+              <span>형식</span>
               <strong id="attachmentPreviewType">-</strong>
             </div>
             <div class="attachment-preview-row">
-              <span>?⑸웾</span>
+              <span>용량</span>
               <strong id="attachmentPreviewSize">-</strong>
             </div>
           </div>
           <div class="task-form-actions">
-            <button id="attachmentPreviewOpenBtn" type="button" class="ghost-btn">?ㅼ슫濡쒕뱶</button>
-            <button id="attachmentPreviewDoneBtn" type="button" class="submit-btn task-submit">?リ린</button>
+            <button id="attachmentPreviewOpenBtn" type="button" class="ghost-btn">다운로드</button>
+            <button id="attachmentPreviewDoneBtn" type="button" class="submit-btn task-submit">닫기</button>
           </div>
         </div>
       </div>
