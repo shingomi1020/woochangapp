@@ -1221,3 +1221,18 @@ body[data-device="desktop"] #employeeInfoDesktopSections > .employee-info-sectio
     gap: 8px !important;
   }
 }
+
+/* Keep native hidden behavior above all layout overrides. */
+body .app-view[hidden],
+body .hero[hidden],
+body .workspace-hub[hidden],
+body .session-badge[hidden],
+body #logoutBtn[hidden],
+body #tasksView[hidden],
+body[data-device] .app-view[hidden],
+body[data-device] .hero[hidden],
+body[data-device] .workspace-hub[hidden],
+body[data-device] #tasksView[hidden],
+body [hidden] {
+  display: none !important;
+}

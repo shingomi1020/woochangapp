@@ -324,10 +324,13 @@ test("desktop admin smoke flow renders calendar selection, team, and payroll vie
   await expect(page.locator("#monthEventCount")).toContainText("2");
 
   await page.locator('button[data-view="employeeinfo"]').click();
+  await expect(page.locator("#tasksView")).toBeHidden();
   await expect(page.locator("#employeeinfoView")).toBeVisible();
   await expect(page.locator("#employeeInfoDesktopSummary")).toContainText("Alex Kim");
 
   await page.locator('button[data-view="payroll"]').click();
+  await expect(page.locator("#employeeinfoView")).toBeHidden();
+  await expect(page.locator("#tasksView")).toBeHidden();
   await expect(page.locator("#payrollView")).toBeVisible();
   await expect(page.locator("#payrollSummaryList")).toContainText("Alex Kim");
 });
