@@ -3666,8 +3666,13 @@ async function appendPendingAttachments(files, mode = "create") {
     return;
   }
 
-  const targetCollection = mode === "edit" ? state.pendingEditTaskAttachments : state.pendingTaskAttachments;
-  const usage = getAttachmentUsage();
+  const targetCollection =
+    mode === "edit"
+      ? state.pendingEditTaskAttachments
+      : mode === "portfolio"
+        ? state.pendingPortfolioAttachments
+        : state.pendingTaskAttachments;
+  const usage = mode === "portfolio" ? getPortfolioAttachmentUsage() : getAttachmentUsage();
   let nextUsageBytes = usage.usedBytes + targetCollection.reduce((sum, item) => sum + Number(item.fileSize || 0), 0);
 
   for (const file of list) {
