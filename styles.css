@@ -7902,3 +7902,72 @@ body[data-device="desktop"] #employeeinfoView .employee-info-sections {
   width: 100% !important;
   min-width: 0 !important;
 }
+
+/* 2026-03 corporate header color pass */
+.site-nav-inner,
+body[data-device] .site-nav-inner {
+  background: linear-gradient(180deg, #243447, #2f435a) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14) !important;
+}
+
+.site-nav .site-brand strong,
+.site-nav .session-badge strong,
+.site-nav .role-switcher,
+.site-nav .role-switcher strong {
+  color: #f8fafc !important;
+}
+
+.site-nav .site-brand p,
+.site-nav .session-badge span {
+  color: rgba(226, 232, 240, 0.78) !important;
+}
+
+.site-nav .icon-chip,
+.site-nav .metric-icon,
+.site-nav .btn-icon {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.site-nav .session-badge,
+.site-nav .role-switcher,
+.site-nav .ghost-btn,
+.site-nav .submit-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.site-nav .ghost-btn:hover,
+.site-nav .submit-btn:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.site-nav .site-menu {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.site-nav .site-menu-link {
+  color: rgba(226, 232, 240, 0.82) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+}
+
+.site-nav .site-menu-link:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+}
+
+.site-nav .site-menu-link.active {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #1f2f45 !important;
+  box-shadow: none !important;
+}
