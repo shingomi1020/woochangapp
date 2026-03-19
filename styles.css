@@ -7352,3 +7352,205 @@ body[data-device] .workspace-card-label {
 .metric-label {
   color: #4b5563 !important;
 }
+
+/* 2026-03 samsung calendar month pass */
+.panel-calendar .calendar-nav,
+.panel-calendar .calendar-view-switch {
+  padding: 2px !important;
+  gap: 2px !important;
+  border-radius: 10px !important;
+  border: 1px solid #d1d5db !important;
+  background: #f3f4f6 !important;
+  box-shadow: none !important;
+}
+
+.panel-calendar .calendar-nav .ghost-btn,
+.panel-calendar .calendar-view-switch .chip {
+  min-width: 64px !important;
+  height: 36px !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: #6b7280 !important;
+  box-shadow: none !important;
+}
+
+.panel-calendar .calendar-nav .ghost-btn.primary,
+.panel-calendar .calendar-view-switch .chip.active {
+  border: 1px solid #d1d5db !important;
+  background: #ffffff !important;
+  color: #111827 !important;
+  box-shadow: none !important;
+}
+
+.panel-calendar .calendar-scroll {
+  border-radius: 16px !important;
+  border-color: #d1d5db !important;
+}
+
+.panel-calendar .weekdays {
+  background: #f8fafc !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month {
+  background: #e5e7eb !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-card {
+  min-height: 142px !important;
+  padding: 10px 8px 8px !important;
+  border: 0 !important;
+  border-right: 1px solid #e5e7eb !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card:hover,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-card:hover {
+  background: #fafafa !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-selected,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-card.is-selected {
+  background: #f8fafc !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-outside,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-card.is-outside {
+  background: #f9fafb !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-top {
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  margin-bottom: 8px !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-number {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  color: #111827 !important;
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-selected .day-number,
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-today .day-number {
+  min-width: 30px !important;
+  height: 30px !important;
+  border-radius: 999px !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-selected .day-number {
+  background: #111827 !important;
+  color: #ffffff !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-today:not(.is-selected) .day-number {
+  background: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-count {
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #6b7280 !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-events {
+  display: grid !important;
+  gap: 3px !important;
+  margin-top: 4px !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .mini-event {
+  display: grid !important;
+  grid-template-columns: 8px minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 6px !important;
+  min-height: 18px !important;
+  padding: 1px 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event-dot {
+  width: 6px !important;
+  height: 6px !important;
+  margin-top: 5px !important;
+  border-radius: 999px !important;
+  background: #6b7280 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event.priority-high .mini-event-dot {
+  background: #111827 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event.priority-medium .mini-event-dot {
+  background: #4b5563 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event.priority-low .mini-event-dot {
+  background: #9ca3af !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event-body {
+  display: grid !important;
+  gap: 1px !important;
+  min-width: 0 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event-title,
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event-link {
+  display: block !important;
+  overflow: hidden !important;
+  color: #111827 !important;
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event-sub {
+  display: none !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event-link:hover {
+  color: #111827 !important;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-grid.calendar-mode-month .day-card {
+  min-height: 92px !important;
+  padding: 8px 6px 6px !important;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-grid.calendar-mode-month .day-count {
+  font-size: 0.62rem !important;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-grid.calendar-mode-month .mini-event,
+body[data-device="mobile"] .panel-calendar .calendar-grid.calendar-mode-month .mini-event-title {
+  font-size: 0.62rem !important;
+}

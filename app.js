@@ -1907,14 +1907,22 @@ function createDayConfig(date, isOutside) {
 function renderDayCard(config) {
   const taskPreview = config.tasks
     .slice(0, state.calendarMode === "week" ? 3 : 2)
-    .map(
-      (task) => `
+    .map((task) => {
+      const title = escapeHtml(task.description || task.title || task.client || "업무");
+      const client = escapeHtml(task.client || "");
+      const clientAttr = escapeHtmlAttribute(task.client || "");
+      const clientLinkAttr = task.client ? ` data-client-open="${clientAttr}"` : "";
+
+      return `
         <div class="mini-event priority-${task.priority}">
-          <span class="mini-event-client mini-event-link" data-client-open="${escapeHtmlAttribute(task.client || "")}">${escapeHtml(task.client || "거래처 미지정")}</span>
-          <span class="mini-event-text">${escapeHtml(task.description || task.title || "")}</span>
+          <span class="mini-event-dot" aria-hidden="true"></span>
+          <div class="mini-event-body">
+            <span class="mini-event-title mini-event-link"${clientLinkAttr}>${title}</span>
+            ${task.client ? `<span class="mini-event-sub">${client}</span>` : ""}
+          </div>
         </div>
-      `
-    )
+      `;
+    })
     .join("");
 
   return `
