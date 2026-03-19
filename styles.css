@@ -7971,3 +7971,25 @@ body[data-device] .site-nav-inner {
   color: #1f2f45 !important;
   box-shadow: none !important;
 }
+
+/* 2026-03 header action cleanup */
+body[data-device="desktop"] .site-nav .site-actions {
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+  flex-wrap: nowrap !important;
+}
+
+body[data-device="desktop"] .site-nav .session-badge {
+  min-width: 220px !important;
+  min-height: 56px !important;
+  padding: 0 18px !important;
+  justify-content: center !important;
+}
+
+body[data-device="desktop"] .site-nav #logoutBtn {
+  min-height: 56px !important;
+  padding: 0 20px !important;
+  white-space: nowrap !important;
+}
