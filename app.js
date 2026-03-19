@@ -1,19 +1,6 @@
 function ensurePortfolioNavigationAndView() {
-  const siteMenu = document.querySelector(".site-menu");
-  if (siteMenu && !siteMenu.querySelector('[data-view="portfolio"]')) {
-    const portfolioButton = document.createElement("button");
-    portfolioButton.className = "site-menu-link";
-    portfolioButton.type = "button";
-    portfolioButton.dataset.view = "portfolio";
-    portfolioButton.dataset.roleVisible = "admin,employee,freelancer";
-    portfolioButton.textContent = "포트폴리오";
-    const estimateButton = siteMenu.querySelector('[data-view="estimate"]');
-    if (estimateButton) {
-      siteMenu.insertBefore(portfolioButton, estimateButton);
-    } else {
-      siteMenu.appendChild(portfolioButton);
-    }
-  }
+  const legacyPortfolioButton = document.querySelector('.site-menu [data-view="portfolio"]');
+  legacyPortfolioButton?.remove();
 
   if (document.getElementById("portfolioView")) {
     return;
@@ -203,7 +190,9 @@ const filterButtons = document.querySelectorAll("[data-filter]");
 const focusTodayBtn = document.getElementById("focusTodayBtn");
 const focusInputBtn = document.getElementById("focusInputBtn");
 const pageHero = document.querySelector(".hero");
+const workspaceHub = document.querySelector(".workspace-hub");
 const workspaceTabs = document.querySelectorAll("[data-view]");
+const workspaceShortcutButtons = document.querySelectorAll("[data-shortcut-view]");
 const roleSensitiveTabs = document.querySelectorAll("[data-role-visible]");
 const authSensitiveTabs = document.querySelectorAll("[data-auth-visible]");
 const pageViews = document.querySelectorAll(".app-view");
@@ -713,6 +702,16 @@ workspaceTabs.forEach((tab) => {
   tab.addEventListener("click", handleWorkspaceTabInteraction);
   tab.addEventListener("pointerup", handleWorkspaceTabInteraction);
   tab.addEventListener("touchend", handleWorkspaceTabInteraction, { passive: false });
+});
+
+workspaceShortcutButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const nextView = button.dataset.shortcutView;
+    if (!nextView) {
+      return;
+    }
+    switchView(nextView);
+  });
 });
 
 calendarViewButtons.forEach((button) => {
@@ -2950,18 +2949,17 @@ function switchView(view, shouldSyncHash = true) {
   }
   const isBoardView = boardViews.includes(view);
   pageHero.hidden = !isBoardView;
+  if (workspaceHub) {
+    workspaceHub.hidden = !isAuthenticated() || ["login", "signup"].includes(view);
+  }
   renderStandaloneViews(view);
   if (["login", "signup"].includes(view)) {
     const authTarget = document.getElementById(`${view}View`);
     authTarget?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
+  const primaryView = getPrimaryNavView(view);
   workspaceTabs.forEach((tab) => {
-    const isActive =
-      (view === "client" && tab.dataset.view === "calendar") ||
-      (view === "calendar" && tab.dataset.view === "calendar") ||
-      (view === "todos" && tab.dataset.view === "todos") ||
-      tab.dataset.view === view;
-    tab.classList.toggle("active", isActive);
+    tab.classList.toggle("active", tab.dataset.view === primaryView);
   });
   if (shouldSyncHash) {
     const nextHash = `#${view}`;
@@ -2969,6 +2967,19 @@ function switchView(view, shouldSyncHash = true) {
       window.location.hash = nextHash;
     }
   }
+}
+
+function getPrimaryNavView(view) {
+  if (["calendar", "client"].includes(view)) {
+    return "calendar";
+  }
+  if (["hr", "portfolio", "estimate", "statement"].includes(view)) {
+    return "hr";
+  }
+  if (["employeeinfo", "members"].includes(view)) {
+    return "employeeinfo";
+  }
+  return view;
 }
 
 function getRoleLabel(role) {
