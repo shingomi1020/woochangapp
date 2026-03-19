@@ -464,6 +464,9 @@ const state = {
 
 const ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024;
 const ATTACHMENT_FREE_QUOTA_BYTES = 1024 * 1024 * 1024;
+const ATTACHMENT_IMAGE_MAX_DIMENSION = 1800;
+const ATTACHMENT_IMAGE_TARGET_BYTES = 2 * 1024 * 1024;
+const COMPRESSIBLE_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/jpg", "image/webp", "image/bmp"]);
 
 setConnectionState("checking", text.booting);
 
@@ -2697,14 +2700,14 @@ function renderAttachmentUsage() {
   attachmentStorageRemaining.textContent = `무료 1GB 기준 남은 용량 ${formatFileSize(usage.remainingBytes)}`;
 }
 
-function makeLocalAttachmentPreview(file, fileData) {
+function makeLocalAttachmentPreview(file, fileData, overrides = {}) {
   return {
     tempId: `attachment-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
-    fileName: file.name,
-    mimeType: file.type || "",
+    fileName: overrides.fileName || file.name,
+    mimeType: overrides.mimeType || file.type || "",
     fileData,
-    fileSize: Number(file.size || 0),
-    isImage: String(file.type || "").startsWith("image/"),
+    fileSize: Number(overrides.fileSize ?? file.size ?? 0),
+    isImage: typeof overrides.isImage === "boolean" ? overrides.isImage : String(overrides.mimeType || file.type || "").startsWith("image/"),
   };
 }
 
@@ -2756,6 +2759,98 @@ async function readFileAsDataUrl(file) {
     reader.onload = () => resolve(reader.result);
     reader.onerror = () => reject(new Error("파일을 읽지 못했습니다."));
     reader.readAsDataURL(file);
+  });
+}
+
+async function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("압축 이미지 변환에 실패했습니다."));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function loadImageElement(file) {
+  const dataUrl = await readFileAsDataUrl(file);
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve({ image, dataUrl });
+    image.onerror = () => reject(new Error("이미지 미리보기를 생성하지 못했습니다."));
+    image.src = dataUrl;
+  });
+}
+
+function getResizedDimensions(width, height, maxDimension) {
+  if (Math.max(width, height) <= maxDimension) {
+    return { width, height };
+  }
+
+  const ratio = width / height;
+  if (width >= height) {
+    return { width: maxDimension, height: Math.round(maxDimension / ratio) };
+  }
+
+  return { width: Math.round(maxDimension * ratio), height: maxDimension };
+}
+
+function replaceFileExtension(fileName, nextExtension) {
+  return /\.[^.]+$/.test(fileName) ? fileName.replace(/\.[^.]+$/, nextExtension) : `${fileName}${nextExtension}`;
+}
+
+async function canvasToBlob(canvas, mimeType, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob);
+        return;
+      }
+      reject(new Error("이미지 압축에 실패했습니다."));
+    }, mimeType, quality);
+  });
+}
+
+async function prepareAttachmentPayload(file) {
+  const mimeType = String(file.type || "").toLowerCase();
+  const isImage = mimeType.startsWith("image/");
+  const isCompressibleImage = isImage && COMPRESSIBLE_IMAGE_TYPES.has(mimeType);
+
+  if (!isCompressibleImage) {
+    const fileData = await readFileAsDataUrl(file);
+    return makeLocalAttachmentPreview(file, fileData);
+  }
+
+  const { image, dataUrl: originalDataUrl } = await loadImageElement(file);
+  const nextSize = getResizedDimensions(image.naturalWidth || image.width, image.naturalHeight || image.height, ATTACHMENT_IMAGE_MAX_DIMENSION);
+  const canvas = document.createElement("canvas");
+  canvas.width = nextSize.width;
+  canvas.height = nextSize.height;
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    return makeLocalAttachmentPreview(file, originalDataUrl);
+  }
+
+  context.drawImage(image, 0, 0, nextSize.width, nextSize.height);
+
+  let chosenBlob = await canvasToBlob(canvas, "image/jpeg", 0.82);
+  for (const quality of [0.74, 0.66, 0.58]) {
+    if (chosenBlob.size <= ATTACHMENT_IMAGE_TARGET_BYTES) {
+      break;
+    }
+    chosenBlob = await canvasToBlob(canvas, "image/jpeg", quality);
+  }
+
+  if (chosenBlob.size >= Number(file.size || 0)) {
+    return makeLocalAttachmentPreview(file, originalDataUrl);
+  }
+
+  const compressedDataUrl = await blobToDataUrl(chosenBlob);
+  return makeLocalAttachmentPreview(file, compressedDataUrl, {
+    fileName: replaceFileExtension(file.name, ".jpg"),
+    mimeType: "image/jpeg",
+    fileSize: chosenBlob.size,
+    isImage: true,
   });
 }
 
@@ -2955,6 +3050,132 @@ function renderTaskAttachmentPanels() {
   renderAttachmentUsage();
   bindAttachmentRemoveButtons();
   bindAttachmentPreviewButtons();
+}
+
+async function attachmentBlobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("압축 이미지 변환에 실패했습니다."));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function attachmentLoadImage(file) {
+  const dataUrl = await readFileAsDataUrl(file);
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve({ image, dataUrl });
+    image.onerror = () => reject(new Error("이미지 미리보기를 생성하지 못했습니다."));
+    image.src = dataUrl;
+  });
+}
+
+function attachmentResizeDimensions(width, height, maxDimension) {
+  if (Math.max(width, height) <= maxDimension) {
+    return { width, height };
+  }
+
+  const ratio = width / height;
+  if (width >= height) {
+    return { width: maxDimension, height: Math.round(maxDimension / ratio) };
+  }
+
+  return { width: Math.round(maxDimension * ratio), height: maxDimension };
+}
+
+function attachmentRenameAsJpg(fileName) {
+  return /\.[^.]+$/.test(fileName) ? fileName.replace(/\.[^.]+$/, ".jpg") : `${fileName}.jpg`;
+}
+
+async function attachmentCanvasToBlob(canvas, mimeType, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob);
+        return;
+      }
+      reject(new Error("이미지 압축에 실패했습니다."));
+    }, mimeType, quality);
+  });
+}
+
+async function prepareAttachmentPayload(file) {
+  const mimeType = String(file.type || "").toLowerCase();
+  const isImage = mimeType.startsWith("image/");
+  const isCompressibleImage = isImage && COMPRESSIBLE_IMAGE_TYPES.has(mimeType);
+
+  if (!isCompressibleImage) {
+    const fileData = await readFileAsDataUrl(file);
+    return makeLocalAttachmentPreview(file, fileData);
+  }
+
+  const { image, dataUrl: originalDataUrl } = await attachmentLoadImage(file);
+  const nextSize = attachmentResizeDimensions(
+    image.naturalWidth || image.width,
+    image.naturalHeight || image.height,
+    ATTACHMENT_IMAGE_MAX_DIMENSION
+  );
+
+  const canvas = document.createElement("canvas");
+  canvas.width = nextSize.width;
+  canvas.height = nextSize.height;
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    return makeLocalAttachmentPreview(file, originalDataUrl);
+  }
+
+  context.drawImage(image, 0, 0, nextSize.width, nextSize.height);
+
+  let chosenBlob = await attachmentCanvasToBlob(canvas, "image/jpeg", 0.82);
+  for (const quality of [0.74, 0.66, 0.58]) {
+    if (chosenBlob.size <= ATTACHMENT_IMAGE_TARGET_BYTES) {
+      break;
+    }
+    chosenBlob = await attachmentCanvasToBlob(canvas, "image/jpeg", quality);
+  }
+
+  if (chosenBlob.size >= Number(file.size || 0)) {
+    return makeLocalAttachmentPreview(file, originalDataUrl);
+  }
+
+  const compressedDataUrl = await attachmentBlobToDataUrl(chosenBlob);
+  return makeLocalAttachmentPreview(file, compressedDataUrl, {
+    fileName: attachmentRenameAsJpg(file.name),
+    mimeType: "image/jpeg",
+    fileSize: chosenBlob.size,
+    isImage: true,
+  });
+}
+
+async function appendPendingAttachments(files, mode = "create") {
+  const list = Array.from(files || []);
+  if (!list.length) {
+    return;
+  }
+
+  const targetCollection = mode === "edit" ? state.pendingEditTaskAttachments : state.pendingTaskAttachments;
+  const usage = getAttachmentUsage();
+  let nextUsageBytes = usage.usedBytes + targetCollection.reduce((sum, item) => sum + Number(item.fileSize || 0), 0);
+
+  for (const file of list) {
+    if (Number(file.size || 0) > ATTACHMENT_MAX_BYTES) {
+      showToast(`첨부파일은 파일당 ${formatFileSize(ATTACHMENT_MAX_BYTES)} 이하만 가능합니다.`);
+      continue;
+    }
+
+    const preview = await prepareAttachmentPayload(file);
+    if (nextUsageBytes + Number(preview.fileSize || 0) > ATTACHMENT_FREE_QUOTA_BYTES) {
+      showToast("무료 1GB 첨부 한도를 초과할 수 있어 업로드할 수 없습니다.");
+      continue;
+    }
+
+    targetCollection.push(preview);
+    nextUsageBytes += preview.fileSize;
+  }
+
+  renderTaskAttachmentPanels();
 }
 
 function getVisibleTasks() {
