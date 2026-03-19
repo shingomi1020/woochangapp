@@ -2978,6 +2978,7 @@ function switchView(view, shouldSyncHash = true) {
   workspaceTabs.forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.view === primaryView);
   });
+  syncWorkspaceShortcutState(view);
   if (shouldSyncHash) {
     const nextHash = `#${view}`;
     if (window.location.hash !== nextHash) {
@@ -2997,6 +2998,22 @@ function getPrimaryNavView(view) {
     return "employeeinfo";
   }
   return view;
+}
+
+function getWorkspaceShortcutView(view) {
+  if (["calendar", "client"].includes(view)) {
+    return "calendar";
+  }
+  return view;
+}
+
+function syncWorkspaceShortcutState(view = state.currentView) {
+  const activeShortcutView = getWorkspaceShortcutView(view);
+  workspaceShortcutButtons.forEach((button) => {
+    const isActive = button.dataset.shortcutView === activeShortcutView;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
 }
 
 function getRoleLabel(role) {
