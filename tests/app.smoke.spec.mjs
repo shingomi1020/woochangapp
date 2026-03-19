@@ -8,8 +8,9 @@ function buildFixture() {
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth();
+  const daysInCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const dueToday = formatDate(new Date(currentYear, currentMonth, Math.max(1, now.getDate())));
-  const dueSoon = formatDate(new Date(currentYear, currentMonth, Math.max(2, now.getDate() + 2)));
+  const dueSoon = formatDate(new Date(currentYear, currentMonth, Math.min(daysInCurrentMonth, Math.max(2, now.getDate() + 2))));
   const monthPrefix = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`;
 
   const adminMember = {
@@ -109,40 +110,153 @@ function buildFixture() {
   };
 }
 
+function cloneFixture(data) {
+  return JSON.parse(JSON.stringify(data));
+}
+
+function parseIdFilter(url) {
+  const raw = url.searchParams.get("id");
+  if (!raw) {
+    return null;
+  }
+
+  if (raw.startsWith("eq.")) {
+    return [decodeURIComponent(raw.slice(3))];
+  }
+
+  if (raw.startsWith("in.(") && raw.endsWith(")")) {
+    return raw
+      .slice(4, -1)
+      .split(",")
+      .map((value) => decodeURIComponent(value));
+  }
+
+  return null;
+}
+
+function nextNumericId(records) {
+  return records.reduce((max, record) => Math.max(max, Number(record?.id) || 0), 0) + 1;
+}
+
+async function seedAuthenticatedSession(page, member) {
+  await page.addInitScript((currentMember) => {
+    window.localStorage.setItem(
+      "flowboard-session-user",
+      JSON.stringify({
+        id: currentMember.id,
+        name: currentMember.name,
+        loginId: currentMember.login_id,
+        role: currentMember.role,
+      })
+    );
+
+    window.localStorage.setItem(
+      "flowboard-members",
+      JSON.stringify([
+        {
+          id: currentMember.id,
+          name: currentMember.name,
+          loginId: currentMember.login_id,
+          password: currentMember.password,
+          role: currentMember.role,
+          department: currentMember.department,
+          title: currentMember.title,
+          phone: currentMember.phone,
+          note: currentMember.note,
+          isActive: currentMember.is_active,
+        },
+      ])
+    );
+  }, member);
+}
+
 async function mockApi(page, fixture) {
+  const db = {
+    memberAccounts: cloneFixture(fixture.memberAccounts ?? []),
+    tasks: cloneFixture(fixture.tasks ?? []),
+    taskAttachments: cloneFixture(fixture.taskAttachments ?? []),
+    employees: cloneFixture(fixture.employees ?? []),
+    attendanceRecords: cloneFixture(fixture.attendanceRecords ?? []),
+    employeeDocuments: cloneFixture(fixture.employeeDocuments ?? []),
+  };
+
+  let nextTaskId = nextNumericId(db.tasks);
+
   await page.route("**/rest/v1/**", async (route) => {
     const url = new URL(route.request().url());
     const pathName = url.pathname;
+    const method = route.request().method();
+    const requestBody = route.request().postData() ? JSON.parse(route.request().postData()) : {};
+    const idFilter = parseIdFilter(url);
 
-    const respond = (body) =>
+    const respond = (body, status = 200) =>
       route.fulfill({
-        status: 200,
+        status,
         contentType: "application/json",
         body: JSON.stringify(body),
       });
 
     if (pathName.endsWith("/member_accounts")) {
-      return respond(fixture.memberAccounts ?? []);
+      return respond(db.memberAccounts);
     }
 
     if (pathName.endsWith("/tasks")) {
-      return respond(fixture.tasks ?? []);
+      if (method === "GET") {
+        const rows = idFilter
+          ? db.tasks.filter((task) => idFilter.includes(String(task.id)))
+          : db.tasks;
+        return respond(rows);
+      }
+
+      if (method === "POST") {
+        const createdTask = {
+          id: nextTaskId++,
+          created_at: new Date().toISOString(),
+          ...requestBody,
+        };
+        db.tasks.unshift(createdTask);
+        return respond([createdTask]);
+      }
+
+      if (method === "PATCH") {
+        const updated = [];
+        db.tasks = db.tasks.map((task) => {
+          if (!idFilter || !idFilter.includes(String(task.id))) {
+            return task;
+          }
+
+          const nextTask = {
+            ...task,
+            ...requestBody,
+          };
+          updated.push(nextTask);
+          return nextTask;
+        });
+        return respond(updated);
+      }
+
+      if (method === "DELETE") {
+        db.tasks = db.tasks.filter((task) => !idFilter?.includes(String(task.id)));
+        return respond([]);
+      }
+
+      return respond([]);
     }
 
     if (pathName.endsWith("/task_attachments")) {
-      return respond([]);
+      return respond(db.taskAttachments);
     }
 
     if (pathName.endsWith("/employees")) {
-      return respond(fixture.employees ?? []);
+      return respond(db.employees);
     }
 
     if (pathName.endsWith("/attendance_records")) {
-      return respond(fixture.attendanceRecords ?? []);
+      return respond(db.attendanceRecords);
     }
 
     if (pathName.endsWith("/employee_documents")) {
-      return respond([]);
+      return respond(db.employeeDocuments);
     }
 
     return respond([]);
@@ -160,38 +274,33 @@ test("guest landing opens auth view and keeps hidden modals closed", async ({ pa
   await expect(page.locator("#employeeDetailModal")).toBeHidden();
 });
 
-test("desktop admin smoke flow renders dashboard, team, and payroll views", async ({ page }) => {
+test("existing member can log in and land on the desktop dashboard", async ({ page }) => {
   const fixture = buildFixture();
 
-  await page.addInitScript((member) => {
-    window.localStorage.setItem(
-      "flowboard-session-user",
-      JSON.stringify({
-        id: member.id,
-        name: member.name,
-        loginId: member.login_id,
-        role: member.role,
-      })
-    );
+  await mockApi(page, {
+    memberAccounts: [fixture.adminMember],
+    tasks: [],
+    employees: [],
+    attendanceRecords: [],
+  });
 
-    window.localStorage.setItem(
-      "flowboard-members",
-      JSON.stringify([
-        {
-          id: member.id,
-          name: member.name,
-          loginId: member.login_id,
-          password: member.password,
-          role: member.role,
-          department: member.department,
-          title: member.title,
-          phone: member.phone,
-          note: member.note,
-          isActive: member.is_active,
-        },
-      ])
-    );
-  }, fixture.adminMember);
+  await page.goto("/");
+
+  await expect(page.locator("#loginView")).toBeVisible();
+  await page.locator("#loginIdInput").fill(fixture.adminMember.login_id);
+  await page.locator("#loginPasswordInput").fill(fixture.adminMember.password);
+  await page.locator('#loginForm button[type="submit"]').click();
+
+  await expect(page.locator("body")).toHaveAttribute("data-view", "calendar");
+  await expect(page.locator("#tasksView")).toBeVisible();
+  await expect(page.locator("#sessionBadge")).toContainText("Playwright Admin");
+  await expect(page.locator("#logoutBtn")).toBeVisible();
+});
+
+test("desktop admin smoke flow renders calendar selection, team, and payroll views", async ({ page }) => {
+  const fixture = buildFixture();
+
+  await seedAuthenticatedSession(page, fixture.adminMember);
 
   await mockApi(page, {
     memberAccounts: [fixture.adminMember],
@@ -205,6 +314,14 @@ test("desktop admin smoke flow renders dashboard, team, and payroll views", asyn
   await expect(page.locator("#tasksView")).toBeVisible();
   await expect(page.locator("#calendarGrid")).toBeVisible();
   await expect(page.locator("#attachmentPreviewModal")).toBeHidden();
+  await expect(page.locator("body")).toHaveAttribute("data-view", "calendar");
+  await expect(page.locator("#selectedDateEvents")).toContainText("Print proof review");
+
+  const dueSoonCard = page.locator(`#calendarGrid [data-date="${fixture.tasks[1].due_date}"]`).first();
+  await dueSoonCard.scrollIntoViewIfNeeded();
+  await dueSoonCard.dispatchEvent("click");
+  await expect(page.locator("#selectedDateEvents")).toContainText("Signage follow-up");
+  await expect(page.locator("#monthEventCount")).toContainText("2");
 
   await page.locator('button[data-view="employeeinfo"]').click();
   await expect(page.locator("#employeeinfoView")).toBeVisible();
@@ -213,4 +330,43 @@ test("desktop admin smoke flow renders dashboard, team, and payroll views", asyn
   await page.locator('button[data-view="payroll"]').click();
   await expect(page.locator("#payrollView")).toBeVisible();
   await expect(page.locator("#payrollSummaryList")).toContainText("Alex Kim");
+});
+
+test("desktop admin can create a todo and move it to done", async ({ page }) => {
+  const fixture = buildFixture();
+  const newTaskDescription = "Playwright created task";
+  const newClientName = "Client Z";
+
+  await seedAuthenticatedSession(page, fixture.adminMember);
+
+  await mockApi(page, {
+    memberAccounts: [fixture.adminMember],
+    tasks: fixture.tasks,
+    employees: [fixture.employee],
+    attendanceRecords: fixture.attendanceRecords,
+  });
+
+  await page.goto("/");
+
+  await page.locator('button[data-view="todos"]').click();
+  await expect(page.locator("body")).toHaveAttribute("data-view", "todos");
+
+  await page.locator("#taskClientInput").fill(newClientName);
+  await page.locator("#taskDescriptionInput").fill(newTaskDescription);
+  await page.locator("#taskReceivedDateInput").fill(fixture.tasks[0].received_date);
+  await page.locator("#taskDueDateInput").fill(fixture.tasks[0].due_date);
+  await page.locator("#taskStatusInput").selectOption("todo");
+  await page.locator("#taskPriorityInput").selectOption("high");
+  await page.locator('#taskForm button[type="submit"]').click();
+
+  const createdTask = page.locator("#taskList .task-item").filter({ hasText: newTaskDescription }).first();
+  await expect(createdTask).toBeVisible();
+  await expect(page.locator("#taskProgressLabel")).toContainText("0 / 3");
+
+  await createdTask.locator('[data-action="status"][data-value="done"]').click();
+  await expect(createdTask).toHaveClass(/is-done/);
+
+  await page.locator('.task-filter [data-filter="done"]').click();
+  await expect(page.locator("#taskList")).toContainText(newTaskDescription);
+  await expect(page.locator("#taskProgressLabel")).toContainText("1 / 3");
 });
