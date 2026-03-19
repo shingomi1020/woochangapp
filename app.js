@@ -258,6 +258,7 @@ const employeeWeekendRateInput = document.getElementById("employeeWeekendRateInp
 const employeeList = document.getElementById("employeeList");
 const payrollMonthInput = document.getElementById("payrollMonthInput");
 const payrollSummaryList = document.getElementById("payrollSummaryList");
+const payrollDetailPanel = document.getElementById("payrollDetailPanel");
 const attendanceForm = document.getElementById("attendanceForm");
 const attendanceEmployeeSelect = document.getElementById("attendanceEmployeeSelect");
 const attendanceDateInput = document.getElementById("attendanceDateInput");
@@ -624,6 +625,7 @@ const state = {
     employeeDetailId: null,
   employeeDocuments: [],
   selectedEmployeeDocumentId: null,
+  selectedPayrollEmployeeId: null,
   payrollStatusMap: loadPayrollStatusMap(),
   taskOrderMap: loadTaskOrderMap(),
   pendingTaskAttachments: [],
@@ -2955,8 +2957,7 @@ function switchView(view, shouldSyncHash = true) {
   if (document.body) {
     document.body.dataset.view = view;
   }
-  const isBoardView = boardViews.includes(view);
-  pageHero.hidden = !isBoardView;
+  pageHero.hidden = !isAuthenticated() || view !== "calendar";
   if (workspaceHub) {
     workspaceHub.hidden = !isAuthenticated() || ["login", "signup", "calendar", "todos"].includes(view);
   }
@@ -4090,59 +4091,144 @@ function buildPayrollSummary() {
   });
 }
 
+function renderPayrollDetailPanel(selectedItem) {
+  if (!payrollDetailPanel) {
+    return;
+  }
+
+  if (!selectedItem) {
+    payrollDetailPanel.innerHTML = `<div class="empty-state">직원을 선택하면 급여 상세가 표시됩니다.</div>`;
+    return;
+  }
+
+  payrollDetailPanel.innerHTML = `
+    <div class="panel-head payroll-detail-head">
+      <div>
+        <p class="section-label">선택 직원</p>
+        <h3>${escapeHtml(selectedItem.employee.name)}</h3>
+        <p class="modal-subtitle">${state.payrollMonth} 기준 급여 상세와 공제 내역</p>
+      </div>
+      <span class="attendance-status-pill is-${selectedItem.payrollStatus === "paid" ? "normal" : selectedItem.payrollStatus === "confirmed" ? "late" : "early"}">${getPayrollStatusLabel(selectedItem.payrollStatus)}</span>
+    </div>
+    <div class="payroll-detail-metrics">
+      <article class="summary-metric">
+        <span class="metric-label">총 지급액</span>
+        <strong>${formatCurrency(selectedItem.totalPay)}</strong>
+      </article>
+      <article class="summary-metric">
+        <span class="metric-label">공제 합계</span>
+        <strong>${formatCurrency(selectedItem.deductions.totalDeduction)}</strong>
+      </article>
+      <article class="summary-metric">
+        <span class="metric-label">실지급 예상</span>
+        <strong>${formatCurrency(selectedItem.netPay)}</strong>
+      </article>
+    </div>
+    <div class="detail-table-shell">
+      <table class="detail-table">
+        <tbody>
+          <tr><th>고용 유형</th><td>${selectedItem.employee.employmentType === "freelancer" ? "프리랜서" : "4대보험 적용 직원"}</td></tr>
+          <tr><th>기본급</th><td>${formatCurrency(selectedItem.employee.baseSalary)}</td></tr>
+          <tr><th>야근 수당</th><td>${formatCurrency(selectedItem.overtimePay)} / ${selectedItem.overtimeHours.toFixed(1)}h</td></tr>
+          <tr><th>주말 수당</th><td>${formatCurrency(selectedItem.weekendPay)} / ${selectedItem.weekendHours.toFixed(1)}h</td></tr>
+          <tr><th>총 지급액</th><td>${formatCurrency(selectedItem.totalPay)}</td></tr>
+          <tr><th>${selectedItem.deductions.typeLabel}</th><td>${formatCurrency(selectedItem.deductions.totalDeduction)}</td></tr>
+          <tr><th>실지급 예상</th><td>${formatCurrency(selectedItem.netPay)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="payroll-detail-tags">
+      ${selectedItem.employee.employmentType === "insured"
+        ? `<span class="task-date-chip">국민연금 ${formatCurrency(selectedItem.deductions.nationalPension)}</span>
+           <span class="task-date-chip">건강보험 ${formatCurrency(selectedItem.deductions.healthInsurance)}</span>
+           <span class="task-date-chip">고용보험 ${formatCurrency(selectedItem.deductions.employmentInsurance)}</span>`
+        : `<span class="task-date-chip">원천징수 ${formatCurrency(selectedItem.deductions.withholding)}</span>`}
+    </div>
+  `;
+}
+
 function renderPayrollSummary() {
   const summaryItems = buildPayrollSummary();
   if (!summaryItems.length) {
     payrollSummaryList.innerHTML = `<div class="empty-state">등록된 직원이 없어서 급여 요약을 계산할 수 없습니다.</div>`;
     payrollConfirmedCount.textContent = "0 / 0";
+    renderPayrollDetailPanel(null);
     return;
   }
 
   const finalizedCount = summaryItems.filter((item) => item.payrollStatus === "confirmed" || item.payrollStatus === "paid").length;
   payrollConfirmedCount.textContent = `${finalizedCount} / ${summaryItems.length}`;
 
-  payrollSummaryList.innerHTML = summaryItems
-    .map(
-      (item) => `
-        <article class="employee-card payroll-card">
-          <div class="employee-card-head">
-            <div>
-              <strong>${item.employee.name}</strong>
-              <p class="employee-card-subtitle">${state.payrollMonth} 기준 예상 급여</p>
-            </div>
-            <span class="task-date-chip">${item.employee.employmentType === "freelancer" ? "프리랜서" : "4대보험 적용 직원"}</span>
-          </div>
-          <div class="payroll-status-group" role="group" aria-label="payroll status">
-            <button class="task-choice-btn ${item.payrollStatus === "draft" ? "is-active" : ""}" type="button" data-payroll-status="draft" data-employee-id="${item.employee.id}">미확정</button>
-            <button class="task-choice-btn ${item.payrollStatus === "confirmed" ? "is-active" : ""}" type="button" data-payroll-status="confirmed" data-employee-id="${item.employee.id}">확정</button>
-            <button class="task-choice-btn ${item.payrollStatus === "paid" ? "is-active" : ""}" type="button" data-payroll-status="paid" data-employee-id="${item.employee.id}">지급 완료</button>
-          </div>
-          <div class="payroll-total-row">
-            <strong>${formatCurrency(item.netPay)}</strong>
-            <span>${getPayrollStatusLabel(item.payrollStatus)} · ${item.overtimeHours.toFixed(1)}h 야근 · ${item.weekendHours.toFixed(1)}h 주말</span>
-          </div>
-          <div class="employee-pay-grid">
-            <span>기본급 ${formatCurrency(item.employee.baseSalary)}</span>
-            <span>야근 수당 ${formatCurrency(item.overtimePay)}</span>
-            <span>주말 수당 ${formatCurrency(item.weekendPay)}</span>
-            <span>총 지급 ${formatCurrency(item.totalPay)}</span>
-            <span>${item.deductions.typeLabel} ${formatCurrency(item.deductions.totalDeduction)}</span>
-            <span>실지급 ${formatCurrency(item.netPay)}</span>
-          </div>
-          <div class="attendance-insight">
-            ${item.employee.employmentType === "insured"
-              ? `<span class="task-date-chip">국민연금 ${formatCurrency(item.deductions.nationalPension)}</span>
-                 <span class="task-date-chip">건강보험 ${formatCurrency(item.deductions.healthInsurance)}</span>
-                 <span class="task-date-chip">고용보험 ${formatCurrency(item.deductions.employmentInsurance)}</span>`
-              : `<span class="task-date-chip">원천징수 ${formatCurrency(item.deductions.withholding)}</span>`}
-          </div>
-        </article>
-      `
-    )
-    .join("");
+  if (!summaryItems.some((item) => String(item.employee.id) === String(state.selectedPayrollEmployeeId))) {
+    state.selectedPayrollEmployeeId = summaryItems[0].employee.id;
+  }
+
+  const selectedItem =
+    summaryItems.find((item) => String(item.employee.id) === String(state.selectedPayrollEmployeeId)) || summaryItems[0];
+
+  payrollSummaryList.innerHTML = `
+    <div class="data-table-shell">
+      <table class="data-table payroll-summary-table">
+        <thead>
+          <tr>
+            <th>직원</th>
+            <th>유형</th>
+            <th>기본급</th>
+            <th>야근</th>
+            <th>주말</th>
+            <th>총 지급</th>
+            <th>공제</th>
+            <th>실지급</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${summaryItems
+            .map((item) => {
+              const isSelected = String(item.employee.id) === String(selectedItem.employee.id);
+              return `
+                <tr class="payroll-summary-row${isSelected ? " is-selected" : ""}">
+                  <td data-label="직원">
+                    <button class="table-row-link" type="button" data-payroll-select="${item.employee.id}">
+                      <strong>${escapeHtml(item.employee.name)}</strong>
+                      <span>${state.payrollMonth}</span>
+                    </button>
+                  </td>
+                  <td data-label="유형">${item.employee.employmentType === "freelancer" ? "프리랜서" : "4대보험"}</td>
+                  <td data-label="기본급">${formatCurrency(item.employee.baseSalary)}</td>
+                  <td data-label="야근">${item.overtimeHours.toFixed(1)}h</td>
+                  <td data-label="주말">${item.weekendHours.toFixed(1)}h</td>
+                  <td data-label="총 지급">${formatCurrency(item.totalPay)}</td>
+                  <td data-label="공제">${formatCurrency(item.deductions.totalDeduction)}</td>
+                  <td data-label="실지급">${formatCurrency(item.netPay)}</td>
+                  <td data-label="상태">
+                    <div class="payroll-status-group" role="group" aria-label="payroll status">
+                      <button class="task-choice-btn ${item.payrollStatus === "draft" ? "is-active" : ""}" type="button" data-payroll-status="draft" data-employee-id="${item.employee.id}">미확정</button>
+                      <button class="task-choice-btn ${item.payrollStatus === "confirmed" ? "is-active" : ""}" type="button" data-payroll-status="confirmed" data-employee-id="${item.employee.id}">확정</button>
+                      <button class="task-choice-btn ${item.payrollStatus === "paid" ? "is-active" : ""}" type="button" data-payroll-status="paid" data-employee-id="${item.employee.id}">지급</button>
+                    </div>
+                  </td>
+                </tr>
+              `;
+            })
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  renderPayrollDetailPanel(selectedItem);
+
+  payrollSummaryList.querySelectorAll("[data-payroll-select]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedPayrollEmployeeId = button.dataset.payrollSelect;
+      renderPayrollSummary();
+    });
+  });
 
   payrollSummaryList.querySelectorAll("[data-payroll-status]").forEach((button) => {
     button.addEventListener("click", () => {
+      state.selectedPayrollEmployeeId = button.dataset.employeeId;
       setPayrollStatus(button.dataset.employeeId, button.dataset.payrollStatus);
       renderPayrollSummary();
       showToast(`급여 상태를 ${button.textContent}로 변경했습니다.`);
@@ -4455,7 +4541,7 @@ function createEmployeeInfoDocumentMarkup(employee) {
   })();
 
   return `
-    <section class="employee-info-section-card">
+    <section class="employee-info-section-card employee-doc-section">
       <div class="employee-info-section-head">
         <div>
           <p class="section-label">증빙서류</p>
@@ -4611,55 +4697,76 @@ function renderEmployeeInfoPage() {
     </div>
   `;
 
+  const employeeFacts = [
+    ["구분", insuredLabel],
+    ["부서", escapeHtml(employee.department || "미지정")],
+    ["직책", escapeHtml(employee.title || "미지정")],
+    ["연락처", escapeHtml(employee.phone || "미등록")],
+    ["이메일", escapeHtml(employee.email || "미등록")],
+    ["주소", escapeHtml(employee.address || "미등록")],
+    ["기본급", formatCurrency(employee.baseSalary)],
+    ["야근 수당", `${formatCurrency(employee.overtimeRate)}/h`],
+    ["주말 수당", `${formatCurrency(employee.weekendRate)}/h`],
+    ["급여 은행", escapeHtml(employee.bankName || "미등록")],
+    ["계좌번호", escapeHtml(employee.bankAccount || "미등록")],
+    ["예금주", escapeHtml(employee.accountHolder || "미등록")],
+    ["부양가족", escapeHtml(employee.dependents || "미등록")],
+    ["총 근무", `${monthSummary.statusCounts.totalHours.toFixed(1)}시간`],
+    ["이번 달 기록", `${monthSummary.records.length}건`],
+  ];
+  const factsRows = employeeFacts.map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`).join("");
+
   const recordsMarkup = monthSummary.records.length
-    ? monthSummary.records
-        .slice(0, 6)
-        .map((record) => {
-          const summary = calculateAttendance(record, employee);
-          return `
-            <article class="employee-record-item">
-              <div>
-                <strong>${formatLongDate(new Date(`${record.workDate}T00:00:00`))}</strong>
-                <p>${record.clockIn} - ${record.clockOut}</p>
-              </div>
-              <div class="employee-record-pills">
-                <span class="attendance-status-pill ${summary.attendanceStatus}">${getAttendanceStatusLabel(summary.attendanceStatus)}</span>
-                <span class="task-date-chip">총 ${summary.totalHours.toFixed(1)}시간</span>
-              </div>
-            </article>
-          `;
-        })
-        .join("")
+    ? `
+      <div class="data-table-shell">
+        <table class="data-table compact-table">
+          <thead>
+            <tr>
+              <th>근무일</th>
+              <th>출근</th>
+              <th>퇴근</th>
+              <th>총 근무</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${monthSummary.records
+              .slice(0, 8)
+              .map((record) => {
+                const summary = calculateAttendance(record, employee);
+                return `
+                  <tr>
+                    <td>${formatDisplayDate(record.workDate)}</td>
+                    <td>${record.clockIn}</td>
+                    <td>${record.clockOut}</td>
+                    <td>${summary.totalHours.toFixed(1)}시간</td>
+                    <td><span class="attendance-status-pill ${summary.attendanceStatus}">${getAttendanceStatusLabel(summary.attendanceStatus)}</span></td>
+                  </tr>
+                `;
+              })
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+    `
     : `<div class="empty-state">이번 달 근태 기록이 아직 없습니다.</div>`;
 
   const sectionsMarkup = `
-    <div class="employee-info-section-grid">
-      <section class="employee-info-section-card">
+    <div class="employee-info-workbench">
+      <section class="employee-info-section-card employee-info-section-primary">
         <div class="employee-info-section-head">
           <div>
             <p class="section-label">기본정보</p>
             <h3>인사 정보 요약</h3>
           </div>
         </div>
-        <div class="employee-info-facts">
-          <div><span>구분</span><strong>${insuredLabel}</strong></div>
-          <div><span>부서</span><strong>${escapeHtml(employee.department || "미지정")}</strong></div>
-          <div><span>직책</span><strong>${escapeHtml(employee.title || "미지정")}</strong></div>
-          <div><span>연락처</span><strong>${escapeHtml(employee.phone || "미등록")}</strong></div>
-          <div><span>이메일</span><strong>${escapeHtml(employee.email || "미등록")}</strong></div>
-          <div><span>주소</span><strong>${escapeHtml(employee.address || "미등록")}</strong></div>
-          <div><span>기본급</span><strong>${formatCurrency(employee.baseSalary)}</strong></div>
-          <div><span>야근 수당</span><strong>${formatCurrency(employee.overtimeRate)}/h</strong></div>
-          <div><span>주말 수당</span><strong>${formatCurrency(employee.weekendRate)}/h</strong></div>
-          <div><span>급여 은행</span><strong>${escapeHtml(employee.bankName || "미등록")}</strong></div>
-          <div><span>계좌번호</span><strong>${escapeHtml(employee.bankAccount || "미등록")}</strong></div>
-          <div><span>예금주</span><strong>${escapeHtml(employee.accountHolder || "미등록")}</strong></div>
-          <div><span>부양가족</span><strong>${escapeHtml(employee.dependents || "미등록")}</strong></div>
-          <div><span>총 근무</span><strong>${monthSummary.statusCounts.totalHours.toFixed(1)}시간</strong></div>
-          <div><span>이번 달 기록</span><strong>${monthSummary.records.length}건</strong></div>
+        <div class="detail-table-shell">
+          <table class="detail-table">
+            <tbody>${factsRows}</tbody>
+          </table>
         </div>
       </section>
-      <section class="employee-info-section-card">
+      <section class="employee-info-section-card employee-info-section-secondary">
         <div class="employee-info-section-head">
           <div>
             <p class="section-label">근태 흐름</p>
@@ -4674,16 +4781,16 @@ function renderEmployeeInfoPage() {
         </div>
         ${renderEmployeeStatusCalendar(employee)}
       </section>
-      <section class="employee-info-section-card">
+      <section class="employee-info-section-card employee-info-section-secondary">
         <div class="employee-info-section-head">
           <div>
             <p class="section-label">최근 기록</p>
             <h3>출퇴근 상세</h3>
           </div>
         </div>
-        <div class="employee-record-list">${recordsMarkup}</div>
+        ${recordsMarkup}
       </section>
-      <section class="employee-info-section-card">
+      <section class="employee-info-section-card employee-info-section-secondary">
         <div class="employee-info-section-head">
           <div>
             <p class="section-label">추가 정보</p>
@@ -5504,33 +5611,50 @@ function renderEmployees() {
 
   const canManageEmployees = state.currentRole === "admin";
 
-  employeeList.innerHTML = state.employees
-    .map(
-      (employee) => `
-        <article class="employee-card">
-          <div class="employee-card-head">
-            <div>
-              <strong>${employee.name}</strong>
-              ${employee.loginId ? `<p class="employee-card-subtitle">怨꾩젙 ${escapeHtml(employee.loginId)}</p>` : ""}
-              <p class="employee-card-subtitle">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</p>
-            </div>
-            <div class="employee-card-tools">
-              <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</span>
-              <div class="employee-card-actions">
-                <button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="detail" data-id="${employee.id}">상세</button>
-                ${canManageEmployees ? `<button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="edit" data-id="${employee.id}">수정</button>` : ""}
-              </div>
-            </div>
-          </div>
-          <div class="employee-pay-grid">
-            <span>기본급 ${formatCurrency(employee.baseSalary)}</span>
-            <span>야근 수당 ${formatCurrency(employee.overtimeRate)}/h</span>
-            <span>주말 수당 ${formatCurrency(employee.weekendRate)}/h</span>
-          </div>
-        </article>
-      `
-    )
-    .join("");
+  employeeList.innerHTML = `
+    <div class="data-table-shell">
+      <table class="data-table employee-directory-table">
+        <thead>
+          <tr>
+            <th>직원명</th>
+            <th>계정</th>
+            <th>유형</th>
+            <th>기본급</th>
+            <th>야근</th>
+            <th>주말</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${state.employees
+            .map(
+              (employee) => `
+                <tr>
+                  <td data-label="직원명">
+                    <button class="table-row-link" type="button" data-employee-action="detail" data-id="${employee.id}">
+                      <strong>${escapeHtml(employee.name)}</strong>
+                      <span>${escapeHtml(employee.department || employee.title || "미지정")}</span>
+                    </button>
+                  </td>
+                  <td data-label="계정">${employee.loginId ? escapeHtml(employee.loginId) : "-"}</td>
+                  <td data-label="유형"><span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4대보험" : "프리랜서"}</span></td>
+                  <td data-label="기본급">${formatCurrency(employee.baseSalary)}</td>
+                  <td data-label="야근">${formatCurrency(employee.overtimeRate)}/h</td>
+                  <td data-label="주말">${formatCurrency(employee.weekendRate)}/h</td>
+                  <td data-label="관리">
+                    <div class="table-actions">
+                      <button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="detail" data-id="${employee.id}">상세</button>
+                      ${canManageEmployees ? `<button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="edit" data-id="${employee.id}">수정</button>` : ""}
+                    </div>
+                  </td>
+                </tr>
+              `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
 
   employeeList.querySelectorAll("[data-employee-action='edit']").forEach((button) => {
     button.addEventListener("click", () => {

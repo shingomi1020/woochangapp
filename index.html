@@ -12,6 +12,7 @@
     />
     <link rel="stylesheet" href="styles.css?v=20260319-99" />
     <link rel="stylesheet" href="web-rebuild.css?v=20260320-101" />
+    <link rel="stylesheet" href="desktop-workbench.css?v=20260320-104" />
   </head>
   <body>
     <div class="app-shell">
@@ -51,130 +52,75 @@
       </header>
 
       <header class="hero reveal">
-        <div class="hero-copy-wrap">
-          <div class="hero-badge">
-            <span class="icon-chip">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M7 3h10v2h3a1 1 0 0 1 1 1v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1h3V3Zm2 2h6V5H9v0Zm10 2H5v12h14V7ZM7 10h10v2H7v-2Zm0 4h7v2H7v-2Z" />
-              </svg>
-            </span>
-            <p class="eyebrow">WORK OS</p>
+        <div class="workbench-summary">
+          <div class="workbench-summary-copy">
+            <p class="section-label">대시보드 요약</p>
+            <h1>오늘 업무 흐름</h1>
+            <p class="hero-copy">캘린더와 투두를 한 작업대에서 보고, 운영·급여·팀 화면은 조회와 수정이 빠른 웹용 레이아웃으로 정리했습니다.</p>
           </div>
-          <h1>업무 흐름을<br />한 화면에서</h1>
-          <p class="hero-copy">캘린더와 투두를 중심으로 운영, 급여, 팀 관리까지 이어지는 업무관리 앱으로 다시 구성했습니다.</p>
-          <div class="hero-actions">
-            <button id="focusTodayBtn" class="hero-btn primary" type="button">
-              <span class="btn-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2h3V2Zm13 8H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM6 8h12V6H6v2Zm5 4h2v4h-2v-4Z" />
-                </svg>
-              </span>
-              오늘 일정 보기
-            </button>
-            <button id="focusInputBtn" class="hero-btn secondary" type="button">
-              <span class="btn-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7V4Z" />
-                </svg>
-              </span>
-              새 작업 등록
-            </button>
+          <div class="workbench-summary-metrics">
+            <article class="summary-metric">
+              <span class="metric-label">남은 업무</span>
+              <strong id="remainingCount">0</strong>
+            </article>
+            <article class="summary-metric">
+              <span class="metric-label">이번 달 마감</span>
+              <strong id="monthEventCount">0</strong>
+            </article>
+            <article class="summary-metric" hidden>
+              <span class="metric-label">선택한 날짜</span>
+              <strong id="selectedDaySummary">0</strong>
+            </article>
           </div>
-          <div class="connection-strip">
-            <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
-            <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-            <p id="buildStamp" class="build-stamp">Build 2026-03-20 102</p>
-          </div>
-        </div>
-
-        <div class="hero-meta">
-          <div class="metric-card float-card">
-            <span class="metric-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 3h11l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm10 1.5V8h3.5L15 4.5ZM7 11h10v1.8H7V11Zm0 4h10v1.8H7V15Z" />
-              </svg>
-            </span>
-            <span class="metric-label">남은 업무</span>
-            <strong id="remainingCount">0</strong>
-            <small>오늘 처리해야 할 핵심 작업</small>
-          </div>
-          <div class="metric-card float-card delay-1">
-            <span class="metric-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2h3V2Zm13 8H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM6 8h12V6H6v2Z" />
-              </svg>
-            </span>
-            <span class="metric-label">이번 달 마감 업무</span>
-            <strong id="monthEventCount">0</strong>
-            <small>현재 보는 달에 마감이 있는 업무 수</small>
-          </div>
-          <div class="metric-card float-card delay-2" hidden>
-            <span class="metric-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 4a1 1 0 0 0-1 1v5.4c0 .3.12.58.33.79l3.6 3.6 1.41-1.42L13 11.99V7a1 1 0 0 0-1-1Z" />
-              </svg>
-            </span>
-            <span class="metric-label">선택한 날짜</span>
-            <strong id="selectedDaySummary">0</strong>
-            <small>해당 날짜에 마감인 업무 수</small>
+          <div class="workbench-summary-actions">
+            <div class="hero-actions">
+              <button id="focusTodayBtn" class="hero-btn primary" type="button">
+                <span class="btn-icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V6a2 2 0 0 1 2-2h3V2Zm13 8H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM6 8h12V6H6v2Zm5 4h2v4h-2v-4Z" />
+                  </svg>
+                </span>
+                오늘 일정 보기
+              </button>
+              <button id="focusInputBtn" class="hero-btn secondary" type="button">
+                <span class="btn-icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7V4Z" />
+                  </svg>
+                </span>
+                새 작업 등록
+              </button>
+            </div>
+            <div class="connection-strip">
+              <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
+              <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
+              <p id="buildStamp" class="build-stamp">Build 2026-03-20 104</p>
+            </div>
           </div>
         </div>
       </header>
 
       <section class="workspace-hub reveal delay-1">
-        <div class="workspace-hub-shell">
-          <div class="workspace-hub-head">
+        <div class="workspace-hub-shell workspace-hub-compact">
+          <div class="workspace-hub-head compact">
             <div>
-              <p class="section-label">빠른 작업 공간</p>
-              <h2>핵심 메뉴는 단순하게, 세부 기능은 바로 이동</h2>
+              <p class="section-label">보조 기능</p>
+              <h2>자주 쓰는 보조 메뉴만 간단히 이동</h2>
             </div>
-            <p class="workspace-hub-copy">상단은 대시보드, 작업, 운영, 급여, 팀으로 줄이고 세부 기능은 이 런처에서 바로 여는 방식으로 정리했습니다.</p>
+            <p class="workspace-hub-copy">주 메뉴는 좌측 탐색에서 이동하고, 자주 쓰는 보조 기능만 텍스트 바로가기로 둡니다.</p>
           </div>
-          <div class="workspace-shortcuts">
-            <button type="button" class="workspace-card is-primary" data-shortcut-view="calendar" data-role-visible="admin,employee,freelancer">
-              <span class="workspace-card-label">Dashboard</span>
-              <strong class="workspace-card-title">오늘 일정과 마감</strong>
-              <span class="workspace-card-copy">월간 캘린더와 선택한 날짜 업무를 한 번에 확인합니다.</span>
-            </button>
-            <button type="button" class="workspace-card is-primary" data-shortcut-view="todos" data-role-visible="admin,employee,freelancer">
-              <span class="workspace-card-label">Tasks</span>
-              <strong class="workspace-card-title">투두 집중 보기</strong>
-              <span class="workspace-card-copy">업무 등록, 상태 변경, 보관함까지 바로 이어집니다.</span>
-            </button>
-            <button type="button" class="workspace-card" data-shortcut-view="hr" data-role-visible="admin,employee,freelancer">
-              <span class="workspace-card-label">Operations</span>
-              <strong class="workspace-card-title">인사 운영 센터</strong>
-              <span class="workspace-card-copy">직원 등록, 출퇴근 입력, 근태 캘린더를 한 화면에서 관리합니다.</span>
-            </button>
-            <button type="button" class="workspace-card" data-shortcut-view="employeeinfo" data-role-visible="admin,employee,freelancer">
-              <span class="workspace-card-label">People</span>
-              <strong class="workspace-card-title">직원 카드 보기</strong>
-              <span class="workspace-card-copy">직원별 프로필과 인사 정보를 카드형 구조로 빠르게 전환합니다.</span>
-            </button>
-            <button type="button" class="workspace-card" data-shortcut-view="portfolio" data-role-visible="admin,employee,freelancer">
+          <div class="workspace-shortcuts compact">
+            <button type="button" class="workspace-card utility-link" data-shortcut-view="portfolio" data-role-visible="admin,employee,freelancer">
               <span class="workspace-card-label">Archive</span>
-              <strong class="workspace-card-title">포트폴리오 보관</strong>
-              <span class="workspace-card-copy">작업 결과, 이미지, 첨부 자료를 프로젝트별로 정리합니다.</span>
+              <strong class="workspace-card-title">포트폴리오</strong>
             </button>
-            <button type="button" class="workspace-card" data-shortcut-view="estimate" data-role-visible="admin">
-              <span class="workspace-card-label">Sales</span>
-              <strong class="workspace-card-title">견적서 준비</strong>
-              <span class="workspace-card-copy">대외 문서 작업의 시작점을 같은 업무 흐름 안에서 이어갑니다.</span>
-            </button>
-            <button type="button" class="workspace-card" data-shortcut-view="statement" data-role-visible="admin">
+            <button type="button" class="workspace-card utility-link" data-shortcut-view="statement" data-role-visible="admin">
               <span class="workspace-card-label">Docs</span>
-              <strong class="workspace-card-title">거래명세 흐름</strong>
-              <span class="workspace-card-copy">거래명세서 작성과 후속 정리를 같은 구조 안에서 확장합니다.</span>
+              <strong class="workspace-card-title">거래명세</strong>
             </button>
-            <button type="button" class="workspace-card" data-shortcut-view="payroll" data-role-visible="admin,employee,freelancer">
-              <span class="workspace-card-label">Payroll</span>
-              <strong class="workspace-card-title">급여 정산 보드</strong>
-              <span class="workspace-card-copy">월별 총급여와 직원별 정산 결과를 집중해서 확인합니다.</span>
-            </button>
-            <button type="button" class="workspace-card" data-shortcut-view="members" data-role-visible="admin">
+            <button type="button" class="workspace-card utility-link" data-shortcut-view="members" data-role-visible="admin">
               <span class="workspace-card-label">Admin</span>
-              <strong class="workspace-card-title">계정과 권한 관리</strong>
-              <span class="workspace-card-copy">내부용 계정과 권한을 팀 단위로 정리합니다.</span>
+              <strong class="workspace-card-title">계정 관리</strong>
             </button>
           </div>
         </div>
@@ -389,7 +335,7 @@
         </section>
       </section>
 
-      <section id="hrView" class="hr-workspace app-view" hidden>
+      <section id="hrView" class="hr-workspace app-view operations-view" hidden>
         <section class="panel hr-hero reveal">
           <div class="panel-head">
             <div>
@@ -425,8 +371,8 @@
           </div>
         </section>
 
-        <section class="hr-grid">
-          <section class="panel reveal delay-1">
+        <section class="hr-grid operations-grid">
+          <section class="panel reveal delay-1 operations-sidebar-panel">
             <div class="panel-head">
               <div>
                 <p class="section-label">직원 등록</p>
@@ -472,7 +418,7 @@
             <div id="employeeList" class="employee-list"></div>
           </section>
 
-          <section class="panel reveal delay-2">
+          <section class="panel reveal delay-2 operations-main-panel">
             <div class="panel-head">
               <div>
                 <p class="section-label">출퇴근 기록</p>
@@ -586,7 +532,7 @@
         </section>
       </section>
 
-      <section id="employeeinfoView" class="hr-workspace app-view employee-info-view" hidden>
+      <section id="employeeinfoView" class="hr-workspace app-view employee-info-view team-view" hidden>
           <section class="panel employee-info-hero reveal">
             <div class="panel-head">
               <div>
@@ -665,7 +611,7 @@
         </section>
       </section>
 
-      <section id="payrollView" class="hr-workspace app-view" hidden>
+      <section id="payrollView" class="hr-workspace app-view payroll-view" hidden>
         <section class="panel hr-hero reveal">
           <div class="panel-head">
             <div>
@@ -709,7 +655,8 @@
           </div>
         </section>
 
-        <section class="panel reveal delay-1">
+        <section class="payroll-workbench reveal delay-1">
+          <section class="panel payroll-table-panel">
           <div class="panel-head">
             <div>
               <p class="section-label">월별 급여 요약</p>
@@ -718,6 +665,8 @@
             <p class="attendance-ledger-hint">직원별 기본급, 야근, 주말 수당 합계를 한 번에 확인할 수 있습니다.</p>
           </div>
           <div id="payrollSummaryList" class="employee-list payroll-summary-list"></div>
+          </section>
+          <aside id="payrollDetailPanel" class="panel payroll-detail-panel"></aside>
         </section>
       </section>
       <section id="loginView" class="hr-workspace app-view auth-view" hidden>
@@ -1166,6 +1115,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260320-102"></script>
+    <script src="app.js?v=20260320-103"></script>
   </body>
 </html>

@@ -1,0 +1,948 @@
+:root {
+  --wb-bg: #eef2f7;
+  --wb-surface: #ffffff;
+  --wb-surface-muted: #f7f9fc;
+  --wb-border: #d7dfeb;
+  --wb-border-strong: #bcc7d8;
+  --wb-text: #172031;
+  --wb-muted: #5f6b7d;
+  --wb-subtle: #8a94a6;
+  --wb-accent: #20466f;
+  --wb-accent-strong: #173654;
+  --wb-accent-soft: #e9f0f8;
+  --wb-success: #1f6b4f;
+  --wb-warning: #9a611d;
+  --wb-danger: #b54646;
+  --wb-shadow: 0 12px 36px rgba(18, 31, 53, 0.08);
+}
+
+body {
+  background: linear-gradient(180deg, #f4f7fb 0%, var(--wb-bg) 100%);
+  color: var(--wb-text);
+}
+
+body .ambient {
+  display: none !important;
+}
+
+body .hero,
+body .workspace-hub,
+body #tasksView,
+body .hr-workspace,
+body .employee-info-view,
+body .auth-view {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin-inline: 0 !important;
+}
+
+body .site-nav {
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin-inline: 0 !important;
+}
+
+body .panel,
+body .archive-panel,
+body .auth-panel,
+body .attendance-calendar-panel,
+body .employee-info-sidebar,
+body .employee-info-profile-card,
+body .employee-info-sections,
+body .workspace-hub-shell,
+body .hero,
+body .site-nav {
+  border: 1px solid var(--wb-border);
+  border-radius: 18px;
+  background: var(--wb-surface);
+  box-shadow: var(--wb-shadow);
+}
+
+body .panel,
+body .archive-panel,
+body .auth-panel {
+  padding: 20px 22px;
+}
+
+body .panel-head,
+body .schedule-head,
+body .employee-card-head,
+body .attendance-card-head,
+body .employee-info-section-head {
+  margin-bottom: 16px;
+}
+
+body .panel-head h2,
+body .panel-head h3,
+body .workspace-hub-head h2,
+body .hero h1 {
+  color: var(--wb-text);
+  letter-spacing: -0.03em;
+}
+
+body .panel-head h2,
+body .hero h1 {
+  font-size: clamp(1.55rem, 2vw, 2rem);
+  line-height: 1.08;
+}
+
+body .panel-head h3 {
+  font-size: 1.15rem;
+  line-height: 1.18;
+}
+
+body .section-label,
+body .metric-label,
+body .workspace-card-label,
+body .eyebrow {
+  color: var(--wb-subtle);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+body .modal-subtitle,
+body .hero-copy,
+body .workspace-hub-copy,
+body .connection-message,
+body .employee-card-subtitle,
+body .attendance-ledger-hint {
+  color: var(--wb-muted);
+}
+
+body .ghost-btn,
+body .hero-btn.secondary,
+body .chip,
+body .task-choice-btn,
+body .attendance-edit-btn {
+  border-radius: 12px;
+  border: 1px solid var(--wb-border);
+  background: #fff;
+  color: var(--wb-text);
+  box-shadow: none;
+}
+
+body .hero-btn.primary,
+body .submit-btn,
+body .chip.active,
+body .site-menu-link.active {
+  background: var(--wb-accent);
+  color: #fff;
+  border-color: var(--wb-accent);
+}
+
+body .site-menu-link,
+body .workspace-card.utility-link,
+body .table-row-link,
+body .attendance-row-link,
+body .client-link-button,
+body .task-client-link {
+  color: inherit;
+}
+
+body .task-date-chip,
+body .badge,
+body .attendance-status-pill,
+body .employee-type,
+body .attendance-legend-item {
+  border-radius: 999px;
+  border: 1px solid var(--wb-border);
+  background: var(--wb-surface-muted);
+  color: var(--wb-muted);
+}
+
+body .attendance-status-pill.normal,
+body .attendance-status-pill.is-normal,
+body .attendance-legend-item.normal {
+  color: var(--wb-success);
+  border-color: rgba(31, 107, 79, 0.18);
+  background: rgba(31, 107, 79, 0.08);
+}
+
+body .attendance-status-pill.late,
+body .attendance-status-pill.is-late,
+body .attendance-legend-item.late {
+  color: var(--wb-warning);
+  border-color: rgba(154, 97, 29, 0.18);
+  background: rgba(154, 97, 29, 0.08);
+}
+
+body .attendance-status-pill.early,
+body .attendance-status-pill.is-early,
+body .attendance-legend-item.early {
+  color: #7a57b5;
+  border-color: rgba(122, 87, 181, 0.18);
+  background: rgba(122, 87, 181, 0.08);
+}
+
+body .attendance-status-pill.absent,
+body .attendance-status-pill.is-absent,
+body .attendance-legend-item.absent {
+  color: var(--wb-danger);
+  border-color: rgba(181, 70, 70, 0.18);
+  background: rgba(181, 70, 70, 0.08);
+}
+
+body .summary-metric {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--wb-border);
+  border-radius: 14px;
+  background: var(--wb-surface-muted);
+}
+
+body .summary-metric strong {
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+body .workbench-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 360px) minmax(280px, 360px);
+  gap: 18px;
+  align-items: center;
+}
+
+body .workbench-summary-copy {
+  display: grid;
+  gap: 8px;
+}
+
+body .workbench-summary-copy h1,
+body .workbench-summary-copy p,
+body .workspace-hub-head h2,
+body .workspace-hub-head p {
+  margin: 0;
+}
+
+body .workbench-summary-actions {
+  display: grid;
+  gap: 12px;
+  justify-items: end;
+}
+
+body .workbench-summary-metrics {
+  display: grid;
+  gap: 12px;
+}
+
+body .hero {
+  padding: 18px 22px;
+}
+
+body .hero-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+body .hero-btn {
+  min-height: 44px;
+  padding: 0 16px;
+}
+
+body .connection-strip {
+  padding: 0;
+  border: 0;
+  background: none;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+body .workspace-hub {
+  padding: 14px 18px;
+}
+
+body .workspace-hub-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+body .workspace-hub-head.compact {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+body .workspace-shortcuts.compact {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+body .workspace-card.utility-link {
+  min-height: 0;
+  padding: 10px 14px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 120px;
+  border-radius: 12px;
+  border: 1px solid var(--wb-border);
+  background: var(--wb-surface);
+  box-shadow: none;
+}
+
+body .workspace-card.utility-link .workspace-card-copy {
+  display: none;
+}
+
+body .workspace-card.utility-link.is-active {
+  border-color: var(--wb-accent);
+  background: var(--wb-accent-soft);
+  color: var(--wb-accent-strong);
+}
+
+body .data-table-shell,
+body .detail-table-shell {
+  overflow: auto;
+  border: 1px solid var(--wb-border);
+  border-radius: 14px;
+  background: #fff;
+}
+
+body .data-table,
+body .detail-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+body .data-table {
+  min-width: 760px;
+}
+
+body .compact-table {
+  min-width: 0;
+}
+
+body .data-table thead th,
+body .detail-table th {
+  background: var(--wb-surface-muted);
+  color: var(--wb-subtle);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: left;
+  letter-spacing: 0.06em;
+}
+
+body .data-table thead th {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--wb-border);
+}
+
+body .data-table tbody td,
+body .detail-table td,
+body .detail-table th {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--wb-border);
+  vertical-align: top;
+}
+
+body .data-table tbody tr:last-child td,
+body .detail-table tbody tr:last-child td,
+body .detail-table tbody tr:last-child th {
+  border-bottom: 0;
+}
+
+body .table-row-link,
+body .attendance-row-link {
+  display: grid;
+  gap: 3px;
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+body .table-row-link strong,
+body .attendance-cell-strong {
+  color: var(--wb-text);
+}
+
+body .table-row-link span {
+  color: var(--wb-muted);
+  font-size: 0.82rem;
+}
+
+body .table-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+body .table-actions .ghost-btn,
+body .payroll-status-group .task-choice-btn {
+  min-height: 34px;
+  padding-inline: 10px;
+}
+
+body .payroll-status-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+body .payroll-summary-row.is-selected {
+  background: var(--wb-accent-soft);
+}
+
+body .payroll-detail-head {
+  margin-bottom: 0;
+}
+
+body .payroll-detail-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+body .payroll-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+body .task-list {
+  display: flex;
+  flex-direction: column;
+}
+
+body .task-item {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  padding: 16px 0;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid var(--wb-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body .task-item:first-child {
+  padding-top: 0;
+}
+
+body .task-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+body .task-content {
+  display: grid;
+  gap: 8px;
+}
+
+body .task-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 86px;
+}
+
+body .task-inline-controls,
+body .task-choice-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+body .task-controls,
+body .task-toolbar {
+  padding-top: 14px;
+  border-top: 1px solid var(--wb-border);
+  margin-top: 14px;
+}
+
+body .panel-calendar {
+  min-height: 0;
+}
+
+body .task-controls-grid {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+body .task-form-grid {
+  gap: 12px;
+}
+
+body .calendar-toolbar,
+body .attendance-calendar-controls,
+body .payroll-actions,
+body .employee-info-actions {
+  display: flex;
+  gap: 10px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+body .calendar-nav,
+body .calendar-view-switch,
+body .task-filter {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+body .weekdays {
+  border: 1px solid var(--wb-border);
+  border-bottom: 0;
+  border-radius: 14px 14px 0 0;
+  background: var(--wb-surface-muted);
+}
+
+body .weekdays span {
+  color: var(--wb-subtle);
+  font-weight: 700;
+}
+
+body .calendar-grid.calendar-mode-month {
+  border: 1px solid var(--wb-border);
+  border-radius: 0 0 14px 14px;
+  overflow: hidden;
+  background: #fff;
+}
+
+body .calendar-grid.calendar-mode-month .day-card,
+body[data-device] .calendar-grid.calendar-mode-month .day-card {
+  min-height: 140px;
+  border-radius: 0 !important;
+  border-right: 1px solid var(--wb-border);
+  border-bottom: 1px solid var(--wb-border);
+}
+
+body .calendar-grid.calendar-mode-month .day-top {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--wb-border);
+}
+
+body .schedule-card,
+body .attendance-ledger,
+body .attendance-calendar-panel {
+  border: 1px solid var(--wb-border);
+  border-radius: 16px;
+  background: var(--wb-surface-muted);
+  box-shadow: none;
+}
+
+body .attendance-ledger {
+  padding: 18px;
+}
+
+body .attendance-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+body .attendance-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+body .attendance-summary-card {
+  border: 1px solid var(--wb-border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: none;
+}
+
+body .attendance-calendar-grid {
+  border: 1px solid var(--wb-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+
+body .attendance-calendar-weekdays,
+body .attendance-calendar-cells {
+  gap: 0;
+}
+
+body .attendance-calendar-weekday {
+  padding: 10px;
+  background: var(--wb-surface-muted);
+  color: var(--wb-subtle);
+  border-right: 1px solid var(--wb-border);
+}
+
+body .attendance-calendar-cell {
+  min-height: 110px;
+  border-right: 1px solid var(--wb-border);
+  border-bottom: 1px solid var(--wb-border);
+  border-radius: 0;
+}
+
+body .employee-info-facts,
+body .employee-record-list,
+body .employee-profile-meta,
+body .employee-status-overview {
+  gap: 10px;
+}
+
+body .employee-info-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+}
+
+body .employee-info-section-primary,
+body .employee-doc-section {
+  grid-column: 1;
+}
+
+body .employee-info-section-secondary {
+  grid-column: 2;
+}
+
+body .employee-info-notes p {
+  margin: 0;
+}
+
+body .auth-panel {
+  max-width: 460px;
+}
+
+body .app-view[hidden],
+body .hero[hidden],
+body .workspace-hub[hidden] {
+  display: none !important;
+}
+
+@media (min-width: 980px) {
+  body {
+    padding: 24px;
+  }
+
+  body[data-device="desktop"] .hero,
+  body[data-device="desktop"] .workspace-hub,
+  body[data-device="desktop"] #tasksView,
+  body[data-device="desktop"] .hr-workspace,
+  body[data-device="desktop"] .employee-info-view,
+  body[data-device="desktop"] .auth-view {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  body .app-shell {
+    display: grid !important;
+    grid-template-columns: 236px minmax(0, 1fr) !important;
+    gap: 22px !important;
+    align-items: start !important;
+    max-width: 1680px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+
+  body .app-shell > :not(.site-nav):not(.ambient) {
+    grid-column: 2 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  body[data-device="desktop"] .site-nav {
+    grid-column: 1 !important;
+    grid-row: 1 / span 30 !important;
+    position: sticky !important;
+    top: 24px !important;
+    align-self: start !important;
+    width: 236px !important;
+    min-width: 236px !important;
+    max-width: 236px !important;
+    min-height: calc(100vh - 48px) !important;
+    margin: 0 !important;
+    padding: 18px !important;
+    overflow: hidden !important;
+    z-index: 2 !important;
+  }
+
+  body[data-device="desktop"] .site-nav-inner {
+    height: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto 1fr auto !important;
+    gap: 20px !important;
+    padding: 0 !important;
+  }
+
+  body[data-device="desktop"] .site-brand {
+    padding-bottom: 12px !important;
+    border-bottom: 1px solid var(--wb-border) !important;
+  }
+
+  body[data-device="desktop"] .site-menu {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  body[data-device="desktop"] .site-menu-link {
+    min-height: 44px !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    padding: 0 14px !important;
+    border-radius: 12px !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    font-size: 0.96rem !important;
+  }
+
+  body[data-device="desktop"] .site-menu-link:not(.active) {
+    color: var(--wb-muted) !important;
+  }
+
+  body[data-device="desktop"] .site-actions {
+    display: grid !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+
+  body[data-device="desktop"] .session-badge,
+  body[data-device="desktop"] #logoutBtn {
+    width: 100% !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.35fr) 420px !important;
+    gap: 20px !important;
+    align-items: start !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-calendar {
+    grid-column: 1 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 320px !important;
+    grid-template-rows: auto auto minmax(0, 1fr) !important;
+    grid-template-areas:
+      "head head"
+      "topline topline"
+      "calendar schedule" !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-calendar > .panel-head {
+    grid-area: head !important;
+    margin-bottom: 0 !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-calendar > .calendar-topline {
+    grid-area: topline !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-calendar > .calendar-scroll {
+    grid-area: calendar !important;
+    display: block !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-calendar > .schedule-card {
+    grid-area: schedule !important;
+    position: static !important;
+    top: auto !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+    align-self: stretch !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-tasks {
+    grid-column: 2 !important;
+    align-self: start !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-tasks .task-controls,
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-tasks .task-toolbar,
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-tasks .archive-panel {
+    display: none !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="calendar"] .panel-tasks .task-item:nth-child(n + 7) {
+    display: none !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 360px !important;
+    gap: 20px !important;
+    align-items: start !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-tasks {
+    grid-column: 1 !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar {
+    grid-column: 2 !important;
+    align-self: start !important;
+    display: grid !important;
+    gap: 14px !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .calendar-grid.calendar-mode-month .day-card,
+  body[data-device] #tasksView[data-board-view="todos"] .panel-calendar .calendar-grid.calendar-mode-month .day-card {
+    min-height: 96px !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .mini-event:nth-child(n + 3) {
+    display: none !important;
+  }
+
+  body[data-device="desktop"] #tasksView .panel-calendar,
+  body[data-device="desktop"] #tasksView .panel-tasks {
+    min-height: 0 !important;
+  }
+
+  body[data-device="desktop"] .operations-grid {
+    display: grid !important;
+    grid-template-columns: 360px minmax(0, 1fr) !important;
+    gap: 20px !important;
+    align-items: start !important;
+  }
+
+  body[data-device="desktop"] .operations-sidebar-panel {
+    position: sticky !important;
+    top: 24px !important;
+  }
+
+  body[data-device="desktop"] .operations-main-panel .attendance-ledger {
+    margin-top: 18px;
+  }
+
+  body[data-device="desktop"] .payroll-workbench {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 360px !important;
+    gap: 20px !important;
+    align-items: start !important;
+  }
+
+  body[data-device="desktop"] .payroll-detail-panel {
+    position: sticky !important;
+    top: 24px !important;
+    align-self: start !important;
+  }
+
+  body[data-device="desktop"] .team-view .employee-info-desktop {
+    display: grid !important;
+    grid-template-columns: 280px minmax(0, 1fr) !important;
+    gap: 20px !important;
+    align-items: start !important;
+  }
+
+  body[data-device="desktop"] .team-view .employee-info-sidebar {
+    position: sticky !important;
+    top: 24px !important;
+  }
+
+  body[data-device="desktop"] .team-view .employee-info-main {
+    display: grid !important;
+    gap: 20px !important;
+  }
+}
+
+@media (max-width: 979px) {
+  body {
+    padding: 14px;
+  }
+
+  body .app-shell {
+    display: grid;
+    gap: 14px;
+  }
+
+  body .workbench-summary,
+  body .workspace-hub-shell,
+  body .task-controls-grid,
+  body .attendance-filters,
+  body .attendance-summary-grid,
+  body .payroll-detail-metrics,
+  body .employee-info-workbench,
+  body .payroll-workbench,
+  body .operations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body .site-nav {
+    position: static;
+    min-height: 0;
+  }
+
+  body .site-menu {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  body .site-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  body .workspace-shortcuts.compact {
+    justify-content: flex-start;
+  }
+
+  body .task-item {
+    grid-template-columns: 20px minmax(0, 1fr);
+  }
+
+  body .task-actions {
+    grid-column: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  body .data-table {
+    min-width: 640px;
+  }
+}
+
+body .app-view[hidden],
+body .hero[hidden],
+body .workspace-hub[hidden],
+body .session-badge[hidden],
+body #logoutBtn[hidden],
+body #tasksView[hidden],
+body[data-device] .app-view[hidden],
+body[data-device] .hero[hidden],
+body[data-device] .workspace-hub[hidden],
+body[data-device] .session-badge[hidden],
+body[data-device] #logoutBtn[hidden],
+body[data-device] #tasksView[hidden],
+body [hidden] {
+  display: none !important;
+}
