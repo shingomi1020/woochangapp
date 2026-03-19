@@ -5933,6 +5933,63 @@ body[data-device="desktop"] #employeeinfoView .employee-record-item {
   min-width: 0;
 }
 
+.portfolio-form {
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.portfolio-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  min-width: 0;
+}
+
+.portfolio-form .field,
+.portfolio-form .field span,
+.portfolio-form .field input,
+.portfolio-form .field select,
+.portfolio-form .field textarea {
+  min-width: 0;
+  width: 100%;
+}
+
+.portfolio-form .field span {
+  display: block;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.portfolio-form textarea {
+  width: 100%;
+  min-height: 132px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #d9e1ec;
+  background: #fff;
+  color: var(--text-primary, #24324b);
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.portfolio-form .attachment-dropzone strong,
+.portfolio-form .attachment-dropzone span {
+  display: block;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.portfolio-form .task-form-actions {
+  width: 100%;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.portfolio-form .submit-btn {
+  min-width: 140px;
+}
+
 .portfolio-list {
   display: grid;
   gap: 16px;
@@ -6073,6 +6130,18 @@ body[data-device="desktop"] #employeeinfoView .employee-record-item {
 
 body[data-device="mobile"] .portfolio-layout {
   grid-template-columns: 1fr;
+}
+
+body[data-device="mobile"] .portfolio-form-grid {
+  grid-template-columns: 1fr;
+}
+
+body[data-device="mobile"] .portfolio-form .task-form-actions {
+  justify-content: stretch;
+}
+
+body[data-device="mobile"] .portfolio-form .submit-btn {
+  width: 100%;
 }
 
 body[data-device="mobile"] .portfolio-card {
