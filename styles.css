@@ -7567,3 +7567,324 @@ body[data-device="desktop"] .employee-info-view {
   margin-left: auto !important;
   margin-right: auto !important;
 }
+
+/* 2026-03 corporate business palette pass */
+:root {
+  --bg: #eef2f6;
+  --bg-soft: #e8edf3;
+  --panel: rgba(255, 255, 255, 0.96);
+  --panel-strong: #ffffff;
+  --line: rgba(71, 85, 105, 0.16);
+  --line-strong: rgba(51, 65, 85, 0.24);
+  --text: #162033;
+  --muted: #667281;
+  --accent: #334c6b;
+  --accent-strong: #243950;
+  --accent-deep: #182a40;
+  --accent-soft: #dbe4ec;
+  --accent-soft-2: #f2f5f8;
+  --danger: #b96060;
+  --danger-soft: #faf0f0;
+  --shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+  --shadow-strong: 0 20px 44px rgba(15, 23, 42, 0.12);
+}
+
+html,
+body {
+  background:
+    radial-gradient(circle at top left, rgba(51, 76, 107, 0.05), transparent 24%),
+    radial-gradient(circle at 92% 8%, rgba(100, 116, 139, 0.06), transparent 24%),
+    linear-gradient(180deg, #f8fafb 0%, #eef2f6 52%, #e6ebf1 100%) !important;
+  color: #162033 !important;
+}
+
+.ambient-a {
+  background: radial-gradient(circle, rgba(51, 76, 107, 0.08), transparent 70%) !important;
+}
+
+.ambient-b {
+  background: radial-gradient(circle, rgba(100, 116, 139, 0.1), transparent 72%) !important;
+}
+
+.site-nav-inner,
+.workspace-hub-shell,
+.hero-copy-wrap,
+.metric-card,
+.panel,
+.schedule-card,
+.task-summary-card,
+.auth-panel,
+.attendance-calendar-panel,
+.attendance-table-wrap,
+.employee-info-sidebar,
+.employee-info-profile-card,
+.employee-info-mobile-card,
+.employee-info-section-card {
+  background: linear-gradient(180deg, #ffffff, #f8fafb) !important;
+  border: 1px solid #d7dee6 !important;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.06) !important;
+}
+
+.site-nav-inner {
+  background: rgba(255, 255, 255, 0.96) !important;
+}
+
+.site-menu {
+  background: #f2f5f8 !important;
+  border: 1px solid #d7dee6 !important;
+}
+
+.site-brand strong,
+.workspace-card-title,
+.metric-card strong,
+.panel-head h2,
+.panel-head h3,
+.task-description-primary,
+.task-client,
+.task-client-link,
+.site-menu-link.active,
+.hero-copy-wrap h1 {
+  color: #162033 !important;
+}
+
+.site-brand p,
+.workspace-card-copy,
+.workspace-hub-copy,
+.metric-card small,
+.metric-label,
+.section-label,
+.session-badge span,
+.connection-message,
+.build-stamp,
+.hero-copy {
+  color: #667281 !important;
+}
+
+.site-menu-link {
+  background: transparent !important;
+  color: #5f6b7a !important;
+  border: 1px solid transparent !important;
+}
+
+.site-menu-link:hover {
+  background: #ffffff !important;
+  color: #243950 !important;
+  border-color: #cfd7e1 !important;
+}
+
+.site-menu-link.active {
+  background: #334c6b !important;
+  color: #ffffff !important;
+  border-color: #334c6b !important;
+  box-shadow: none !important;
+}
+
+.session-badge,
+.role-switcher,
+.hero-badge,
+.connection-strip,
+.connection-badge,
+.icon-chip,
+.metric-icon,
+.btn-icon {
+  background: #f2f5f8 !important;
+  border: 1px solid #d7dee6 !important;
+  color: #182a40 !important;
+  box-shadow: none !important;
+}
+
+.role-switcher strong,
+.hero-copy-wrap .eyebrow {
+  color: #334c6b !important;
+}
+
+.hero-copy-wrap::before,
+.hero-copy-wrap::after {
+  background: rgba(51, 76, 107, 0.035) !important;
+}
+
+.connection-badge.is-ready {
+  background: #334c6b !important;
+  color: #ffffff !important;
+  border-color: #334c6b !important;
+}
+
+.connection-badge.is-error {
+  background: #faf3f3 !important;
+  color: #7a3f3f !important;
+  border-color: #e7cccc !important;
+}
+
+.hero-btn.primary,
+.ghost-btn.primary,
+.submit-btn,
+.chip.active,
+.task-choice-btn.is-active {
+  background: #334c6b !important;
+  border-color: #334c6b !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.hero-btn.primary:hover,
+.ghost-btn.primary:hover,
+.submit-btn:hover,
+.chip.active:hover,
+.task-choice-btn.is-active:hover {
+  background: #243950 !important;
+  border-color: #243950 !important;
+}
+
+.hero-btn.secondary,
+.ghost-btn,
+.chip,
+.task-choice-btn,
+.attachment-browse-btn,
+.task-archive-btn {
+  background: #ffffff !important;
+  border: 1px solid #cfd7e1 !important;
+  color: #243950 !important;
+  box-shadow: none !important;
+}
+
+.hero-btn.secondary:hover,
+.ghost-btn:hover,
+.chip:hover,
+.task-choice-btn:hover,
+.attachment-browse-btn:hover,
+.task-archive-btn:hover {
+  background: #f5f7fa !important;
+  border-color: #b9c5d3 !important;
+  color: #182a40 !important;
+}
+
+.workspace-card,
+.workspace-card.is-primary,
+body[data-device] .workspace-card,
+body[data-device] .workspace-card.is-primary {
+  background: linear-gradient(180deg, #ffffff, #f7f9fb) !important;
+  color: #162033 !important;
+  border: 1px solid #d7dee6 !important;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05) !important;
+}
+
+.workspace-card:hover,
+.workspace-card.is-primary:hover,
+body[data-device] .workspace-card:hover,
+body[data-device] .workspace-card.is-primary:hover {
+  border-color: #bfcad6 !important;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08) !important;
+}
+
+.workspace-card-label {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+.panel-calendar,
+.panel-tasks,
+.schedule-card,
+.task-summary-card,
+.hr-hero,
+.employee-info-hero {
+  background: linear-gradient(180deg, #ffffff, #f8fafb) !important;
+}
+
+.task-item {
+  border: 1px solid #d7dee6 !important;
+  background: linear-gradient(180deg, #ffffff, #fafbfc) !important;
+  box-shadow: none !important;
+}
+
+.task-item.is-overdue {
+  border-left: 4px solid #334c6b !important;
+}
+
+.task-item.is-today-deadline:not(.is-overdue) {
+  border-left: 4px solid #5f6b7a !important;
+}
+
+.task-date-chip,
+.badge,
+.calendar-list-date {
+  background: #f2f5f8 !important;
+  border: 1px solid #d7dee6 !important;
+  color: #243950 !important;
+}
+
+.panel-calendar .calendar-nav,
+.panel-calendar .calendar-view-switch,
+.task-filter {
+  background: #f2f5f8 !important;
+  border-color: #cfd7e1 !important;
+}
+
+.panel-calendar .calendar-nav .ghost-btn,
+.panel-calendar .calendar-view-switch .chip,
+.task-filter .chip {
+  background: transparent !important;
+  color: #5f6b7a !important;
+}
+
+.panel-calendar .calendar-nav .ghost-btn.primary,
+.panel-calendar .calendar-view-switch .chip.active,
+.task-filter .chip.active {
+  background: #334c6b !important;
+  border-color: #334c6b !important;
+  color: #ffffff !important;
+}
+
+.panel-calendar .calendar-scroll {
+  border-color: #d7dee6 !important;
+}
+
+.panel-calendar .weekdays {
+  background: #f5f7fa !important;
+}
+
+.panel-calendar .calendar-grid,
+.panel-calendar .calendar-grid.calendar-mode-month {
+  background: #dfe5eb !important;
+}
+
+.panel-calendar .day-card,
+.panel-calendar .calendar-grid.calendar-mode-month .day-card {
+  background: #ffffff !important;
+}
+
+.panel-calendar .day-card.is-selected,
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-selected {
+  background: #f3f6f9 !important;
+}
+
+.panel-calendar .day-card.is-selected .day-number,
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-selected .day-number {
+  background: #334c6b !important;
+  color: #ffffff !important;
+}
+
+.panel-calendar .day-card.is-today:not(.is-selected) .day-number,
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-today:not(.is-selected) .day-number {
+  background: #dbe4ec !important;
+  color: #243950 !important;
+}
+
+.panel-calendar .day-count,
+.panel-calendar .calendar-grid.calendar-mode-month .day-count {
+  color: #6b7280 !important;
+}
+
+.panel-calendar .mini-event.priority-high .mini-event-dot,
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event.priority-high .mini-event-dot {
+  background: #243950 !important;
+}
+
+.panel-calendar .mini-event.priority-medium .mini-event-dot,
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event.priority-medium .mini-event-dot {
+  background: #5f6b7a !important;
+}
+
+.panel-calendar .mini-event.priority-low .mini-event-dot,
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event.priority-low .mini-event-dot {
+  background: #94a3b8 !important;
+}
