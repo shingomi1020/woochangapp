@@ -199,6 +199,17 @@ const employeeDetailCloseBtn = document.getElementById("employeeDetailCloseBtn")
 const employeeDetailTitle = document.getElementById("employeeDetailTitle");
   const employeeDetailSubtitle = document.getElementById("employeeDetailSubtitle");
   const employeeDetailBody = document.getElementById("employeeDetailBody");
+const attachmentPreviewModal = document.getElementById("attachmentPreviewModal");
+const attachmentPreviewBackdrop = document.getElementById("attachmentPreviewBackdrop");
+const attachmentPreviewCloseBtn = document.getElementById("attachmentPreviewCloseBtn");
+const attachmentPreviewTitle = document.getElementById("attachmentPreviewTitle");
+const attachmentPreviewSubtitle = document.getElementById("attachmentPreviewSubtitle");
+const attachmentPreviewCanvas = document.getElementById("attachmentPreviewCanvas");
+const attachmentPreviewName = document.getElementById("attachmentPreviewName");
+const attachmentPreviewType = document.getElementById("attachmentPreviewType");
+const attachmentPreviewSize = document.getElementById("attachmentPreviewSize");
+const attachmentPreviewOpenBtn = document.getElementById("attachmentPreviewOpenBtn");
+const attachmentPreviewDoneBtn = document.getElementById("attachmentPreviewDoneBtn");
 
 const supabaseUrl = "https://nmnycqaufrpcgdanmpsj.supabase.co";
 const supabaseKey = "sb_publishable_a_WFRivMBscLCg-IPkFcZA_LqpStADT";
@@ -447,6 +458,7 @@ const state = {
   taskOrderMap: loadTaskOrderMap(),
   pendingTaskAttachments: [],
   pendingEditTaskAttachments: [],
+  previewAttachmentId: null,
   draggedTaskId: null,
 };
 
@@ -983,6 +995,26 @@ employeeDetailModalBackdrop.addEventListener("click", () => {
   closeEmployeeDetailModal();
 });
 
+attachmentPreviewCloseBtn?.addEventListener("click", () => {
+  closeAttachmentPreviewModal();
+});
+
+attachmentPreviewDoneBtn?.addEventListener("click", () => {
+  closeAttachmentPreviewModal();
+});
+
+attachmentPreviewBackdrop?.addEventListener("click", () => {
+  closeAttachmentPreviewModal();
+});
+
+attachmentPreviewOpenBtn?.addEventListener("click", () => {
+  const attachment = getPreviewAttachment();
+  if (!attachment?.fileData) {
+    return;
+  }
+  window.open(attachment.fileData, "_blank", "noopener,noreferrer");
+});
+
 employeeInfoBackBtn?.addEventListener("click", () => {
   switchView("hr");
 });
@@ -1017,6 +1049,9 @@ document.addEventListener("keydown", (event) => {
   }
   if (event.key === "Escape" && memberModal && !memberModal.hidden) {
     closeMemberModal();
+  }
+  if (event.key === "Escape" && attachmentPreviewModal && !attachmentPreviewModal.hidden) {
+    closeAttachmentPreviewModal();
   }
 });
 
@@ -1496,7 +1531,7 @@ function renderTasks() {
       if (!attachment?.fileData) {
         return;
       }
-      window.open(attachment.fileData, "_blank", "noopener,noreferrer");
+      openAttachmentPreviewModal(attachment);
     });
   });
 
@@ -1918,6 +1953,57 @@ function closeMemberModal() {
   memberModal.hidden = true;
   document.body.classList.remove("modal-open");
   editMemberForm?.reset();
+}
+
+function getPreviewAttachment() {
+  return state.taskAttachments.find((attachment) => String(attachment.id) === String(state.previewAttachmentId)) || null;
+}
+
+function closeAttachmentPreviewModal() {
+  if (!attachmentPreviewModal) {
+    return;
+  }
+
+  state.previewAttachmentId = null;
+  attachmentPreviewModal.hidden = true;
+  attachmentPreviewCanvas.innerHTML = "";
+  attachmentPreviewName.textContent = "-";
+  attachmentPreviewType.textContent = "-";
+  attachmentPreviewSize.textContent = "-";
+  const hasOpenModal = [editModal, attendanceModal, employeeDetailModal, employeeModal, memberModal].some(
+    (modal) => modal && !modal.hidden
+  );
+  document.body.classList.toggle("modal-open", hasOpenModal);
+}
+
+function openAttachmentPreviewModal(attachment) {
+  if (!attachmentPreviewModal || !attachment?.fileData) {
+    return;
+  }
+
+  state.previewAttachmentId = attachment.id;
+  attachmentPreviewTitle.textContent = attachment.fileName || "첨부파일 보기";
+  attachmentPreviewSubtitle.textContent = attachment.isImage
+    ? "이미지를 크게 확인할 수 있습니다."
+    : "일반 파일은 미리보기 제한이 있어 새 창에서 열 수 있습니다.";
+  attachmentPreviewName.textContent = attachment.fileName || "-";
+  attachmentPreviewType.textContent = attachment.mimeType || getAttachmentKindLabel(attachment.mimeType);
+  attachmentPreviewSize.textContent = formatFileSize(attachment.fileSize || 0);
+
+  if (attachment.isImage) {
+    attachmentPreviewCanvas.innerHTML = `<img src="${attachment.fileData}" alt="${escapeHtml(attachment.fileName || "첨부 이미지")}" />`;
+  } else {
+    attachmentPreviewCanvas.innerHTML = `
+      <div class="attachment-preview-file">
+        <span class="attachment-preview-filetype">${escapeHtml(getAttachmentKindLabel(attachment.mimeType))}</span>
+        <strong>${escapeHtml(attachment.fileName || "첨부파일")}</strong>
+        <p>이미지 형식이 아닌 파일은 새 창에서 열어 확인해 주세요.</p>
+      </div>
+    `;
+  }
+
+  attachmentPreviewModal.hidden = false;
+  document.body.classList.add("modal-open");
 }
 
 function saveMembers() {
@@ -2811,6 +2897,64 @@ async function setTaskAttachmentArchiveState(taskId, shouldArchive) {
   );
 
   return true;
+}
+
+function renderPendingAttachmentCollection(target, attachments, options = {}) {
+  if (!target) {
+    return;
+  }
+
+  if (!attachments.length) {
+    target.innerHTML = "";
+    return;
+  }
+
+  target.innerHTML = attachments
+    .map((attachment) => {
+      const preview = attachment.isImage
+        ? `<img class="attachment-chip-thumb" src="${attachment.fileData}" alt="${escapeHtml(attachment.fileName)}" />`
+        : `<span class="attachment-chip-icon">${getAttachmentKindLabel(attachment.mimeType)}</span>`;
+      const removeAttr = options.removeAction ? ` data-attachment-remove="${attachment.tempId || attachment.id}"` : "";
+      const openAttr = options.previewable && attachment.id ? ` data-attachment-open="${attachment.id}"` : "";
+      const mainTag = openAttr ? "button" : "div";
+      return `
+        <div class="attachment-chip">
+          <${mainTag} class="attachment-chip-main${openAttr ? " attachment-chip-open" : ""}"${openAttr}${openAttr ? ' type="button"' : ""}>
+            ${preview}
+            <div class="attachment-chip-copy">
+              <strong>${escapeHtml(attachment.fileName)}</strong>
+              <span>${formatFileSize(attachment.fileSize)}</span>
+            </div>
+          </${mainTag}>
+          ${options.removeAction ? `<button type="button" class="attachment-chip-remove" ${removeAttr}>삭제</button>` : ""}
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function bindAttachmentPreviewButtons() {
+  document.querySelectorAll("[data-attachment-open]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const attachment = state.taskAttachments.find((item) => String(item.id) === String(button.dataset.attachmentOpen));
+      if (!attachment?.fileData) {
+        return;
+      }
+      openAttachmentPreviewModal(attachment);
+    });
+  });
+}
+
+function renderTaskAttachmentPanels() {
+  renderPendingAttachmentCollection(taskPendingAttachmentList, state.pendingTaskAttachments, { removeAction: "create" });
+  if (editTaskExistingAttachmentList && state.editingTaskId !== null) {
+    const existing = getTaskAttachments(state.editingTaskId);
+    renderPendingAttachmentCollection(editTaskExistingAttachmentList, existing, { previewable: true });
+  }
+  renderPendingAttachmentCollection(editTaskPendingAttachmentList, state.pendingEditTaskAttachments, { removeAction: "edit" });
+  renderAttachmentUsage();
+  bindAttachmentRemoveButtons();
+  bindAttachmentPreviewButtons();
 }
 
 function getVisibleTasks() {
