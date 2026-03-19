@@ -37,6 +37,16 @@ const editTaskDueDateInput = document.getElementById("editTaskDueDateInput");
 const editTaskStatusInput = document.getElementById("editTaskStatusInput");
 const editTaskPriorityInput = document.getElementById("editTaskPriorityInput");
 const editTaskCancelBtn = document.getElementById("editTaskCancelBtn");
+const taskAttachmentDropzone = document.getElementById("taskAttachmentDropzone");
+const taskAttachmentInput = document.getElementById("taskAttachmentInput");
+const taskPendingAttachmentList = document.getElementById("taskPendingAttachmentList");
+const editTaskAttachmentDropzone = document.getElementById("editTaskAttachmentDropzone");
+const editTaskAttachmentInput = document.getElementById("editTaskAttachmentInput");
+const editTaskExistingAttachmentList = document.getElementById("editTaskExistingAttachmentList");
+const editTaskPendingAttachmentList = document.getElementById("editTaskPendingAttachmentList");
+const attachmentStorageSummary = document.getElementById("attachmentStorageSummary");
+const attachmentStorageBar = document.getElementById("attachmentStorageBar");
+const attachmentStorageRemaining = document.getElementById("attachmentStorageRemaining");
 const taskProgressLabel = document.getElementById("taskProgressLabel");
 const taskProgressBar = document.getElementById("taskProgressBar");
 const toast = document.getElementById("toast");
@@ -420,6 +430,7 @@ const state = {
   archivedTaskIds: loadArchivedTaskIds(),
   employees: [],
   attendanceRecords: [],
+  taskAttachments: [],
   editingEmployeeId: null,
   editingAttendanceId: null,
   editingMemberId: null,
@@ -434,8 +445,13 @@ const state = {
   selectedEmployeeDocumentId: null,
   payrollStatusMap: loadPayrollStatusMap(),
   taskOrderMap: loadTaskOrderMap(),
+  pendingTaskAttachments: [],
+  pendingEditTaskAttachments: [],
   draggedTaskId: null,
-  };
+};
+
+const ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024;
+const ATTACHMENT_FREE_QUOTA_BYTES = 1024 * 1024 * 1024;
 
 setConnectionState("checking", text.booting);
 
@@ -778,7 +794,13 @@ taskForm.addEventListener("submit", async (event) => {
     state.tasks.unshift(savedTask);
   }
 
+  const uploadedAttachments = await uploadTaskAttachments(savedTask.id, state.pendingTaskAttachments);
+  if (uploadedAttachments.length) {
+    state.taskAttachments = [...uploadedAttachments, ...state.taskAttachments];
+  }
+
   taskForm.reset();
+  state.pendingTaskAttachments = [];
   clearEditingState();
   taskReceivedDateInput.value = formatDateKey(today);
   taskDueDateInput.value = formatDateKey(today);
@@ -791,10 +813,12 @@ taskForm.addEventListener("submit", async (event) => {
 
 taskCancelBtn.addEventListener("click", () => {
   taskForm.reset();
+  state.pendingTaskAttachments = [];
   clearEditingState();
   taskReceivedDateInput.value = formatDateKey(today);
   taskDueDateInput.value = formatDateKey(today);
   taskClientInput.focus();
+  renderTaskAttachmentPanels();
   showToast(text.cancelEditLabel);
 });
 
@@ -854,6 +878,11 @@ editTaskForm.addEventListener("submit", async (event) => {
 
   const savedTask = mapTaskRecord(Array.isArray(data) ? data[0] : data);
   state.tasks = state.tasks.map((task) => (task.id === savedTask.id ? savedTask : task));
+  const uploadedAttachments = await uploadTaskAttachments(savedTask.id, state.pendingEditTaskAttachments);
+  if (uploadedAttachments.length) {
+    state.taskAttachments = [...uploadedAttachments, ...state.taskAttachments];
+  }
+  state.pendingEditTaskAttachments = [];
   state.selectedDateKey = savedTask.dueDate;
   state.viewDate = new Date(new Date(`${savedTask.dueDate}T00:00:00`).getFullYear(), new Date(`${savedTask.dueDate}T00:00:00`).getMonth(), 1);
   closeEditModal();
@@ -872,6 +901,70 @@ editModalCloseBtn.addEventListener("click", () => {
 
 editModalBackdrop.addEventListener("click", () => {
   closeEditModal();
+});
+
+function bindAttachmentDropzone(dropzone, mode) {
+  if (!dropzone) {
+    return;
+  }
+
+  const input = mode === "edit" ? editTaskAttachmentInput : taskAttachmentInput;
+
+  dropzone.addEventListener("click", () => {
+    input?.click();
+  });
+
+  dropzone.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      input?.click();
+    }
+  });
+
+  ["dragenter", "dragover"].forEach((eventName) => {
+    dropzone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      dropzone.classList.add("is-dragover");
+    });
+  });
+
+  ["dragleave", "dragend", "drop"].forEach((eventName) => {
+    dropzone.addEventListener(eventName, () => {
+      dropzone.classList.remove("is-dragover");
+    });
+  });
+
+  dropzone.addEventListener("drop", (event) => {
+    event.preventDefault();
+    appendPendingAttachments(event.dataTransfer?.files || [], mode);
+  });
+}
+
+taskAttachmentInput?.addEventListener("change", (event) => {
+  appendPendingAttachments(event.target.files || [], "create");
+  taskAttachmentInput.value = "";
+});
+
+editTaskAttachmentInput?.addEventListener("change", (event) => {
+  appendPendingAttachments(event.target.files || [], "edit");
+  editTaskAttachmentInput.value = "";
+});
+
+bindAttachmentDropzone(taskAttachmentDropzone, "create");
+bindAttachmentDropzone(editTaskAttachmentDropzone, "edit");
+
+document.addEventListener("paste", (event) => {
+  if (!["todos", "calendar"].includes(state.currentView) && !(state.editingTaskId !== null && !editModal.hidden)) {
+    return;
+  }
+  const items = Array.from(event.clipboardData?.items || []);
+  const files = items.filter((item) => item.kind === "file").map((item) => item.getAsFile()).filter(Boolean);
+  if (!files.length) {
+    return;
+  }
+
+  const mode = !editModal.hidden && state.editingTaskId !== null ? "edit" : "create";
+  appendPendingAttachments(files, mode);
 });
 
 attendanceModalCloseBtn.addEventListener("click", () => {
@@ -1048,6 +1141,8 @@ function renderAll() {
   renderArchivedTasks();
   renderClientDetailView();
   updateMetrics();
+  renderTaskAttachmentPanels();
+  renderAttachmentUsage();
 }
 
 function renderCalendar() {
@@ -1256,6 +1351,7 @@ function renderTasks() {
               ${isOverdue(task) ? `<span class="task-date-chip task-date-chip-alert">\ub9c8\uac10 \uc9c0\uc5f0</span>` : ""}
               ${isTodayTask(task) ? `<span class="task-date-chip task-date-chip-today">\uc624\ub298 \ub9c8\uac10</span>` : ""}
             </div>
+            ${renderTaskAttachmentPreviewMarkup(task)}
           </div>
           <div class="task-actions">
             <button class="edit-btn" type="button" data-action="edit" data-id="${task.id}">${text.editLabel}</button>
@@ -1354,6 +1450,19 @@ function renderTasks() {
       }
 
       if (action === "remove") {
+        const attachmentIds = getTaskAttachments(taskId, true).map((attachment) => attachment.id).filter(Boolean);
+        if (attachmentIds.length) {
+          const { error: attachmentError } = await requestTasks(`/rest/v1/task_attachments?id=in.(${attachmentIds.join(",")})`, {
+            method: "DELETE",
+          });
+
+          if (attachmentError) {
+            handleSupabaseError("Failed to delete task attachments:", attachmentError);
+            return;
+          }
+
+          state.taskAttachments = state.taskAttachments.filter((attachment) => !attachmentIds.includes(attachment.id));
+        }
         const { error } = await requestTasks(`/rest/v1/tasks?id=eq.${taskId}`, {
           method: "DELETE",
         });
@@ -1368,11 +1477,26 @@ function renderTasks() {
       }
 
       if (action === "archive") {
+        const nextArchiveState = !isArchivedTask(taskId);
+        const synced = await setTaskAttachmentArchiveState(taskId, nextArchiveState);
+        if (!synced) {
+          return;
+        }
         toggleArchivedTask(taskId);
         showToast("완료 업무를 보관함으로 이동했습니다.");
       }
 
       renderAll();
+    });
+  });
+
+  taskList.querySelectorAll("[data-attachment-open]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const attachment = state.taskAttachments.find((item) => String(item.id) === String(button.dataset.attachmentOpen));
+      if (!attachment?.fileData) {
+        return;
+      }
+      window.open(attachment.fileData, "_blank", "noopener,noreferrer");
     });
   });
 
@@ -1413,6 +1537,43 @@ function renderTasks() {
       showToast("할 일 순서를 변경했습니다.");
     });
   });
+}
+
+function renderTaskAttachmentPreviewMarkup(task) {
+  const attachments = getTaskAttachments(task.id);
+  if (!attachments.length) {
+    return "";
+  }
+
+  const previewItems = attachments
+    .slice(0, 3)
+    .map((attachment) => {
+      const thumb = attachment.isImage
+        ? `<span class="task-attachment-thumb"><img src="${attachment.fileData}" alt="${escapeHtml(attachment.fileName)}" /></span>`
+        : `<span class="task-attachment-filetype">${escapeHtml(getAttachmentKindLabel(attachment.mimeType))}</span>`;
+
+      return `
+        <button class="task-attachment-pill" type="button" data-attachment-open="${attachment.id}">
+          ${thumb}
+          <span class="task-attachment-name">${escapeHtml(attachment.fileName)}</span>
+        </button>
+      `;
+    })
+    .join("");
+
+  const moreCount = attachments.length - 3;
+  return `
+    <div class="task-attachments">
+      <div class="task-attachments-head">
+        <span>첨부 ${attachments.length}개</span>
+        <span class="storage-summary-caption">${formatFileSize(attachments.reduce((sum, attachment) => sum + Number(attachment.fileSize || 0), 0))}</span>
+      </div>
+      <div class="task-attachments-list">
+        ${previewItems}
+        ${moreCount > 0 ? `<span class="task-attachment-more">+${moreCount}</span>` : ""}
+      </div>
+    </div>
+  `;
 }
 
 function updateMetrics() {
@@ -1459,8 +1620,13 @@ function renderArchivedTasks() {
     .join("");
 
   archivedTaskList.querySelectorAll("[data-archive-restore]").forEach((button) => {
-    button.addEventListener("click", () => {
-      toggleArchivedTask(button.dataset.archiveRestore);
+    button.addEventListener("click", async () => {
+      const taskId = button.dataset.archiveRestore;
+      const synced = await setTaskAttachmentArchiveState(taskId, false);
+      if (!synced) {
+        return;
+      }
+      toggleArchivedTask(taskId);
       renderAll();
       showToast("보관함에서 업무를 복원했습니다.");
     });
@@ -1556,7 +1722,11 @@ async function loadTasks() {
   setConnectionState("checking", text.connectionChecking);
   renderAll();
 
-  const { data, error } = await requestTasks("/rest/v1/tasks?select=*&order=created_at.desc");
+  const [tasksResponse, attachmentsResponse] = await Promise.all([
+    requestTasks("/rest/v1/tasks?select=*&order=created_at.desc"),
+    requestTasks("/rest/v1/task_attachments?select=*&order=created_at.desc"),
+  ]);
+  const { data, error } = tasksResponse;
 
   if (error) {
     state.isLoading = false;
@@ -1566,6 +1736,12 @@ async function loadTasks() {
   }
 
   state.tasks = (data ?? []).map(mapTaskRecord);
+  if (!attachmentsResponse.error) {
+    state.taskAttachments = (attachmentsResponse.data ?? []).map(mapTaskAttachmentRecord);
+  } else {
+    handleSupabaseError("Failed to load task attachments:", attachmentsResponse.error);
+  }
+  await cleanupExpiredTaskAttachments();
   normalizeTaskOrderMap();
   state.isLoading = false;
   setConnectionState("ready", text.connectionReady);
@@ -1656,9 +1832,11 @@ function shouldRetryWithoutPriority(error) {
 
 function clearEditingState() {
   state.editingTaskId = null;
+  state.pendingTaskAttachments = [];
   syncFormMode();
   taskStatusInput.value = "todo";
   taskPriorityInput.value = "medium";
+  renderTaskAttachmentPanels();
 }
 
 function syncFormMode() {
@@ -1668,6 +1846,7 @@ function syncFormMode() {
 
 function openEditModal(task) {
   state.editingTaskId = task.id;
+  state.pendingEditTaskAttachments = [];
   editModalTitle.textContent = `${task.title} 수정`;
   editModalSubtitle.textContent = `${task.client} 업무를 수정하는 중입니다.`;
   editTaskClientInput.value = task.client || "";
@@ -1678,6 +1857,7 @@ function openEditModal(task) {
   editTaskPriorityInput.value = task.priority || "medium";
   editModal.hidden = false;
   document.body.classList.add("modal-open");
+  renderTaskAttachmentPanels();
   editTaskDescriptionInput.focus();
 }
 
@@ -1685,6 +1865,7 @@ function closeEditModal() {
   editModal.hidden = true;
   document.body.classList.remove("modal-open");
   editTaskForm.reset();
+  state.pendingEditTaskAttachments = [];
   clearEditingState();
 }
 
@@ -1759,12 +1940,32 @@ async function loadMembersData() {
   }
 
   const remoteMembers = (data ?? []).map(mapMemberRecord).filter(Boolean);
+  const missingLocalMembers = localMembers.filter(
+    (localMember) =>
+      !remoteMembers.some(
+        (remoteMember) =>
+          String(remoteMember.id) === String(localMember.id) ||
+          String(remoteMember.loginId) === String(localMember.loginId)
+      )
+  );
 
-  if (!remoteMembers.length && localMembers.length) {
-    const migrationResult = await migrateLocalMembersToSupabase(localMembers);
-    state.members = migrationResult.length ? migrationResult : localMembers;
+  if (missingLocalMembers.length) {
+    const migratedMembers = await migrateLocalMembersToSupabase(missingLocalMembers);
+    const mergedRemoteMembers = [...remoteMembers];
+    migratedMembers.forEach((migratedMember) => {
+      if (
+        !mergedRemoteMembers.some(
+          (remoteMember) =>
+            String(remoteMember.id) === String(migratedMember.id) ||
+            String(remoteMember.loginId) === String(migratedMember.loginId)
+        )
+      ) {
+        mergedRemoteMembers.push(migratedMember);
+      }
+    });
+    state.members = mergedRemoteMembers.length ? mergedRemoteMembers : localMembers;
   } else {
-    state.members = remoteMembers;
+    state.members = remoteMembers.length ? remoteMembers : localMembers;
   }
 
   saveMembers();
@@ -2326,6 +2527,25 @@ function mapTaskRecord(record) {
   };
 }
 
+function mapTaskAttachmentRecord(record) {
+  if (!record) {
+    return null;
+  }
+
+  return {
+    id: record.id,
+    taskId: record.task_id,
+    fileName: record.file_name || "파일",
+    mimeType: record.mime_type || "",
+    fileData: record.file_data || "",
+    fileSize: Number(record.file_size || 0),
+    isImage: record.is_image === true || String(record.mime_type || "").startsWith("image/"),
+    archivedAt: record.archived_at || "",
+    purgeAfter: record.purge_after || "",
+    createdAt: record.created_at || new Date().toISOString(),
+  };
+}
+
 function isArchivedTask(taskId) {
   return state.archivedTaskIds.includes(String(taskId));
 }
@@ -2342,6 +2562,255 @@ function toggleArchivedTask(taskId) {
     state.archivedTaskIds = [...state.archivedTaskIds, key];
   }
   saveArchivedTaskIds();
+}
+
+function getTaskAttachments(taskId, includeArchived = false) {
+  return state.taskAttachments.filter((attachment) => {
+    if (String(attachment.taskId) !== String(taskId)) {
+      return false;
+    }
+    if (!includeArchived && attachment.archivedAt) {
+      return false;
+    }
+    return true;
+  });
+}
+
+function formatFileSize(bytes) {
+  const value = Number(bytes || 0);
+  if (value >= 1024 * 1024 * 1024) {
+    return `${(value / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+  }
+  if (value >= 1024 * 1024) {
+    return `${(value / (1024 * 1024)).toFixed(1)} MB`;
+  }
+  if (value >= 1024) {
+    return `${Math.round(value / 1024)} KB`;
+  }
+  return `${value} B`;
+}
+
+function getAttachmentUsage() {
+  const uploadedBytes = state.taskAttachments.reduce((sum, attachment) => sum + Number(attachment.fileSize || 0), 0);
+  const pendingBytes =
+    state.pendingTaskAttachments.reduce((sum, attachment) => sum + Number(attachment.fileSize || 0), 0) +
+    state.pendingEditTaskAttachments.reduce((sum, attachment) => sum + Number(attachment.fileSize || 0), 0);
+  const usedBytes = uploadedBytes + pendingBytes;
+  const remainingBytes = Math.max(0, ATTACHMENT_FREE_QUOTA_BYTES - usedBytes);
+  const percent = Math.min(100, Math.round((usedBytes / ATTACHMENT_FREE_QUOTA_BYTES) * 100));
+  return { usedBytes, remainingBytes, percent };
+}
+
+function renderAttachmentUsage() {
+  if (!attachmentStorageSummary || !attachmentStorageBar || !attachmentStorageRemaining) {
+    return;
+  }
+  const usage = getAttachmentUsage();
+  attachmentStorageSummary.textContent = `${formatFileSize(usage.usedBytes)} / 1 GB`;
+  attachmentStorageBar.style.width = `${usage.percent}%`;
+  attachmentStorageRemaining.textContent = `무료 1GB 기준 남은 용량 ${formatFileSize(usage.remainingBytes)}`;
+}
+
+function makeLocalAttachmentPreview(file, fileData) {
+  return {
+    tempId: `attachment-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    fileName: file.name,
+    mimeType: file.type || "",
+    fileData,
+    fileSize: Number(file.size || 0),
+    isImage: String(file.type || "").startsWith("image/"),
+  };
+}
+
+function renderPendingAttachmentCollection(target, attachments, options = {}) {
+  if (!target) {
+    return;
+  }
+
+  if (!attachments.length) {
+    target.innerHTML = "";
+    return;
+  }
+
+  target.innerHTML = attachments
+    .map((attachment) => {
+      const preview = attachment.isImage
+        ? `<img class="attachment-chip-thumb" src="${attachment.fileData}" alt="${escapeHtml(attachment.fileName)}" />`
+        : `<span class="attachment-chip-icon">${getAttachmentKindLabel(attachment.mimeType)}</span>`;
+      const removeAttr = options.removeAction ? ` data-attachment-remove="${attachment.tempId || attachment.id}"` : "";
+      return `
+        <div class="attachment-chip">
+          <div class="attachment-chip-main">
+            ${preview}
+            <div class="attachment-chip-copy">
+              <strong>${escapeHtml(attachment.fileName)}</strong>
+              <span>${formatFileSize(attachment.fileSize)}</span>
+            </div>
+          </div>
+          ${options.removeAction ? `<button type="button" class="attachment-chip-remove" ${removeAttr}>삭제</button>` : ""}
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function getAttachmentKindLabel(mimeType) {
+  if (String(mimeType || "").startsWith("image/")) {
+    return "IMG";
+  }
+  if (mimeType === "application/pdf") {
+    return "PDF";
+  }
+  return "FILE";
+}
+
+async function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("파일을 읽지 못했습니다."));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function appendPendingAttachments(files, mode = "create") {
+  const list = Array.from(files || []);
+  if (!list.length) {
+    return;
+  }
+
+  const targetCollection = mode === "edit" ? state.pendingEditTaskAttachments : state.pendingTaskAttachments;
+  const usage = getAttachmentUsage();
+  let nextUsageBytes = usage.usedBytes + targetCollection.reduce((sum, item) => sum + Number(item.fileSize || 0), 0);
+
+  for (const file of list) {
+    if (Number(file.size || 0) > ATTACHMENT_MAX_BYTES) {
+      showToast(`첨부파일은 파일당 ${formatFileSize(ATTACHMENT_MAX_BYTES)} 이하만 가능합니다.`);
+      continue;
+    }
+    if (nextUsageBytes + Number(file.size || 0) > ATTACHMENT_FREE_QUOTA_BYTES) {
+      showToast("무료 1GB 첨부 한도를 초과할 수 있어 업로드할 수 없습니다.");
+      continue;
+    }
+    const fileData = await readFileAsDataUrl(file);
+    const preview = makeLocalAttachmentPreview(file, fileData);
+    targetCollection.push(preview);
+    nextUsageBytes += preview.fileSize;
+  }
+
+  renderTaskAttachmentPanels();
+}
+
+function removePendingAttachment(attachmentId, mode = "create") {
+  if (mode === "edit") {
+    state.pendingEditTaskAttachments = state.pendingEditTaskAttachments.filter((item) => item.tempId !== attachmentId);
+  } else {
+    state.pendingTaskAttachments = state.pendingTaskAttachments.filter((item) => item.tempId !== attachmentId);
+  }
+  renderTaskAttachmentPanels();
+}
+
+function renderTaskAttachmentPanels() {
+  renderPendingAttachmentCollection(taskPendingAttachmentList, state.pendingTaskAttachments, { removeAction: "create" });
+  if (editTaskExistingAttachmentList && state.editingTaskId !== null) {
+    const existing = getTaskAttachments(state.editingTaskId);
+    renderPendingAttachmentCollection(editTaskExistingAttachmentList, existing);
+  }
+  renderPendingAttachmentCollection(editTaskPendingAttachmentList, state.pendingEditTaskAttachments, { removeAction: "edit" });
+  renderAttachmentUsage();
+  bindAttachmentRemoveButtons();
+}
+
+function bindAttachmentRemoveButtons() {
+  document.querySelectorAll("[data-attachment-remove]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const attachmentId = button.dataset.attachmentRemove;
+      const mode = button.closest("#editTaskPendingAttachmentList") ? "edit" : "create";
+      removePendingAttachment(attachmentId, mode);
+    });
+  });
+}
+
+async function uploadTaskAttachments(taskId, attachments) {
+  if (!attachments.length) {
+    return [];
+  }
+
+  const payload = attachments.map((attachment) => ({
+    task_id: Number(taskId),
+    file_name: attachment.fileName,
+    mime_type: attachment.mimeType,
+    file_data: attachment.fileData,
+    file_size: Number(attachment.fileSize || 0),
+    is_image: attachment.isImage === true,
+  }));
+
+  const { data, error } = await requestTasks("/rest/v1/task_attachments", {
+    method: "POST",
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to upload task attachments:", error);
+    return [];
+  }
+
+  return (data ?? []).map(mapTaskAttachmentRecord).filter(Boolean);
+}
+
+async function cleanupExpiredTaskAttachments() {
+  const nowIso = new Date().toISOString();
+  const expiredIds = state.taskAttachments
+    .filter((attachment) => attachment.purgeAfter && attachment.purgeAfter <= nowIso)
+    .map((attachment) => attachment.id);
+
+  if (!expiredIds.length) {
+    return;
+  }
+
+  const { error } = await requestTasks(`/rest/v1/task_attachments?id=in.(${expiredIds.join(",")})`, {
+    method: "DELETE",
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to cleanup archived attachments:", error);
+    return;
+  }
+
+  state.taskAttachments = state.taskAttachments.filter((attachment) => !expiredIds.includes(attachment.id));
+}
+
+async function setTaskAttachmentArchiveState(taskId, shouldArchive) {
+  const attachments = getTaskAttachments(taskId, true);
+  if (!attachments.length) {
+    return true;
+  }
+
+  const nextArchiveDate = shouldArchive ? new Date().toISOString() : null;
+  const nextPurgeDate = shouldArchive ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : null;
+  const { error } = await requestTasks(`/rest/v1/task_attachments?task_id=eq.${taskId}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      archived_at: nextArchiveDate,
+      purge_after: nextPurgeDate,
+    }),
+  });
+
+  if (error) {
+    handleSupabaseError("Failed to update attachment archive state:", error);
+    return false;
+  }
+
+  state.taskAttachments = state.taskAttachments.map((attachment) =>
+    String(attachment.taskId) === String(taskId)
+      ? { ...attachment, archivedAt: nextArchiveDate || "", purgeAfter: nextPurgeDate || "" }
+      : attachment
+  );
+
+  return true;
 }
 
 function getVisibleTasks() {

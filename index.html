@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260318-66" />
+    <link rel="stylesheet" href="styles.css?v=20260319-67" />
   </head>
   <body>
     <div class="app-shell">
@@ -89,7 +89,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-          <p id="buildStamp" class="build-stamp">Build 2026-03-18 66</p>
+          <p id="buildStamp" class="build-stamp">Build 2026-03-19 67</p>
           </div>
         </div>
 
@@ -248,6 +248,15 @@
                     <option value="low">낮음</option>
                   </select>
                 </label>
+                <div class="field task-form-wide attachment-field">
+                  <span>첨부파일</span>
+                  <div id="taskAttachmentDropzone" class="attachment-dropzone" tabindex="0" role="button" aria-label="첨부파일 업로드">
+                    <strong>파일을 끌어놓거나 클릭해서 첨부</strong>
+                    <span>이미지, 문서 가능 · 붙여넣기(Ctrl+V) 지원 · 파일당 최대 10MB</span>
+                    <input id="taskAttachmentInput" type="file" multiple hidden />
+                  </div>
+                  <div id="taskPendingAttachmentList" class="attachment-list compact"></div>
+                </div>
               </div>
               <div class="task-form-actions">
                 <button id="taskCancelBtn" type="button" class="ghost-btn task-cancel" hidden>취소</button>
@@ -261,6 +270,16 @@
               </div>
               <div class="progress-track" aria-hidden="true">
                 <div id="taskProgressBar" class="progress-fill"></div>
+              </div>
+              <div class="storage-summary">
+                <div class="storage-summary-head">
+                  <span>첨부 사용량</span>
+                  <strong id="attachmentStorageSummary">0 MB / 1 GB</strong>
+                </div>
+                <div class="progress-track storage-track" aria-hidden="true">
+                  <div id="attachmentStorageBar" class="progress-fill"></div>
+                </div>
+                <p id="attachmentStorageRemaining" class="storage-summary-caption">무료 1GB 기준 남은 용량 1 GB</p>
               </div>
             </div>
           </div>
@@ -875,6 +894,16 @@
                 <option value="low">낮음</option>
               </select>
             </label>
+            <div class="field task-form-wide attachment-field">
+              <span>첨부파일</span>
+              <div id="editTaskAttachmentDropzone" class="attachment-dropzone" tabindex="0" role="button" aria-label="첨부파일 업로드">
+                <strong>파일을 끌어놓거나 클릭해서 첨부</strong>
+                <span>이미지, 문서 가능 · 붙여넣기(Ctrl+V) 지원 · 파일당 최대 10MB</span>
+                <input id="editTaskAttachmentInput" type="file" multiple hidden />
+              </div>
+              <div id="editTaskExistingAttachmentList" class="attachment-list"></div>
+              <div id="editTaskPendingAttachmentList" class="attachment-list compact"></div>
+            </div>
           </div>
           <div class="task-form-actions">
             <button id="editTaskCancelBtn" type="button" class="ghost-btn task-cancel">취소</button>
@@ -1045,6 +1074,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260318-66"></script>
+    <script src="app.js?v=20260319-67"></script>
   </body>
 </html>

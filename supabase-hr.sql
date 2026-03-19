@@ -74,3 +74,19 @@ create table if not exists public.employee_documents (
 );
 
 create index if not exists employee_documents_employee_id_idx on public.employee_documents(employee_id);
+
+create table if not exists public.task_attachments (
+  id bigint generated always as identity primary key,
+  task_id bigint not null references public.tasks(id) on delete cascade,
+  file_name text not null,
+  mime_type text not null default '',
+  file_data text not null,
+  file_size bigint not null default 0,
+  is_image boolean not null default false,
+  archived_at timestamptz,
+  purge_after timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists task_attachments_task_id_idx on public.task_attachments(task_id);
+create index if not exists task_attachments_purge_after_idx on public.task_attachments(purge_after);
