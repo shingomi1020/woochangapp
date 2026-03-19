@@ -1,20 +1,4 @@
-function ensurePortfolioNavigationAndView() {
-  const siteMenu = document.querySelector(".site-menu");
-  if (siteMenu && !siteMenu.querySelector('[data-view="portfolio"]')) {
-    const portfolioButton = document.createElement("button");
-    portfolioButton.className = "site-menu-link";
-    portfolioButton.type = "button";
-    portfolioButton.dataset.view = "portfolio";
-    portfolioButton.dataset.roleVisible = "admin,employee,freelancer";
-    portfolioButton.textContent = "포트폴리오";
-    const estimateButton = siteMenu.querySelector('[data-view="estimate"]');
-    if (estimateButton) {
-      siteMenu.insertBefore(portfolioButton, estimateButton);
-    } else {
-      siteMenu.appendChild(portfolioButton);
-    }
-  }
-
+﻿function ensurePortfolioNavigationAndView() {
   if (document.getElementById("portfolioView")) {
     return;
   }
@@ -31,26 +15,26 @@ function ensurePortfolioNavigationAndView() {
         <section class="panel hr-hero reveal">
           <div class="panel-head">
             <div>
-              <p class="section-label">포트폴리오</p>
-              <h2>작업 결과 아카이브</h2>
-              <p class="modal-subtitle">업체명, 작업일시, 규격, 후가공, 기타사항과 함께 이미지와 파일을 저장합니다.</p>
+              <p class="section-label">?ы듃?대━??/p>
+              <h2>?묒뾽 寃곌낵 ?꾩뭅?대툕</h2>
+              <p class="modal-subtitle">?낆껜紐? ?묒뾽?쇱떆, 洹쒓꺽, ?꾧?怨? 湲고??ы빆怨??④퍡 ?대?吏? ?뚯씪????ν빀?덈떎.</p>
             </div>
           </div>
           <div class="payroll-hero-grid portfolio-metrics">
             <article class="metric-card">
-              <span class="metric-label">등록 작업</span>
+              <span class="metric-label">?깅줉 ?묒뾽</span>
               <strong id="portfolioCount">0</strong>
-              <small>저장된 포트폴리오 수</small>
+              <small>??λ맂 ?ы듃?대━????/small>
             </article>
             <article class="metric-card">
-              <span class="metric-label">이미지 첨부</span>
+              <span class="metric-label">?대?吏 泥⑤?</span>
               <strong id="portfolioImageCount">0</strong>
-              <small>미리보기 가능한 이미지 수</small>
+              <small>誘몃━蹂닿린 媛?ν븳 ?대?吏 ??/small>
             </article>
             <article class="metric-card">
-              <span class="metric-label">첨부 사용량</span>
+              <span class="metric-label">泥⑤? ?ъ슜??/span>
               <strong id="portfolioStorageUsage">0 MB</strong>
-              <small id="portfolioStorageRemaining">남은 용량 1 GB</small>
+              <small id="portfolioStorageRemaining">?⑥? ?⑸웾 1 GB</small>
             </article>
           </div>
         </section>
@@ -59,61 +43,61 @@ function ensurePortfolioNavigationAndView() {
           <section class="panel portfolio-form-panel">
             <div class="panel-head">
               <div>
-                <p class="section-label">신규 등록</p>
-                <h3>포트폴리오 추가</h3>
+                <p class="section-label">?좉퇋 ?깅줉</p>
+                <h3>?ы듃?대━??異붽?</h3>
               </div>
             </div>
             <form id="portfolioForm" class="task-form portfolio-form">
               <div class="task-form-grid portfolio-form-grid">
                 <label class="field">
-                  <span>업체명</span>
+                  <span>?낆껜紐?/span>
                   <input id="portfolioClientInput" type="text" maxlength="60" autocomplete="off" required />
                 </label>
                 <label class="field">
-                  <span>작업명</span>
+                  <span>?묒뾽紐?/span>
                   <input id="portfolioProjectInput" type="text" maxlength="80" autocomplete="off" required />
                 </label>
                 <label class="field">
-                  <span>작업일시</span>
+                  <span>?묒뾽?쇱떆</span>
                   <input id="portfolioWorkDateInput" type="date" />
                 </label>
                 <label class="field">
-                  <span>규격</span>
-                  <input id="portfolioSizeInput" type="text" maxlength="80" placeholder="예: 900x1800 / A3 / 3T" />
+                  <span>洹쒓꺽</span>
+                  <input id="portfolioSizeInput" type="text" maxlength="80" placeholder="?? 900x1800 / A3 / 3T" />
                 </label>
                 <label class="field">
-                  <span>후가공</span>
-                  <input id="portfolioFinishInput" type="text" maxlength="100" placeholder="예: 코팅, 타공, 재단" />
+                  <span>?꾧?怨?/span>
+                  <input id="portfolioFinishInput" type="text" maxlength="100" placeholder="?? 肄뷀똿, ?怨? ?щ떒" />
                 </label>
                 <label class="field">
-                  <span>소재/기타</span>
-                  <input id="portfolioMaterialInput" type="text" maxlength="100" placeholder="예: 현수막천 / 포맥스 / PET" />
+                  <span>?뚯옱/湲고?</span>
+                  <input id="portfolioMaterialInput" type="text" maxlength="100" placeholder="?? ?꾩닔留됱쿇 / ?щ㎘??/ PET" />
                 </label>
                 <label class="field task-form-wide">
-                  <span>기타사항</span>
-                  <textarea id="portfolioNoteInput" rows="4" maxlength="600" placeholder="작업 메모, 후속 참고사항, 납품 특이사항"></textarea>
+                  <span>湲고??ы빆</span>
+                  <textarea id="portfolioNoteInput" rows="4" maxlength="600" placeholder="?묒뾽 硫붾え, ?꾩냽 李멸퀬?ы빆, ?⑺뭹 ?뱀씠?ы빆"></textarea>
                 </label>
               </div>
 
               <div class="attachment-field">
                 <div class="task-attachments-head">
                   <div>
-                    <span>첨부 파일</span>
-                    <small>이미지, PDF, 일반 파일 / 파일당 10MB / 붙여넣기 가능</small>
+                    <span>泥⑤? ?뚯씪</span>
+                    <small>?대?吏, PDF, ?쇰컲 ?뚯씪 / ?뚯씪??10MB / 遺숈뿬?ｊ린 媛??/small>
                   </div>
                 </div>
                 <input id="portfolioAttachmentInput" type="file" multiple hidden />
-                <label id="portfolioAttachmentDropzone" class="attachment-dropzone" tabindex="0" role="button" aria-label="포트폴리오 첨부 업로드" for="portfolioAttachmentInput">
-                  <strong>파일을 끌어놓거나 클릭해 추가</strong>
-                  <small>스크린샷은 Ctrl+V로 바로 넣을 수 있습니다.</small>
+                <label id="portfolioAttachmentDropzone" class="attachment-dropzone" tabindex="0" role="button" aria-label="?ы듃?대━??泥⑤? ?낅줈?? for="portfolioAttachmentInput">
+                  <strong>?뚯씪???뚯뼱?볤굅???대┃??異붽?</strong>
+                  <small>?ㅽ겕由곗꺑? Ctrl+V濡?諛붾줈 ?ｌ쓣 ???덉뒿?덈떎.</small>
                 </label>
                 <div class="attachment-actions">
-                  <label for="portfolioAttachmentInput" class="attachment-browse-btn">파일 선택</label>
+                  <label for="portfolioAttachmentInput" class="attachment-browse-btn">?뚯씪 ?좏깮</label>
                 </div>
                 <div class="storage-summary">
                   <div class="storage-summary-head">
                     <strong id="portfolioStorageSummary">0 MB / 1 GB</strong>
-                    <span class="storage-summary-caption">포트폴리오 첨부 사용량</span>
+                    <span class="storage-summary-caption">?ы듃?대━??泥⑤? ?ъ슜??/span>
                   </div>
                   <div class="storage-track">
                     <span id="portfolioStorageBar" class="storage-fill" style="width:0%"></span>
@@ -123,7 +107,7 @@ function ensurePortfolioNavigationAndView() {
               </div>
 
               <div class="task-form-actions">
-                <button id="portfolioSubmitBtn" type="submit" class="submit-btn task-submit">저장</button>
+                <button id="portfolioSubmitBtn" type="submit" class="submit-btn task-submit">???/button>
               </div>
             </form>
           </section>
@@ -131,8 +115,8 @@ function ensurePortfolioNavigationAndView() {
           <section class="panel portfolio-list-panel">
             <div class="panel-head">
               <div>
-                <p class="section-label">보관 목록</p>
-                <h3>포트폴리오 기록</h3>
+                <p class="section-label">蹂닿? 紐⑸줉</p>
+                <h3>?ы듃?대━??湲곕줉</h3>
               </div>
             </div>
             <div id="portfolioList" class="portfolio-list"></div>
@@ -329,10 +313,10 @@ const portfolioStorageBar = document.getElementById("portfolioStorageBar");
 
 if (portfolioAttachmentDropzone) {
   portfolioAttachmentDropzone.removeAttribute("for");
-  portfolioAttachmentDropzone.setAttribute("aria-label", "포트폴리오 첨부 업로드");
+  portfolioAttachmentDropzone.setAttribute("aria-label", "?ы듃?대━??泥⑤? ?낅줈??);
   portfolioAttachmentDropzone.innerHTML = `
-    <strong>파일을 끌어놓거나 클릭해 추가</strong>
-    <span>스크린샷은 Ctrl+V로 바로 넣을 수 있습니다.</span>
+    <strong>?뚯씪???뚯뼱?볤굅???대┃??異붽?</strong>
+    <span>?ㅽ겕由곗꺑? Ctrl+V濡?諛붾줈 ?ｌ쓣 ???덉뒿?덈떎.</span>
   `;
 }
 
@@ -342,7 +326,7 @@ if (portfolioAttachmentActions && !portfolioAttachmentBrowseButton) {
   portfolioAttachmentBrowseButton.id = "portfolioAttachmentBrowseButton";
   portfolioAttachmentBrowseButton.type = "button";
   portfolioAttachmentBrowseButton.className = "attachment-browse-btn";
-  portfolioAttachmentBrowseButton.textContent = "파일 선택";
+  portfolioAttachmentBrowseButton.textContent = "?뚯씪 ?좏깮";
   portfolioAttachmentActions.replaceChildren(portfolioAttachmentBrowseButton);
 }
 const employeeModal = document.getElementById("employeeModal");
@@ -506,10 +490,10 @@ function renderEmployeeMemberOptions(selectElement, selectedValue = "") {
   }
 
   const options = [
-    `<option value="">연결 안 함</option>`,
+    `<option value="">?곌껐 ????/option>`,
     ...getAssignableMembers().map(
       (member) =>
-        `<option value="${member.id}">${escapeHtml(member.name)} · ${escapeHtml(member.loginId)} · ${getRoleLabel(member.role)}</option>`
+        `<option value="${member.id}">${escapeHtml(member.name)} 쨌 ${escapeHtml(member.loginId)} 쨌 ${getRoleLabel(member.role)}</option>`
     ),
   ];
 
@@ -775,12 +759,12 @@ signupForm?.addEventListener("submit", async (event) => {
   const role = state.members.length === 0 ? "admin" : signupRoleInput.value;
 
   if (!name || !loginId || !password) {
-    showToast("회원 정보를 모두 입력해 주세요.");
+    showToast("?뚯썝 ?뺣낫瑜?紐⑤몢 ?낅젰??二쇱꽭??");
     return;
   }
 
   if (state.members.some((member) => member.loginId === loginId)) {
-    showToast("이미 사용 중인 아이디입니다.");
+    showToast("?대? ?ъ슜 以묒씤 ?꾩씠?붿엯?덈떎.");
     return;
   }
 
@@ -805,7 +789,7 @@ signupForm?.addEventListener("submit", async (event) => {
   renderHrWorkspace();
   signupForm.reset();
   syncSignupRoleUi();
-  showToast("회원 계정을 등록했습니다.");
+  showToast("?뚯썝 怨꾩젙???깅줉?덉뒿?덈떎.");
   switchView("login");
 });
 
@@ -826,7 +810,7 @@ editMemberForm?.addEventListener("submit", async (event) => {
   const nextPassword = editMemberPasswordInput.value.trim();
 
   if (!nextName || !nextLoginId) {
-    showToast("회원 이름과 아이디를 입력해 주세요.");
+    showToast("?뚯썝 ?대쫫怨??꾩씠?붾? ?낅젰??二쇱꽭??");
     return;
   }
 
@@ -834,7 +818,7 @@ editMemberForm?.addEventListener("submit", async (event) => {
     (item) => item.id !== member.id && item.loginId === nextLoginId
   );
   if (duplicateMember) {
-    showToast("이미 사용 중인 아이디입니다.");
+    showToast("?대? ?ъ슜 以묒씤 ?꾩씠?붿엯?덈떎.");
     return;
   }
 
@@ -876,10 +860,10 @@ editMemberForm?.addEventListener("submit", async (event) => {
   closeMemberModal();
   if (state.currentUser?.id === member.id && member.isActive === false) {
     logoutCurrentUser(true);
-    showToast("현재 계정을 비활성화해서 다시 로그인해야 합니다.");
+    showToast("?꾩옱 怨꾩젙??鍮꾪솢?깊솕?댁꽌 ?ㅼ떆 濡쒓렇?명빐???⑸땲??");
     return;
   }
-  showToast("회원 정보를 수정했습니다.");
+  showToast("?뚯썝 ?뺣낫瑜??섏젙?덉뒿?덈떎.");
 });
 
 editMemberDeleteBtn?.addEventListener("click", async () => {
@@ -901,10 +885,10 @@ editMemberDeleteBtn?.addEventListener("click", async () => {
   closeMemberModal();
   if (state.currentUser?.id === member.id) {
     logoutCurrentUser(true);
-    showToast("현재 로그인한 계정을 삭제했습니다.");
+    showToast("?꾩옱 濡쒓렇?명븳 怨꾩젙????젣?덉뒿?덈떎.");
     return;
   }
-  showToast("회원 계정을 삭제했습니다.");
+  showToast("?뚯썝 怨꾩젙????젣?덉뒿?덈떎.");
 });
 
 window.addEventListener("hashchange", () => {
@@ -1289,7 +1273,7 @@ employeeForm.addEventListener("submit", (event) => {
   employeeTypeInput.value = "insured";
   saveHrState();
   renderHrWorkspace();
-  showToast(`${name} 직원을 등록했습니다.`);
+  showToast(`${name} 吏곸썝???깅줉?덉뒿?덈떎.`);
 });
 
 attendanceForm.addEventListener("submit", (event) => {
@@ -1318,7 +1302,7 @@ attendanceForm.addEventListener("submit", (event) => {
   attendanceClockOutInput.value = "18:00";
   saveHrState();
   renderHrWorkspace();
-  showToast("출퇴근 기록을 저장했습니다.");
+  showToast("異쒗눜洹?湲곕줉????ν뻽?듬땲??");
 });
 
 filterButtons.forEach((button) => {
@@ -1453,7 +1437,7 @@ function renderWeekCalendar() {
     return createDayConfig(date, false);
   });
 
-  monthLabel.textContent = `${selectedDate.getFullYear()}년 ${selectedDate.getMonth() + 1}월 주간`;
+  monthLabel.textContent = `${selectedDate.getFullYear()}??${selectedDate.getMonth() + 1}??二쇨컙`;
   calendarGrid.innerHTML = days.map((config) => renderDayCard(config)).join("");
   bindCalendarDayCards();
   monthEventCount.textContent = days.reduce((sum, day) => sum + day.tasks.length, 0);
@@ -1465,10 +1449,10 @@ function renderListCalendar() {
     .filter((task) => !isArchivedTask(task.id) && task.dueDate.startsWith(formatMonthPrefix(state.viewDate)))
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate) || priorityWeight(a.priority) - priorityWeight(b.priority));
 
-  monthLabel.textContent = `${state.viewDate.getFullYear()}년 ${state.viewDate.getMonth() + 1}월 리스트`;
+  monthLabel.textContent = `${state.viewDate.getFullYear()}??${state.viewDate.getMonth() + 1}??由ъ뒪??;
 
   if (!monthTasks.length) {
-    calendarGrid.innerHTML = `<div class="empty-state calendar-list-empty">이번 달 마감 업무가 없습니다.</div>`;
+    calendarGrid.innerHTML = `<div class="empty-state calendar-list-empty">?대쾲 ??留덇컧 ?낅Т媛 ?놁뒿?덈떎.</div>`;
     monthEventCount.textContent = "0";
     updateCalendarHint();
     return;
@@ -1480,7 +1464,7 @@ function renderListCalendar() {
         <article class="calendar-list-item priority-${task.priority}">
           <button class="calendar-list-open" type="button" data-date-select="${task.dueDate}">
             <span class="calendar-list-date">${formatDisplayDate(task.dueDate)}</span>
-            <strong>${escapeHtml(task.client || "거래처 미지정")}</strong>
+            <strong>${escapeHtml(task.client || "嫄곕옒泥?誘몄???)}</strong>
             <p>${escapeHtml(task.description || task.title || "")}</p>
           </button>
         </article>
@@ -1576,14 +1560,14 @@ function renderTasks() {
               ${task.client ?? task.category}
             </button>
             <div class="task-description task-description-primary">${task.description ?? task.title ?? ""}</div>
-            <div class="task-meta">${getStatusLabel(task.status)} · ${getPriorityLabel(task.priority)} · ${task.category}</div>
+            <div class="task-meta">${getStatusLabel(task.status)} 쨌 ${getPriorityLabel(task.priority)} 쨌 ${task.category}</div>
             <div class="task-inline-controls">
-              <div class="task-choice-group" aria-label="진행 상태 선택">
+              <div class="task-choice-group" aria-label="吏꾪뻾 ?곹깭 ?좏깮">
                 ${renderChoiceButton("status", task, "todo", getStatusLabel("todo"))}
                 ${renderChoiceButton("status", task, "paused", getStatusLabel("paused"))}
                 ${renderChoiceButton("status", task, "done", getStatusLabel("done"))}
               </div>
-              <div class="task-choice-group" aria-label="중요도 선택">
+              <div class="task-choice-group" aria-label="以묒슂???좏깮">
                 ${renderChoiceButton("priority", task, "high", getPriorityLabel("high"))}
                 ${renderChoiceButton("priority", task, "medium", getPriorityLabel("medium"))}
                 ${renderChoiceButton("priority", task, "low", getPriorityLabel("low"))}
@@ -1599,7 +1583,7 @@ function renderTasks() {
           </div>
           <div class="task-actions">
             <button class="edit-btn" type="button" data-action="edit" data-id="${task.id}">${text.editLabel}</button>
-            ${task.status === "done" ? `<button class="ghost-btn task-archive-btn" type="button" data-action="archive" data-id="${task.id}">보관</button>` : ""}
+            ${task.status === "done" ? `<button class="ghost-btn task-archive-btn" type="button" data-action="archive" data-id="${task.id}">蹂닿?</button>` : ""}
             <button class="remove-btn" type="button" data-action="remove" data-id="${task.id}">${text.deleteLabel}</button>
           </div>
         </article>
@@ -1653,7 +1637,7 @@ function renderTasks() {
         state.tasks = state.tasks.map((task) =>
           task.id === taskId ? { ...task, status: nextStatus, done: nextDone } : task
         );
-        showToast(`진행 상태를 ${getStatusLabel(nextStatus)}로 변경했습니다.`);
+        showToast(`吏꾪뻾 ?곹깭瑜?${getStatusLabel(nextStatus)}濡?蹂寃쏀뻽?듬땲??`);
       }
 
       if (action === "priority") {
@@ -1668,7 +1652,7 @@ function renderTasks() {
             task.id === taskId ? { ...task, priority: nextPriority } : task
           );
           renderAll();
-          showToast(`중요도를 ${getPriorityLabel(nextPriority)}으로 표시했습니다.`);
+          showToast(`以묒슂?꾨? ${getPriorityLabel(nextPriority)}?쇰줈 ?쒖떆?덉뒿?덈떎.`);
           return;
         }
 
@@ -1680,7 +1664,7 @@ function renderTasks() {
         state.tasks = state.tasks.map((task) =>
           task.id === taskId ? { ...task, priority: nextPriority } : task
         );
-        showToast(`중요도를 ${getPriorityLabel(nextPriority)}으로 변경했습니다.`);
+        showToast(`以묒슂?꾨? ${getPriorityLabel(nextPriority)}?쇰줈 蹂寃쏀뻽?듬땲??`);
       }
 
       if (action === "edit") {
@@ -1727,7 +1711,7 @@ function renderTasks() {
           return;
         }
         toggleArchivedTask(taskId);
-        showToast("완료 업무를 보관함으로 이동했습니다.");
+        showToast("?꾨즺 ?낅Т瑜?蹂닿??⑥쑝濡??대룞?덉뒿?덈떎.");
       }
 
       renderAll();
@@ -1778,7 +1762,7 @@ function renderTasks() {
       reorderVisibleTasks(state.draggedTaskId, item.dataset.taskId);
       state.draggedTaskId = null;
       renderAll();
-      showToast("할 일 순서를 변경했습니다.");
+      showToast("?????쒖꽌瑜?蹂寃쏀뻽?듬땲??");
     });
   });
 }
@@ -1809,7 +1793,7 @@ function renderTaskAttachmentPreviewMarkup(task) {
   return `
     <div class="task-attachments">
       <div class="task-attachments-head">
-        <span>첨부 ${attachments.length}개</span>
+        <span>泥⑤? ${attachments.length}媛?/span>
         <span class="storage-summary-caption">${formatFileSize(attachments.reduce((sum, attachment) => sum + Number(attachment.fileSize || 0), 0))}</span>
       </div>
       <div class="task-attachments-list">
@@ -1835,10 +1819,10 @@ function renderArchivedTasks() {
     .sort((a, b) => `${b.dueDate}${b.receivedDate}`.localeCompare(`${a.dueDate}${a.receivedDate}`));
 
   archivedTaskCount.textContent = `${archivedTasks.length}`;
-  archivedTaskSummary.textContent = `${archivedTasks.length}건 보관`;
+  archivedTaskSummary.textContent = `${archivedTasks.length}嫄?蹂닿?`;
 
   if (!archivedTasks.length) {
-    archivedTaskList.innerHTML = `<div class="empty-state">아직 보관된 완료 업무가 없습니다.</div>`;
+    archivedTaskList.innerHTML = `<div class="empty-state">?꾩쭅 蹂닿????꾨즺 ?낅Т媛 ?놁뒿?덈떎.</div>`;
     return;
   }
 
@@ -1848,15 +1832,15 @@ function renderArchivedTasks() {
         <article class="task-item archive-task-item">
           <div class="task-content">
             <button class="task-client task-client-link" type="button" data-client-open="${escapeHtmlAttribute(task.client || "")}">
-              ${escapeHtml(task.client || "거래처 미지정")}
+              ${escapeHtml(task.client || "嫄곕옒泥?誘몄???)}
             </button>
             <div class="task-description task-description-primary">${escapeHtml(task.description || task.title || "")}</div>
             <div class="task-dates">
-              <span class="task-date-chip">마감일 ${formatDisplayDate(task.dueDate)}</span>
+              <span class="task-date-chip">留덇컧??${formatDisplayDate(task.dueDate)}</span>
             </div>
           </div>
           <div class="task-actions">
-            <button class="ghost-btn task-archive-btn" type="button" data-archive-restore="${task.id}">복원</button>
+            <button class="ghost-btn task-archive-btn" type="button" data-archive-restore="${task.id}">蹂듭썝</button>
           </div>
         </article>
       `
@@ -1872,7 +1856,7 @@ function renderArchivedTasks() {
       }
       toggleArchivedTask(taskId);
       renderAll();
-      showToast("보관함에서 업무를 복원했습니다.");
+      showToast("蹂닿??⑥뿉???낅Т瑜?蹂듭썝?덉뒿?덈떎.");
     });
   });
 
@@ -1911,7 +1895,7 @@ function renderDayCard(config) {
     .map(
       (task) => `
         <div class="mini-event priority-${task.priority}">
-          <span class="mini-event-client mini-event-link" data-client-open="${escapeHtmlAttribute(task.client || "")}">${escapeHtml(task.client || "거래처 미지정")}</span>
+          <span class="mini-event-client mini-event-link" data-client-open="${escapeHtmlAttribute(task.client || "")}">${escapeHtml(task.client || "嫄곕옒泥?誘몄???)}</span>
           <span class="mini-event-text">${escapeHtml(task.description || task.title || "")}</span>
         </div>
       `
@@ -2018,7 +2002,7 @@ function mapPortfolioAttachmentRecord(record) {
   return {
     id: record.id,
     portfolioId: record.portfolio_id,
-    fileName: record.file_name || "파일",
+    fileName: record.file_name || "?뚯씪",
     mimeType: record.mime_type || "",
     fileData: record.file_data || "",
     fileSize: Number(record.file_size || 0),
@@ -2048,7 +2032,7 @@ function renderPortfolioAttachmentUsage() {
   const usage = getPortfolioAttachmentUsage();
   portfolioStorageSummary.textContent = `${formatFileSize(usage.usedBytes)} / 1 GB`;
   portfolioStorageBar.style.width = `${usage.percent}%`;
-  portfolioStorageRemaining.textContent = `남은 용량 ${formatFileSize(usage.remainingBytes)}`;
+  portfolioStorageRemaining.textContent = `?⑥? ?⑸웾 ${formatFileSize(usage.remainingBytes)}`;
   portfolioStorageUsage.textContent = formatFileSize(usage.usedBytes);
 }
 
@@ -2119,7 +2103,7 @@ function renderPortfolioPage() {
   renderPortfolioAttachmentUsage();
 
   if (!state.portfolioItems.length) {
-    portfolioList.innerHTML = `<article class="portfolio-empty">등록된 포트폴리오가 없습니다. 첫 작업 결과물을 등록해 보세요.</article>`;
+    portfolioList.innerHTML = `<article class="portfolio-empty">?깅줉???ы듃?대━?ㅺ? ?놁뒿?덈떎. 泥??묒뾽 寃곌낵臾쇱쓣 ?깅줉??蹂댁꽭??</article>`;
     bindAttachmentPreviewButtons();
     return;
   }
@@ -2129,10 +2113,10 @@ function renderPortfolioPage() {
       const attachments = getPortfolioAttachments(item.id);
       const previewImage = attachments.find((attachment) => attachment.isImage && attachment.fileData);
       const meta = [
-        item.workDate ? `작업일 ${escapeHtml(item.workDate)}` : "",
-        item.sizeSpec ? `규격 ${escapeHtml(item.sizeSpec)}` : "",
-        item.postProcessing ? `후가공 ${escapeHtml(item.postProcessing)}` : "",
-        item.material ? `기타 ${escapeHtml(item.material)}` : "",
+        item.workDate ? `?묒뾽??${escapeHtml(item.workDate)}` : "",
+        item.sizeSpec ? `洹쒓꺽 ${escapeHtml(item.sizeSpec)}` : "",
+        item.postProcessing ? `?꾧?怨?${escapeHtml(item.postProcessing)}` : "",
+        item.material ? `湲고? ${escapeHtml(item.material)}` : "",
       ]
         .filter(Boolean)
         .map((value) => `<span class="portfolio-meta-chip">${value}</span>`)
@@ -2152,7 +2136,7 @@ function renderPortfolioPage() {
               `;
             })
             .join("")
-        : `<span class="portfolio-attachment-empty">첨부 없음</span>`;
+        : `<span class="portfolio-attachment-empty">泥⑤? ?놁쓬</span>`;
 
       return `
         <article class="portfolio-card">
@@ -2160,20 +2144,20 @@ function renderPortfolioPage() {
             ${
               previewImage
                 ? `<button type="button" class="portfolio-card-image" data-portfolio-attachment-open="${previewImage.id}">
-                    <img src="${previewImage.fileData}" alt="${escapeHtml(item.clientName || item.projectName || "포트폴리오 이미지")}" />
+                    <img src="${previewImage.fileData}" alt="${escapeHtml(item.clientName || item.projectName || "?ы듃?대━???대?吏")}" />
                   </button>`
-                : `<div class="portfolio-card-placeholder">이미지 없음</div>`
+                : `<div class="portfolio-card-placeholder">?대?吏 ?놁쓬</div>`
             }
           </div>
           <div class="portfolio-card-body">
             <div class="portfolio-card-head">
               <div>
-                <strong class="portfolio-card-client">${escapeHtml(item.clientName || "업체명 미입력")}</strong>
-                <p class="portfolio-card-project">${escapeHtml(item.projectName || "작업명 미입력")}</p>
+                <strong class="portfolio-card-client">${escapeHtml(item.clientName || "?낆껜紐?誘몄엯??)}</strong>
+                <p class="portfolio-card-project">${escapeHtml(item.projectName || "?묒뾽紐?誘몄엯??)}</p>
               </div>
             </div>
-            <div class="portfolio-meta">${meta || `<span class="portfolio-meta-chip">추가 정보 없음</span>`}</div>
-            <p class="portfolio-note">${escapeHtml(item.note || "기타사항 없음")}</p>
+            <div class="portfolio-meta">${meta || `<span class="portfolio-meta-chip">異붽? ?뺣낫 ?놁쓬</span>`}</div>
+            <p class="portfolio-note">${escapeHtml(item.note || "湲고??ы빆 ?놁쓬")}</p>
             <div class="portfolio-attachments">${attachmentMarkup}</div>
           </div>
         </article>
@@ -2194,7 +2178,7 @@ async function savePortfolioItem() {
   const note = portfolioNoteInput?.value.trim() || "";
 
   if (!clientName || !projectName) {
-    showToast("업체명과 작업명을 먼저 입력해 주세요.");
+    showToast("?낆껜紐낃낵 ?묒뾽紐낆쓣 癒쇱? ?낅젰??二쇱꽭??");
     return;
   }
 
@@ -2221,7 +2205,7 @@ async function savePortfolioItem() {
 
   const savedItem = mapPortfolioRecord(Array.isArray(data) ? data[0] : data);
   if (!savedItem) {
-    showToast("포트폴리오 저장 결과를 불러오지 못했습니다.");
+    showToast("?ы듃?대━?????寃곌낵瑜?遺덈윭?ㅼ? 紐삵뻽?듬땲??");
     return;
   }
 
@@ -2232,7 +2216,7 @@ async function savePortfolioItem() {
   portfolioForm?.reset();
   renderPortfolioPage();
   renderTaskAttachmentPanels();
-  showToast("포트폴리오를 저장했습니다.");
+  showToast("?ы듃?대━?ㅻ? ??ν뻽?듬땲??");
 }
 
 function focusToday() {
@@ -2284,7 +2268,7 @@ function showToast(message) {
   window.clearTimeout(state.toastTimer);
   toast.textContent = message;
   toast.classList.add("is-visible");
-  const duration = message.includes("실패") || message.includes("문제") || message.includes("오류") ? 5200 : 3600;
+  const duration = message.includes("?ㅽ뙣") || message.includes("臾몄젣") || message.includes("?ㅻ쪟") ? 5200 : 3600;
   state.toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), duration);
 }
 
@@ -2334,8 +2318,8 @@ function syncFormMode() {
 function openEditModal(task) {
   state.editingTaskId = task.id;
   state.pendingEditTaskAttachments = [];
-  editModalTitle.textContent = `${task.title} 수정`;
-  editModalSubtitle.textContent = `${task.client} 업무를 수정하는 중입니다.`;
+  editModalTitle.textContent = `${task.title} ?섏젙`;
+  editModalSubtitle.textContent = `${task.client} ?낅Т瑜??섏젙?섎뒗 以묒엯?덈떎.`;
   editTaskClientInput.value = task.client || "";
   editTaskDescriptionInput.value = task.description || "";
   editTaskReceivedDateInput.value = task.receivedDate || formatDateKey(today);
@@ -2359,8 +2343,8 @@ function closeEditModal() {
 function openAttendanceModal(record) {
   state.editingAttendanceId = record.id;
   const employee = state.employees.find((item) => String(item.id) === String(record.employeeId));
-  attendanceModalTitle.textContent = `${employee?.name || "직원"} 출퇴근 기록 수정`;
-  attendanceModalSubtitle.textContent = `${formatLongDate(new Date(`${record.workDate}T00:00:00`))} 기록을 수정하거나 삭제할 수 있습니다.`;
+  attendanceModalTitle.textContent = `${employee?.name || "吏곸썝"} 異쒗눜洹?湲곕줉 ?섏젙`;
+  attendanceModalSubtitle.textContent = `${formatLongDate(new Date(`${record.workDate}T00:00:00`))} 湲곕줉???섏젙?섍굅????젣?????덉뒿?덈떎.`;
   renderEditAttendanceEmployeeSelect();
   editAttendanceEmployeeSelect.value = String(record.employeeId);
   editAttendanceDateInput.value = record.workDate;
@@ -2458,23 +2442,23 @@ function openAttachmentPreviewModal(attachment) {
   state.previewAttachmentId = attachment.id;
   state.previewAttachmentRecord = attachment;
   state.previewAttachmentRecord = attachment;
-  attachmentPreviewTitle.textContent = attachment.fileName || "첨부파일 보기";
+  attachmentPreviewTitle.textContent = attachment.fileName || "泥⑤??뚯씪 蹂닿린";
   attachmentPreviewSubtitle.textContent = attachment.isImage
-    ? "이미지를 크게 확인할 수 있습니다."
-    : "일반 파일은 미리보기 제한이 있어 새 창에서 열 수 있습니다.";
+    ? "?대?吏瑜??ш쾶 ?뺤씤?????덉뒿?덈떎."
+    : "?쇰컲 ?뚯씪? 誘몃━蹂닿린 ?쒗븳???덉뼱 ??李쎌뿉???????덉뒿?덈떎.";
   state.previewAttachmentRecord = attachment;
   attachmentPreviewName.textContent = attachment.fileName || "-";
   attachmentPreviewType.textContent = attachment.mimeType || getAttachmentKindLabel(attachment.mimeType);
   attachmentPreviewSize.textContent = formatFileSize(attachment.fileSize || 0);
 
   if (attachment.isImage) {
-    attachmentPreviewCanvas.innerHTML = `<img src="${attachment.fileData}" alt="${escapeHtml(attachment.fileName || "첨부 이미지")}" />`;
+    attachmentPreviewCanvas.innerHTML = `<img src="${attachment.fileData}" alt="${escapeHtml(attachment.fileName || "泥⑤? ?대?吏")}" />`;
   } else {
     attachmentPreviewCanvas.innerHTML = `
       <div class="attachment-preview-file">
         <span class="attachment-preview-filetype">${escapeHtml(getAttachmentKindLabel(attachment.mimeType))}</span>
-        <strong>${escapeHtml(attachment.fileName || "첨부파일")}</strong>
-        <p>이미지 형식이 아닌 파일은 새 창에서 열어 확인해 주세요.</p>
+        <strong>${escapeHtml(attachment.fileName || "泥⑤??뚯씪")}</strong>
+        <p>?대?吏 ?뺤떇???꾨땶 ?뚯씪? ??李쎌뿉???댁뼱 ?뺤씤??二쇱꽭??</p>
       </div>
     `;
   }
@@ -2661,8 +2645,8 @@ function renderSessionUi() {
   if (!state.currentUser) {
     sessionBadge.hidden = false;
     logoutBtn.hidden = true;
-    sessionUserName.textContent = "게스트";
-    sessionUserMeta.textContent = "로그인이 필요합니다";
+    sessionUserName.textContent = "寃뚯뒪??;
+    sessionUserMeta.textContent = "濡쒓렇?몄씠 ?꾩슂?⑸땲??;
     if (roleSwitcher) {
       roleSwitcher.hidden = true;
     }
@@ -2672,7 +2656,7 @@ function renderSessionUi() {
   sessionBadge.hidden = false;
   logoutBtn.hidden = false;
   sessionUserName.textContent = state.currentUser.name;
-  sessionUserMeta.textContent = `${getRoleLabel(state.currentUser.role)} · ${state.currentUser.loginId}`;
+  sessionUserMeta.textContent = `${getRoleLabel(state.currentUser.role)} 쨌 ${state.currentUser.loginId}`;
   if (roleSwitcher) {
     roleSwitcher.hidden = false;
   }
@@ -2703,7 +2687,7 @@ function syncSignupRoleUi() {
   if (state.members.length === 0) {
     signupRoleInput.value = "employee";
     signupRoleInput.disabled = true;
-    signupGuideText.textContent = "첫 가입 계정은 보안을 위해 자동으로 관리자 권한으로 생성됩니다. 이후 관리자만 다른 관리자 권한을 부여할 수 있습니다.";
+    signupGuideText.textContent = "泥?媛??怨꾩젙? 蹂댁븞???꾪빐 ?먮룞?쇰줈 愿由ъ옄 沅뚰븳?쇰줈 ?앹꽦?⑸땲?? ?댄썑 愿由ъ옄留??ㅻⅨ 愿由ъ옄 沅뚰븳??遺?ы븷 ???덉뒿?덈떎.";
     return;
   }
 
@@ -2711,7 +2695,7 @@ function syncSignupRoleUi() {
   if (!["employee", "freelancer"].includes(signupRoleInput.value)) {
     signupRoleInput.value = "employee";
   }
-  signupGuideText.textContent = "내부용이라 필수 정보만 받습니다. 이름, 아이디, 비밀번호와 직원/프리랜서 구분만 입력하면 됩니다.";
+  signupGuideText.textContent = "?대??⑹씠???꾩닔 ?뺣낫留?諛쏆뒿?덈떎. ?대쫫, ?꾩씠?? 鍮꾨?踰덊샇? 吏곸썝/?꾨━?쒖꽌 援щ텇留??낅젰?섎㈃ ?⑸땲??";
 }
 
 function renderMembers() {
@@ -2724,7 +2708,7 @@ function renderMembers() {
   adminMemberCount.textContent = String(state.members.filter((member) => member.role === "admin").length);
 
   if (!state.members.length) {
-    memberList.innerHTML = `<div class="empty-state">등록된 회원이 없습니다.</div>`;
+    memberList.innerHTML = `<div class="empty-state">?깅줉???뚯썝???놁뒿?덈떎.</div>`;
     return;
   }
 
@@ -2737,27 +2721,27 @@ function renderMembers() {
             <div class="member-meta">
               <span>${escapeHtml(member.loginId)}</span>
               <span>${getRoleLabel(member.role)}</span>
-              <span>${member.department ? escapeHtml(member.department) : "부서 미지정"}</span>
-              <span>${member.title ? escapeHtml(member.title) : "직책 미지정"}</span>
-              <span>${member.isActive === false ? "비활성" : "활성"}</span>
+              <span>${member.department ? escapeHtml(member.department) : "遺??誘몄???}</span>
+              <span>${member.title ? escapeHtml(member.title) : "吏곸콉 誘몄???}</span>
+              <span>${member.isActive === false ? "鍮꾪솢?? : "?쒖꽦"}</span>
             </div>
-            <p class="member-profile-line">${member.phone ? escapeHtml(member.phone) : "연락처 미등록"}</p>
+            <p class="member-profile-line">${member.phone ? escapeHtml(member.phone) : "?곕씫泥?誘몃벑濡?}</p>
             ${member.note ? `<p class="member-profile-note">${escapeHtml(member.note)}</p>` : ""}
           </div>
           <div class="member-actions">
-            <button class="ghost-btn" type="button" data-member-edit="${member.id}">수정</button>
+            <button class="ghost-btn" type="button" data-member-edit="${member.id}">?섏젙</button>
             <select class="member-role-select" data-member-role="${member.id}">
-              <option value="admin" ${member.role === "admin" ? "selected" : ""}>관리자</option>
-              <option value="employee" ${member.role === "employee" ? "selected" : ""}>직원</option>
-              <option value="freelancer" ${member.role === "freelancer" ? "selected" : ""}>프리랜서</option>
+              <option value="admin" ${member.role === "admin" ? "selected" : ""}>愿由ъ옄</option>
+              <option value="employee" ${member.role === "employee" ? "selected" : ""}>吏곸썝</option>
+              <option value="freelancer" ${member.role === "freelancer" ? "selected" : ""}>?꾨━?쒖꽌</option>
             </select>
             <button class="ghost-btn" type="button" data-member-toggle="${member.id}" ${member.loginId === "admin" ? "disabled" : ""}>
-              ${member.isActive === false ? "활성화" : "비활성화"}
+              ${member.isActive === false ? "?쒖꽦?? : "鍮꾪솢?깊솕"}
             </button>
             ${
               member.loginId !== "admin"
-                ? `<button class="remove-btn" type="button" data-member-delete="${member.id}">삭제</button>`
-                : `<span class="member-status">기본 계정</span>`
+                ? `<button class="remove-btn" type="button" data-member-delete="${member.id}">??젣</button>`
+                : `<span class="member-status">湲곕낯 怨꾩젙</span>`
             }
           </div>
         </article>
@@ -2797,7 +2781,7 @@ function renderMembers() {
       saveMembers();
       renderMembers();
       applyRoleAccess();
-      showToast("회원 권한을 변경했습니다.");
+      showToast("?뚯썝 沅뚰븳??蹂寃쏀뻽?듬땲??");
     });
   });
 
@@ -2808,7 +2792,7 @@ function renderMembers() {
         return;
       }
       if (member.loginId === "admin") {
-        showToast("기본 관리자 계정은 비활성화할 수 없습니다.");
+        showToast("湲곕낯 愿由ъ옄 怨꾩젙? 鍮꾪솢?깊솕?????놁뒿?덈떎.");
         return;
       }
       member.isActive = member.isActive === false;
@@ -2826,7 +2810,7 @@ function renderMembers() {
       }
       saveMembers();
       renderMembers();
-      showToast(member.isActive === false ? "회원 계정을 비활성화했습니다." : "회원 계정을 활성화했습니다.");
+      showToast(member.isActive === false ? "?뚯썝 怨꾩젙??鍮꾪솢?깊솕?덉뒿?덈떎." : "?뚯썝 怨꾩젙???쒖꽦?뷀뻽?듬땲??");
     });
   });
 
@@ -2839,14 +2823,14 @@ function renderMembers() {
       state.members = state.members.filter((member) => member.id !== button.dataset.memberDelete);
       saveMembers();
       renderMembers();
-      showToast("회원 계정을 삭제했습니다.");
+      showToast("?뚯썝 怨꾩젙????젣?덉뒿?덈떎.");
     });
   });
 }
 
 async function loginMember(loginId, password) {
   if (!state.members.length) {
-    showToast("등록된 계정이 없습니다. 먼저 회원가입을 진행해 주세요.");
+    showToast("?깅줉??怨꾩젙???놁뒿?덈떎. 癒쇱? ?뚯썝媛?낆쓣 吏꾪뻾??二쇱꽭??");
     switchView("signup");
     return false;
   }
@@ -2855,7 +2839,7 @@ async function loginMember(loginId, password) {
       (item) => item.loginId === loginId && item.password === password && item.isActive !== false
   );
   if (!member) {
-    showToast("로그인 정보를 다시 확인해 주세요.");
+    showToast("濡쒓렇???뺣낫瑜??ㅼ떆 ?뺤씤??二쇱꽭??");
     return false;
   }
 
@@ -2872,7 +2856,7 @@ async function loginMember(loginId, password) {
   syncRoleWithCurrentUser();
   applyRoleAccess();
   switchView(member.role === "admin" ? "calendar" : "hr");
-  showToast(`${member.name} 님으로 로그인했습니다.`);
+  showToast(`${member.name} ?섏쑝濡?濡쒓렇?명뻽?듬땲??`);
   return true;
 }
 
@@ -2882,7 +2866,7 @@ function logoutCurrentUser(skipToast = false) {
   applyRoleAccess();
   switchView(getGuestLandingView());
   if (!skipToast) {
-    showToast("로그아웃했습니다.");
+    showToast("濡쒓렇?꾩썐?덉뒿?덈떎.");
   }
 }
 
@@ -2956,11 +2940,13 @@ function switchView(view, shouldSyncHash = true) {
     authTarget?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   workspaceTabs.forEach((tab) => {
-    const isActive =
-      (view === "client" && tab.dataset.view === "calendar") ||
-      (view === "calendar" && tab.dataset.view === "calendar") ||
-      (view === "todos" && tab.dataset.view === "todos") ||
-      tab.dataset.view === view;
+    const tabView = tab.dataset.view;
+    const mapsToDashboard = ["calendar", "client"].includes(view) && tabView === "calendar";
+    const mapsToWork = view === "todos" && tabView === "todos";
+    const mapsToOps = ["hr", "employeeinfo", "portfolio", "estimate", "statement"].includes(view) && tabView === "hr";
+    const mapsToPayroll = view === "payroll" && tabView === "payroll";
+    const mapsToTeam = view === "members" && tabView === "members";
+    const isActive = mapsToDashboard || mapsToWork || mapsToOps || mapsToPayroll || mapsToTeam || tabView === view;
     tab.classList.toggle("active", isActive);
   });
   if (shouldSyncHash) {
@@ -2973,12 +2959,12 @@ function switchView(view, shouldSyncHash = true) {
 
 function getRoleLabel(role) {
   if (role === "employee") {
-    return "직원";
+    return "吏곸썝";
   }
   if (role === "freelancer") {
-    return "프리랜서";
+    return "?꾨━?쒖꽌";
   }
-  return "관리자";
+  return "愿由ъ옄";
 }
 
 function isViewAllowedForRole(view) {
@@ -3098,7 +3084,7 @@ function mapTaskAttachmentRecord(record) {
   return {
     id: record.id,
     taskId: record.task_id,
-    fileName: record.file_name || "파일",
+    fileName: record.file_name || "?뚯씪",
     mimeType: record.mime_type || "",
     fileData: record.file_data || "",
     fileSize: Number(record.file_size || 0),
@@ -3171,7 +3157,7 @@ function renderAttachmentUsage() {
   const usage = getAttachmentUsage();
   attachmentStorageSummary.textContent = `${formatFileSize(usage.usedBytes)} / 1 GB`;
   attachmentStorageBar.style.width = `${usage.percent}%`;
-  attachmentStorageRemaining.textContent = `무료 1GB 기준 남은 용량 ${formatFileSize(usage.remainingBytes)}`;
+  attachmentStorageRemaining.textContent = `臾대즺 1GB 湲곗? ?⑥? ?⑸웾 ${formatFileSize(usage.remainingBytes)}`;
 }
 
 function makeLocalAttachmentPreview(file, fileData, overrides = {}) {
@@ -3210,7 +3196,7 @@ function renderPendingAttachmentCollection(target, attachments, options = {}) {
               <span>${formatFileSize(attachment.fileSize)}</span>
             </div>
           </div>
-          ${options.removeAction ? `<button type="button" class="attachment-chip-remove" ${removeAttr}>삭제</button>` : ""}
+          ${options.removeAction ? `<button type="button" class="attachment-chip-remove" ${removeAttr}>??젣</button>` : ""}
         </div>
       `;
     })
@@ -3231,7 +3217,7 @@ async function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error("파일을 읽지 못했습니다."));
+    reader.onerror = () => reject(new Error("?뚯씪???쎌? 紐삵뻽?듬땲??"));
     reader.readAsDataURL(file);
   });
 }
@@ -3240,7 +3226,7 @@ async function blobToDataUrl(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error("압축 이미지 변환에 실패했습니다."));
+    reader.onerror = () => reject(new Error("?뺤텞 ?대?吏 蹂?섏뿉 ?ㅽ뙣?덉뒿?덈떎."));
     reader.readAsDataURL(blob);
   });
 }
@@ -3250,7 +3236,7 @@ async function loadImageElement(file) {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve({ image, dataUrl });
-    image.onerror = () => reject(new Error("이미지 미리보기를 생성하지 못했습니다."));
+    image.onerror = () => reject(new Error("?대?吏 誘몃━蹂닿린瑜??앹꽦?섏? 紐삵뻽?듬땲??"));
     image.src = dataUrl;
   });
 }
@@ -3279,7 +3265,7 @@ async function canvasToBlob(canvas, mimeType, quality) {
         resolve(blob);
         return;
       }
-      reject(new Error("이미지 압축에 실패했습니다."));
+      reject(new Error("?대?吏 ?뺤텞???ㅽ뙣?덉뒿?덈떎."));
     }, mimeType, quality);
   });
 }
@@ -3345,11 +3331,11 @@ async function appendPendingAttachments(files, mode = "create") {
 
   for (const file of list) {
     if (Number(file.size || 0) > ATTACHMENT_MAX_BYTES) {
-      showToast(`첨부파일은 파일당 ${formatFileSize(ATTACHMENT_MAX_BYTES)} 이하만 가능합니다.`);
+      showToast(`泥⑤??뚯씪? ?뚯씪??${formatFileSize(ATTACHMENT_MAX_BYTES)} ?댄븯留?媛?ν빀?덈떎.`);
       continue;
     }
     if (nextUsageBytes + Number(file.size || 0) > ATTACHMENT_FREE_QUOTA_BYTES) {
-      showToast("무료 1GB 첨부 한도를 초과할 수 있어 업로드할 수 없습니다.");
+      showToast("臾대즺 1GB 泥⑤? ?쒕룄瑜?珥덇낵?????덉뼱 ?낅줈?쒗븷 ???놁뒿?덈떎.");
       continue;
     }
     const fileData = await readFileAsDataUrl(file);
@@ -3506,7 +3492,7 @@ function renderPendingAttachmentCollection(target, attachments, options = {}) {
               <span>${formatFileSize(attachment.fileSize)}</span>
             </div>
           </${mainTag}>
-          ${options.removeAction ? `<button type="button" class="attachment-chip-remove" ${removeAttr}>삭제</button>` : ""}
+          ${options.removeAction ? `<button type="button" class="attachment-chip-remove" ${removeAttr}>??젣</button>` : ""}
         </div>
       `;
     })
@@ -3560,28 +3546,28 @@ function openAttachmentPreviewModal(attachment) {
   }
 
   state.previewAttachmentId = attachment.id;
-  attachmentPreviewTitle.textContent = attachment.fileName || "첨부파일 보기";
+  attachmentPreviewTitle.textContent = attachment.fileName || "泥⑤??뚯씪 蹂닿린";
   attachmentPreviewName.textContent = attachment.fileName || "-";
   attachmentPreviewType.textContent = attachment.mimeType || getAttachmentKindLabel(attachment.mimeType);
   attachmentPreviewSize.textContent = formatFileSize(attachment.fileSize || 0);
 
   if (attachment.isImage) {
-    attachmentPreviewSubtitle.textContent = "이미지는 이 화면에서 크게 확인할 수 있습니다.";
+    attachmentPreviewSubtitle.textContent = "?대?吏?????붾㈃?먯꽌 ?ш쾶 ?뺤씤?????덉뒿?덈떎.";
     if (attachmentPreviewOpenBtn) {
       attachmentPreviewOpenBtn.hidden = true;
     }
-    attachmentPreviewCanvas.innerHTML = `<img src="${attachment.fileData}" alt="${escapeHtml(attachment.fileName || "첨부 이미지")}" />`;
+    attachmentPreviewCanvas.innerHTML = `<img src="${attachment.fileData}" alt="${escapeHtml(attachment.fileName || "泥⑤? ?대?吏")}" />`;
   } else {
-    attachmentPreviewSubtitle.textContent = "일반 파일은 다운로드해서 확인할 수 있습니다.";
+    attachmentPreviewSubtitle.textContent = "?쇰컲 ?뚯씪? ?ㅼ슫濡쒕뱶?댁꽌 ?뺤씤?????덉뒿?덈떎.";
     if (attachmentPreviewOpenBtn) {
       attachmentPreviewOpenBtn.hidden = false;
-      attachmentPreviewOpenBtn.textContent = "다운로드";
+      attachmentPreviewOpenBtn.textContent = "?ㅼ슫濡쒕뱶";
     }
     attachmentPreviewCanvas.innerHTML = `
       <div class="attachment-preview-file">
         <span class="attachment-preview-filetype">${escapeHtml(getAttachmentKindLabel(attachment.mimeType))}</span>
-        <strong>${escapeHtml(attachment.fileName || "첨부파일")}</strong>
-        <p>이 파일은 미리보기를 지원하지 않아 다운로드로 제공합니다.</p>
+        <strong>${escapeHtml(attachment.fileName || "泥⑤??뚯씪")}</strong>
+        <p>???뚯씪? 誘몃━蹂닿린瑜?吏?먰븯吏 ?딆븘 ?ㅼ슫濡쒕뱶濡??쒓났?⑸땲??</p>
       </div>
     `;
   }
@@ -3594,7 +3580,7 @@ async function attachmentBlobToDataUrl(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error("압축 이미지 변환에 실패했습니다."));
+    reader.onerror = () => reject(new Error("?뺤텞 ?대?吏 蹂?섏뿉 ?ㅽ뙣?덉뒿?덈떎."));
     reader.readAsDataURL(blob);
   });
 }
@@ -3604,7 +3590,7 @@ async function attachmentLoadImage(file) {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve({ image, dataUrl });
-    image.onerror = () => reject(new Error("이미지 미리보기를 생성하지 못했습니다."));
+    image.onerror = () => reject(new Error("?대?吏 誘몃━蹂닿린瑜??앹꽦?섏? 紐삵뻽?듬땲??"));
     image.src = dataUrl;
   });
 }
@@ -3633,7 +3619,7 @@ async function attachmentCanvasToBlob(canvas, mimeType, quality) {
         resolve(blob);
         return;
       }
-      reject(new Error("이미지 압축에 실패했습니다."));
+      reject(new Error("?대?吏 ?뺤텞???ㅽ뙣?덉뒿?덈떎."));
     }, mimeType, quality);
   });
 }
@@ -3704,14 +3690,14 @@ async function appendPendingAttachments(files, mode = "create") {
 
   for (const file of list) {
     if (Number(file.size || 0) > ATTACHMENT_MAX_BYTES) {
-      showToast(`첨부파일은 파일당 ${formatFileSize(ATTACHMENT_MAX_BYTES)} 이하만 가능합니다.`);
+      showToast(`泥⑤??뚯씪? ?뚯씪??${formatFileSize(ATTACHMENT_MAX_BYTES)} ?댄븯留?媛?ν빀?덈떎.`);
       continue;
     }
 
     try {
       const preview = await prepareAttachmentPayload(file);
       if (nextUsageBytes + Number(preview.fileSize || 0) > ATTACHMENT_FREE_QUOTA_BYTES) {
-        showToast("무료 1GB 첨부 한도를 초과할 수 있어 업로드할 수 없습니다.");
+        showToast("臾대즺 1GB 泥⑤? ?쒕룄瑜?珥덇낵?????덉뼱 ?낅줈?쒗븷 ???놁뒿?덈떎.");
         continue;
       }
 
@@ -3719,7 +3705,7 @@ async function appendPendingAttachments(files, mode = "create") {
       nextUsageBytes += preview.fileSize;
     } catch (error) {
       console.error("Failed to prepare attachment:", error);
-      showToast("첨부파일을 읽거나 처리하지 못했습니다.");
+      showToast("泥⑤??뚯씪???쎄굅??泥섎━?섏? 紐삵뻽?듬땲??");
     }
   }
 
@@ -3787,13 +3773,13 @@ function renderClientDetailView() {
   }
 
   if (!state.selectedClient) {
-    clientDetailTitle.textContent = "거래처 업무 요약";
-    clientDetailSubtitle.textContent = "업무 카드나 캘린더에서 거래처를 선택하면 전체 흐름을 볼 수 있습니다.";
-    clientDetailMetrics.innerHTML = `<article class="metric-card"><span class="metric-label">선택된 거래처</span><strong>0</strong><small>거래처를 선택해 주세요.</small></article>`;
-    clientTaskHeading.textContent = "거래처 업무 목록";
-    clientTaskCount.textContent = "0건";
-    clientTaskList.innerHTML = `<div class="empty-state">거래처를 먼저 선택해 주세요.</div>`;
-    clientDeadlineList.innerHTML = `<div class="empty-state">거래처를 선택하면 다가오는 마감과 완료 현황을 볼 수 있습니다.</div>`;
+    clientDetailTitle.textContent = "嫄곕옒泥??낅Т ?붿빟";
+    clientDetailSubtitle.textContent = "?낅Т 移대뱶??罹섎┛?붿뿉??嫄곕옒泥섎? ?좏깮?섎㈃ ?꾩껜 ?먮쫫??蹂????덉뒿?덈떎.";
+    clientDetailMetrics.innerHTML = `<article class="metric-card"><span class="metric-label">?좏깮??嫄곕옒泥?/span><strong>0</strong><small>嫄곕옒泥섎? ?좏깮??二쇱꽭??</small></article>`;
+    clientTaskHeading.textContent = "嫄곕옒泥??낅Т 紐⑸줉";
+    clientTaskCount.textContent = "0嫄?;
+    clientTaskList.innerHTML = `<div class="empty-state">嫄곕옒泥섎? 癒쇱? ?좏깮??二쇱꽭??</div>`;
+    clientDeadlineList.innerHTML = `<div class="empty-state">嫄곕옒泥섎? ?좏깮?섎㈃ ?ㅺ??ㅻ뒗 留덇컧怨??꾨즺 ?꾪솴??蹂????덉뒿?덈떎.</div>`;
     return;
   }
 
@@ -3806,30 +3792,30 @@ function renderClientDetailView() {
   const highPriorityCount = tasks.filter((task) => task.priority === "high").length;
 
   clientDetailTitle.textContent = state.selectedClient;
-  clientDetailSubtitle.textContent = `${tasks.length}건의 등록 업무와 마감 흐름을 한 화면에서 확인합니다.`;
-  clientTaskHeading.textContent = `${state.selectedClient} 업무 목록`;
-  clientTaskCount.textContent = `${tasks.length}건`;
+  clientDetailSubtitle.textContent = `${tasks.length}嫄댁쓽 ?깅줉 ?낅Т? 留덇컧 ?먮쫫?????붾㈃?먯꽌 ?뺤씤?⑸땲??`;
+  clientTaskHeading.textContent = `${state.selectedClient} ?낅Т 紐⑸줉`;
+  clientTaskCount.textContent = `${tasks.length}嫄?;
 
   clientDetailMetrics.innerHTML = `
     <article class="metric-card">
-      <span class="metric-label">등록 업무</span>
+      <span class="metric-label">?깅줉 ?낅Т</span>
       <strong>${tasks.length}</strong>
-      <small>현재 거래처에 연결된 전체 업무 수</small>
+      <small>?꾩옱 嫄곕옒泥섏뿉 ?곌껐???꾩껜 ?낅Т ??/small>
     </article>
     <article class="metric-card">
-      <span class="metric-label">완료 업무</span>
+      <span class="metric-label">?꾨즺 ?낅Т</span>
       <strong>${doneCount}</strong>
-      <small>완료 처리된 업무 수</small>
+      <small>?꾨즺 泥섎━???낅Т ??/small>
     </article>
     <article class="metric-card">
-      <span class="metric-label">지연 업무</span>
+      <span class="metric-label">吏???낅Т</span>
       <strong>${overdueCount}</strong>
-      <small>마감일이 지난 미완료 업무 수</small>
+      <small>留덇컧?쇱씠 吏??誘몄셿猷??낅Т ??/small>
     </article>
     <article class="metric-card">
-      <span class="metric-label">긴급 우선순위</span>
+      <span class="metric-label">湲닿툒 ?곗꽑?쒖쐞</span>
       <strong>${highPriorityCount}</strong>
-      <small>긴급으로 표시된 업무 수</small>
+      <small>湲닿툒?쇰줈 ?쒖떆???낅Т ??/small>
     </article>
   `;
 
@@ -3841,18 +3827,18 @@ function renderClientDetailView() {
               <div class="task-content">
                 <div class="task-client">${escapeHtml(task.client)}</div>
                 <div class="task-description task-description-primary">${escapeHtml(task.description || task.title || "")}</div>
-                <div class="task-meta">${getStatusLabel(task.status)} · ${getPriorityLabel(task.priority)}</div>
+                <div class="task-meta">${getStatusLabel(task.status)} 쨌 ${getPriorityLabel(task.priority)}</div>
                 <div class="task-dates">
-                  <span class="task-date-chip">접수일 ${formatDisplayDate(task.receivedDate)}</span>
-                  <span class="task-date-chip">마감일 ${formatDisplayDate(task.dueDate)}</span>
-                  ${isOverdue(task) ? `<span class="task-date-chip task-date-chip-alert">마감 지연</span>` : ""}
+                  <span class="task-date-chip">?묒닔??${formatDisplayDate(task.receivedDate)}</span>
+                  <span class="task-date-chip">留덇컧??${formatDisplayDate(task.dueDate)}</span>
+                  ${isOverdue(task) ? `<span class="task-date-chip task-date-chip-alert">留덇컧 吏??/span>` : ""}
                 </div>
               </div>
             </article>
           `
         )
         .join("")
-    : `<div class="empty-state">이 거래처에 등록된 업무가 없습니다.</div>`;
+    : `<div class="empty-state">??嫄곕옒泥섏뿉 ?깅줉???낅Т媛 ?놁뒿?덈떎.</div>`;
 
   clientDeadlineList.innerHTML = upcomingTasks.length
     ? upcomingTasks
@@ -3872,7 +3858,7 @@ function renderClientDetailView() {
           `
         )
         .join("")
-    : `<div class="empty-state">다가오는 마감 업무가 없습니다.</div>`;
+    : `<div class="empty-state">?ㅺ??ㅻ뒗 留덇컧 ?낅Т媛 ?놁뒿?덈떎.</div>`;
 }
 
 function renderChoiceButton(kind, task, value, label) {
@@ -3953,10 +3939,10 @@ function getAttendanceStatus(record) {
 }
 
 function getAttendanceStatusLabel(status) {
-  if (status === "late") return "지각";
-  if (status === "early") return "조퇴";
-  if (status === "absent") return "결근";
-  return "정상";
+  if (status === "late") return "吏媛?;
+  if (status === "early") return "議고눜";
+  if (status === "absent") return "寃곌렐";
+  return "?뺤긽";
 }
 
 function calculatePayrollDeductions(employee, grossPay) {
@@ -3965,7 +3951,7 @@ function calculatePayrollDeductions(employee, grossPay) {
   if (employee?.employmentType === "freelancer") {
     const withholding = Math.round(gross * 0.033);
     return {
-      typeLabel: "프리랜서 3.3%",
+      typeLabel: "?꾨━?쒖꽌 3.3%",
       nationalPension: 0,
       healthInsurance: 0,
       employmentInsurance: 0,
@@ -3981,7 +3967,7 @@ function calculatePayrollDeductions(employee, grossPay) {
   const totalDeduction = nationalPension + healthInsurance + employmentInsurance;
 
   return {
-    typeLabel: "4대보험 추정",
+    typeLabel: "4?蹂댄뿕 異붿젙",
     nationalPension,
     healthInsurance,
     employmentInsurance,
@@ -4009,12 +3995,12 @@ function setPayrollStatus(employeeId, status) {
 
 function getPayrollStatusLabel(status) {
   if (status === "confirmed") {
-    return "확정";
+    return "?뺤젙";
   }
   if (status === "paid") {
-    return "지급 완료";
+    return "吏湲??꾨즺";
   }
-  return "미확정";
+  return "誘명솗??;
 }
 
 function buildPayrollSummary() {
@@ -4051,7 +4037,7 @@ function buildPayrollSummary() {
 function renderPayrollSummary() {
   const summaryItems = buildPayrollSummary();
   if (!summaryItems.length) {
-    payrollSummaryList.innerHTML = `<div class="empty-state">등록된 직원이 없어서 급여 요약을 계산할 수 없습니다.</div>`;
+    payrollSummaryList.innerHTML = `<div class="empty-state">?깅줉??吏곸썝???놁뼱??湲됱뿬 ?붿빟??怨꾩궛?????놁뒿?덈떎.</div>`;
     payrollConfirmedCount.textContent = "0 / 0";
     return;
   }
@@ -4066,33 +4052,33 @@ function renderPayrollSummary() {
           <div class="employee-card-head">
             <div>
               <strong>${item.employee.name}</strong>
-              <p class="employee-card-subtitle">${state.payrollMonth} 기준 예상 급여</p>
+              <p class="employee-card-subtitle">${state.payrollMonth} 湲곗? ?덉긽 湲됱뿬</p>
             </div>
-            <span class="task-date-chip">${item.employee.employmentType === "freelancer" ? "프리랜서" : "4대보험 적용 직원"}</span>
+            <span class="task-date-chip">${item.employee.employmentType === "freelancer" ? "?꾨━?쒖꽌" : "4?蹂댄뿕 ?곸슜 吏곸썝"}</span>
           </div>
           <div class="payroll-status-group" role="group" aria-label="payroll status">
-            <button class="task-choice-btn ${item.payrollStatus === "draft" ? "is-active" : ""}" type="button" data-payroll-status="draft" data-employee-id="${item.employee.id}">미확정</button>
-            <button class="task-choice-btn ${item.payrollStatus === "confirmed" ? "is-active" : ""}" type="button" data-payroll-status="confirmed" data-employee-id="${item.employee.id}">확정</button>
-            <button class="task-choice-btn ${item.payrollStatus === "paid" ? "is-active" : ""}" type="button" data-payroll-status="paid" data-employee-id="${item.employee.id}">지급 완료</button>
+            <button class="task-choice-btn ${item.payrollStatus === "draft" ? "is-active" : ""}" type="button" data-payroll-status="draft" data-employee-id="${item.employee.id}">誘명솗??/button>
+            <button class="task-choice-btn ${item.payrollStatus === "confirmed" ? "is-active" : ""}" type="button" data-payroll-status="confirmed" data-employee-id="${item.employee.id}">?뺤젙</button>
+            <button class="task-choice-btn ${item.payrollStatus === "paid" ? "is-active" : ""}" type="button" data-payroll-status="paid" data-employee-id="${item.employee.id}">吏湲??꾨즺</button>
           </div>
           <div class="payroll-total-row">
             <strong>${formatCurrency(item.netPay)}</strong>
-            <span>${getPayrollStatusLabel(item.payrollStatus)} · ${item.overtimeHours.toFixed(1)}h 야근 · ${item.weekendHours.toFixed(1)}h 주말</span>
+            <span>${getPayrollStatusLabel(item.payrollStatus)} 쨌 ${item.overtimeHours.toFixed(1)}h ?쇨렐 쨌 ${item.weekendHours.toFixed(1)}h 二쇰쭚</span>
           </div>
           <div class="employee-pay-grid">
-            <span>기본급 ${formatCurrency(item.employee.baseSalary)}</span>
-            <span>야근 수당 ${formatCurrency(item.overtimePay)}</span>
-            <span>주말 수당 ${formatCurrency(item.weekendPay)}</span>
-            <span>총 지급 ${formatCurrency(item.totalPay)}</span>
+            <span>湲곕낯湲?${formatCurrency(item.employee.baseSalary)}</span>
+            <span>?쇨렐 ?섎떦 ${formatCurrency(item.overtimePay)}</span>
+            <span>二쇰쭚 ?섎떦 ${formatCurrency(item.weekendPay)}</span>
+            <span>珥?吏湲?${formatCurrency(item.totalPay)}</span>
             <span>${item.deductions.typeLabel} ${formatCurrency(item.deductions.totalDeduction)}</span>
-            <span>실지급 ${formatCurrency(item.netPay)}</span>
+            <span>?ㅼ?湲?${formatCurrency(item.netPay)}</span>
           </div>
           <div class="attendance-insight">
             ${item.employee.employmentType === "insured"
-              ? `<span class="task-date-chip">국민연금 ${formatCurrency(item.deductions.nationalPension)}</span>
-                 <span class="task-date-chip">건강보험 ${formatCurrency(item.deductions.healthInsurance)}</span>
-                 <span class="task-date-chip">고용보험 ${formatCurrency(item.deductions.employmentInsurance)}</span>`
-              : `<span class="task-date-chip">원천징수 ${formatCurrency(item.deductions.withholding)}</span>`}
+              ? `<span class="task-date-chip">援???곌툑 ${formatCurrency(item.deductions.nationalPension)}</span>
+                 <span class="task-date-chip">嫄닿컯蹂댄뿕 ${formatCurrency(item.deductions.healthInsurance)}</span>
+                 <span class="task-date-chip">怨좎슜蹂댄뿕 ${formatCurrency(item.deductions.employmentInsurance)}</span>`
+              : `<span class="task-date-chip">?먯쿇吏뺤닔 ${formatCurrency(item.deductions.withholding)}</span>`}
           </div>
         </article>
       `
@@ -4103,7 +4089,7 @@ function renderPayrollSummary() {
     button.addEventListener("click", () => {
       setPayrollStatus(button.dataset.employeeId, button.dataset.payrollStatus);
       renderPayrollSummary();
-      showToast(`급여 상태를 ${button.textContent}로 변경했습니다.`);
+      showToast(`湲됱뿬 ?곹깭瑜?${button.textContent}濡?蹂寃쏀뻽?듬땲??`);
     });
   });
 }
@@ -4117,9 +4103,9 @@ function renderAttendanceSummary() {
   if (!filteredRecords.length) {
     attendanceSummaryCards.innerHTML = `
       <article class="attendance-summary-card">
-        <span class="metric-label">현재 조회 결과</span>
-        <strong>0건</strong>
-        <small>필터에 맞는 출퇴근 기록이 없습니다.</small>
+        <span class="metric-label">?꾩옱 議고쉶 寃곌낵</span>
+        <strong>0嫄?/strong>
+        <small>?꾪꽣??留욌뒗 異쒗눜洹?湲곕줉???놁뒿?덈떎.</small>
       </article>
     `;
     return;
@@ -4142,24 +4128,24 @@ function renderAttendanceSummary() {
 
   attendanceSummaryCards.innerHTML = `
     <article class="attendance-summary-card">
-      <span class="metric-label">조회 기록</span>
-      <strong>${totals.records}건</strong>
-      <small>현재 필터 기준 출퇴근 기록 수</small>
+      <span class="metric-label">議고쉶 湲곕줉</span>
+      <strong>${totals.records}嫄?/strong>
+      <small>?꾩옱 ?꾪꽣 湲곗? 異쒗눜洹?湲곕줉 ??/small>
     </article>
     <article class="attendance-summary-card">
-      <span class="metric-label">총 근무 시간</span>
+      <span class="metric-label">珥?洹쇰Т ?쒓컙</span>
       <strong>${totals.totalHours.toFixed(1)}h</strong>
-      <small>필터에 포함된 전체 근무 시간</small>
+      <small>?꾪꽣???ы븿???꾩껜 洹쇰Т ?쒓컙</small>
     </article>
     <article class="attendance-summary-card">
-      <span class="metric-label">야근 누적</span>
+      <span class="metric-label">?쇨렐 ?꾩쟻</span>
       <strong>${totals.overtimeHours.toFixed(1)}h</strong>
-      <small>18시 이후 누적 시간</small>
+      <small>18???댄썑 ?꾩쟻 ?쒓컙</small>
     </article>
     <article class="attendance-summary-card">
-      <span class="metric-label">근태 이슈</span>
-      <strong>${totals.late + totals.early + totals.absent}건</strong>
-      <small>지각 ${totals.late} · 조퇴 ${totals.early} · 결근 ${totals.absent}</small>
+      <span class="metric-label">洹쇳깭 ?댁뒋</span>
+      <strong>${totals.late + totals.early + totals.absent}嫄?/strong>
+      <small>吏媛?${totals.late} 쨌 議고눜 ${totals.early} 쨌 寃곌렐 ${totals.absent}</small>
     </article>
   `;
 }
@@ -4187,7 +4173,7 @@ function renderAttendanceBatchList() {
   }
 
   if (!state.employees.length) {
-    attendanceBatchList.innerHTML = `<div class="empty-state">직원을 먼저 등록하면 같은 날짜에 여러 명의 출퇴근 기록을 한 번에 입력할 수 있습니다.</div>`;
+    attendanceBatchList.innerHTML = `<div class="empty-state">吏곸썝??癒쇱? ?깅줉?섎㈃ 媛숈? ?좎쭨???щ윭 紐낆쓽 異쒗눜洹?湲곕줉????踰덉뿉 ?낅젰?????덉뒿?덈떎.</div>`;
     return;
   }
 
@@ -4199,7 +4185,7 @@ function renderAttendanceBatchList() {
             <input type="checkbox" data-batch-enabled="${employee.id}" />
             <span>${escapeHtml(employee.name)}</span>
           </label>
-          <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</span>
+          <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4?蹂댄뿕 ?곸슜 吏곸썝" : "?꾨━?쒖꽌"}</span>
           <input type="time" data-batch-clock-in="${employee.id}" value="09:00" />
           <input type="time" data-batch-clock-out="${employee.id}" value="18:00" />
         </div>
@@ -4235,7 +4221,7 @@ async function saveBatchAttendance() {
     }));
 
   if (!rows.length) {
-    showToast("일괄 저장할 직원과 시간을 먼저 선택해 주세요.");
+    showToast("?쇨큵 ??ν븷 吏곸썝怨??쒓컙??癒쇱? ?좏깮??二쇱꽭??");
     return;
   }
 
@@ -4254,7 +4240,7 @@ async function saveBatchAttendance() {
 
   state.attendanceRecords = [...(Array.isArray(data) ? data.map(mapAttendanceRecord) : []), ...state.attendanceRecords];
   renderHrWorkspace();
-  showToast("출퇴근 기록을 일괄 저장했습니다.");
+  showToast("異쒗눜洹?湲곕줉???쇨큵 ??ν뻽?듬땲??");
 }
 
 function openEmployeeDetailModal(employee) {
@@ -4264,29 +4250,29 @@ function openEmployeeDetailModal(employee) {
     .sort((a, b) => `${b.workDate}${b.clockIn}`.localeCompare(`${a.workDate}${a.clockIn}`));
   const payrollItem = buildPayrollSummary().find((item) => String(item.employee.id) === String(employee.id));
 
-  employeeDetailTitle.textContent = `${employee.name} 상세`;
-  employeeDetailSubtitle.textContent = `${state.payrollMonth} 기준 근태와 급여 요약입니다.`;
+  employeeDetailTitle.textContent = `${employee.name} ?곸꽭`;
+  employeeDetailSubtitle.textContent = `${state.payrollMonth} 湲곗? 洹쇳깭? 湲됱뿬 ?붿빟?낅땲??`;
   employeeDetailBody.innerHTML = `
     <div class="attendance-summary-grid">
       <article class="attendance-summary-card">
-        <span class="metric-label">고용 형태</span>
-        <strong>${employee.employmentType === "insured" ? "4대보험" : "프리랜서"}</strong>
-        <small>기본급 ${formatCurrency(employee.baseSalary)}</small>
+        <span class="metric-label">怨좎슜 ?뺥깭</span>
+        <strong>${employee.employmentType === "insured" ? "4?蹂댄뿕" : "?꾨━?쒖꽌"}</strong>
+        <small>湲곕낯湲?${formatCurrency(employee.baseSalary)}</small>
       </article>
       <article class="attendance-summary-card">
-        <span class="metric-label">월 근무 기록</span>
-        <strong>${records.length}건</strong>
-        <small>${state.payrollMonth} 기준 입력 건수</small>
+        <span class="metric-label">??洹쇰Т 湲곕줉</span>
+        <strong>${records.length}嫄?/strong>
+        <small>${state.payrollMonth} 湲곗? ?낅젰 嫄댁닔</small>
       </article>
       <article class="attendance-summary-card">
-        <span class="metric-label">예상 총지급</span>
+        <span class="metric-label">?덉긽 珥앹?湲?/span>
         <strong>${formatCurrency(payrollItem?.totalPay || 0)}</strong>
-        <small>야근/주말 수당 포함</small>
+        <small>?쇨렐/二쇰쭚 ?섎떦 ?ы븿</small>
       </article>
       <article class="attendance-summary-card">
-        <span class="metric-label">예상 실지급</span>
+        <span class="metric-label">?덉긽 ?ㅼ?湲?/span>
         <strong>${formatCurrency(payrollItem?.netPay || 0)}</strong>
-        <small>공제 추정 반영</small>
+        <small>怨듭젣 異붿젙 諛섏쁺</small>
       </article>
     </div>
     <div class="employee-detail-records">
@@ -4302,19 +4288,19 @@ function openEmployeeDetailModal(employee) {
                         <strong>${formatLongDate(new Date(`${record.workDate}T00:00:00`))}</strong>
                         <p>${getAttendanceStatusLabel(summary.attendanceStatus)}</p>
                       </div>
-                      <span class="task-date-chip">총 ${summary.totalHours.toFixed(1)}시간</span>
+                      <span class="task-date-chip">珥?${summary.totalHours.toFixed(1)}?쒓컙</span>
                     </div>
                     <div class="attendance-pay-grid">
-                      <span>출근 ${record.clockIn}</span>
-                      <span>퇴근 ${record.clockOut}</span>
-                      <span>야근 ${summary.overtimeHours.toFixed(1)}시간</span>
-                      <span>주말 ${summary.weekendHours.toFixed(1)}시간</span>
+                      <span>異쒓렐 ${record.clockIn}</span>
+                      <span>?닿렐 ${record.clockOut}</span>
+                      <span>?쇨렐 ${summary.overtimeHours.toFixed(1)}?쒓컙</span>
+                      <span>二쇰쭚 ${summary.weekendHours.toFixed(1)}?쒓컙</span>
                     </div>
                   </article>
                 `;
               })
               .join("")
-          : `<div class="empty-state">선택한 기준 월에 등록된 출퇴근 기록이 없습니다.</div>`
+          : `<div class="empty-state">?좏깮??湲곗? ?붿뿉 ?깅줉??異쒗눜洹?湲곕줉???놁뒿?덈떎.</div>`
       }
     </div>
   `;
@@ -4377,26 +4363,26 @@ function createEmployeeInfoDocumentMarkup(employee) {
     ? `
       <form class="employee-doc-upload-form" data-document-upload-form="${employee.id}">
         <label class="field">
-          <span>문서 구분</span>
+          <span>臾몄꽌 援щ텇</span>
           <select name="documentType">
-            <option value="신분증">신분증</option>
-            <option value="계약서">계약서</option>
-            <option value="통장사본">통장사본</option>
-            <option value="기타">기타</option>
+            <option value="?좊텇利?>?좊텇利?/option>
+            <option value="怨꾩빟??>怨꾩빟??/option>
+            <option value="?듭옣?щ낯">?듭옣?щ낯</option>
+            <option value="湲고?">湲고?</option>
           </select>
         </label>
         <label class="field">
-          <span>증빙서류 파일</span>
+          <span>利앸튃?쒕쪟 ?뚯씪</span>
           <input name="documentFile" type="file" accept="image/*,.pdf" required />
         </label>
-        <button type="submit" class="submit-btn task-submit">증빙서류 업로드</button>
+        <button type="submit" class="submit-btn task-submit">利앸튃?쒕쪟 ?낅줈??/button>
       </form>
     `
     : "";
 
   const previewMarkup = (() => {
     if (!previewDocument) {
-      return `<div class="empty-state">등록된 증빙서류가 없습니다.</div>`;
+      return `<div class="empty-state">?깅줉??利앸튃?쒕쪟媛 ?놁뒿?덈떎.</div>`;
     }
 
     if ((previewDocument.mimeType || "").startsWith("image/")) {
@@ -4407,15 +4393,15 @@ function createEmployeeInfoDocumentMarkup(employee) {
       return `<iframe class="employee-doc-preview-frame" src="${previewDocument.fileData}" title="${escapeHtml(previewDocument.fileName)}"></iframe>`;
     }
 
-    return `<div class="empty-state">이 형식의 파일은 미리보기를 지원하지 않습니다.</div>`;
+    return `<div class="empty-state">???뺤떇???뚯씪? 誘몃━蹂닿린瑜?吏?먰븯吏 ?딆뒿?덈떎.</div>`;
   })();
 
   return `
     <section class="employee-info-section-card">
       <div class="employee-info-section-head">
         <div>
-          <p class="section-label">증빙서류</p>
-          <h3>업로드 및 미리보기</h3>
+          <p class="section-label">利앸튃?쒕쪟</p>
+          <h3>?낅줈??諛?誘몃━蹂닿린</h3>
         </div>
       </div>
       ${uploadForm}
@@ -4433,7 +4419,7 @@ function createEmployeeInfoDocumentMarkup(employee) {
                     `
                   )
                   .join("")
-              : `<div class="empty-state compact">등록된 문서가 없습니다.</div>`
+              : `<div class="empty-state compact">?깅줉??臾몄꽌媛 ?놁뒿?덈떎.</div>`
           }
         </div>
         <div class="employee-doc-preview">${previewMarkup}</div>
@@ -4461,7 +4447,7 @@ function renderEmployeeStatusCalendar(employee) {
       })
   );
 
-  const weekdayLabels = ["일", "월", "화", "수", "목", "금", "토"]
+  const weekdayLabels = ["??, "??, "??, "??, "紐?, "湲?, "??]
     .map((label) => `<span class="employee-month-weekday">${label}</span>`)
     .join("");
 
@@ -4478,8 +4464,8 @@ function renderEmployeeStatusCalendar(employee) {
         ${
           recordInfo
             ? `<span class="employee-month-state">${getAttendanceStatusLabel(recordInfo.summary.attendanceStatus)}</span>
-               <span class="employee-month-time">${recordInfo.record.clockIn} · ${recordInfo.record.clockOut}</span>`
-            : `<span class="employee-month-state empty">${isCurrentMonth ? "기록 없음" : ""}</span>`
+               <span class="employee-month-time">${recordInfo.record.clockIn} 쨌 ${recordInfo.record.clockOut}</span>`
+            : `<span class="employee-month-state empty">${isCurrentMonth ? "湲곕줉 ?놁쓬" : ""}</span>`
         }
       </article>
     `;
@@ -4524,7 +4510,7 @@ function renderEmployeeInfoPage() {
       return `
         <button class="employee-info-list-item${isActive ? " is-active" : ""}" type="button" data-employee-info-id="${item.id}">
           <strong>${escapeHtml(item.name)}</strong>
-          <span>${item.employmentType === "insured" ? "4대보험 직원" : "프리랜서"}</span>
+          <span>${item.employmentType === "insured" ? "4?蹂댄뿕 吏곸썝" : "?꾨━?쒖꽌"}</span>
         </button>
       `;
     })
@@ -4533,35 +4519,35 @@ function renderEmployeeInfoPage() {
   employeeInfoDesktopList.innerHTML = listMarkup;
   employeeInfoMobileSelector.innerHTML = `<div class="employee-info-mobile-rail">${listMarkup}</div>`;
 
-  const insuredLabel = employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서";
+  const insuredLabel = employee.employmentType === "insured" ? "4?蹂댄뿕 ?곸슜 吏곸썝" : "?꾨━?쒖꽌";
   const totalPay = monthSummary.payrollItem?.totalPay || 0;
   const netPay = monthSummary.payrollItem?.netPay || 0;
-  const firstLetter = escapeHtml(employee.name.slice(0, 1) || "직");
+  const firstLetter = escapeHtml(employee.name.slice(0, 1) || "吏?);
   const documentSectionMarkup = createEmployeeInfoDocumentMarkup(employee);
 
   employeeInfoDesktopSummary.innerHTML = `
     <div class="employee-profile-desktop">
       <div class="employee-profile-avatar">${firstLetter}</div>
       <div class="employee-profile-copy">
-        <p class="section-label">직원 기본 프로필</p>
+        <p class="section-label">吏곸썝 湲곕낯 ?꾨줈??/p>
         <h3>${escapeHtml(employee.name)}</h3>
         <p>${insuredLabel}</p>
         <div class="employee-profile-meta">
-          <span class="task-date-chip">기본급 ${formatCurrency(employee.baseSalary)}</span>
-          <span class="task-date-chip">야근 ${formatCurrency(employee.overtimeRate)}/h</span>
-          <span class="task-date-chip">주말 ${formatCurrency(employee.weekendRate)}/h</span>
+          <span class="task-date-chip">湲곕낯湲?${formatCurrency(employee.baseSalary)}</span>
+          <span class="task-date-chip">?쇨렐 ${formatCurrency(employee.overtimeRate)}/h</span>
+          <span class="task-date-chip">二쇰쭚 ${formatCurrency(employee.weekendRate)}/h</span>
         </div>
       </div>
       <div class="employee-profile-stats">
         <article class="attendance-summary-card">
-          <span class="metric-label">이번 달 예상 총급여</span>
+          <span class="metric-label">?대쾲 ???덉긽 珥앷툒??/span>
           <strong>${formatCurrency(totalPay)}</strong>
-          <small>기본급 + 야근 + 주말 수당</small>
+          <small>湲곕낯湲?+ ?쇨렐 + 二쇰쭚 ?섎떦</small>
         </article>
         <article class="attendance-summary-card">
-          <span class="metric-label">이번 달 실지급 예상</span>
+          <span class="metric-label">?대쾲 ???ㅼ?湲??덉긽</span>
           <strong>${formatCurrency(netPay)}</strong>
-          <small>${state.payrollMonth} 기준 공제 반영</small>
+          <small>${state.payrollMonth} 湲곗? 怨듭젣 諛섏쁺</small>
         </article>
       </div>
     </div>
@@ -4580,61 +4566,61 @@ function renderEmployeeInfoPage() {
               </div>
               <div class="employee-record-pills">
                 <span class="attendance-status-pill ${summary.attendanceStatus}">${getAttendanceStatusLabel(summary.attendanceStatus)}</span>
-                <span class="task-date-chip">총 ${summary.totalHours.toFixed(1)}시간</span>
+                <span class="task-date-chip">珥?${summary.totalHours.toFixed(1)}?쒓컙</span>
               </div>
             </article>
           `;
         })
         .join("")
-    : `<div class="empty-state">이번 달 근태 기록이 아직 없습니다.</div>`;
+    : `<div class="empty-state">?대쾲 ??洹쇳깭 湲곕줉???꾩쭅 ?놁뒿?덈떎.</div>`;
 
   const sectionsMarkup = `
     <div class="employee-info-section-grid">
       <section class="employee-info-section-card">
         <div class="employee-info-section-head">
           <div>
-            <p class="section-label">기본정보</p>
-            <h3>인사 정보 요약</h3>
+            <p class="section-label">湲곕낯?뺣낫</p>
+            <h3>?몄궗 ?뺣낫 ?붿빟</h3>
           </div>
         </div>
         <div class="employee-info-facts">
-          <div><span>구분</span><strong>${insuredLabel}</strong></div>
-          <div><span>부서</span><strong>${escapeHtml(employee.department || "미지정")}</strong></div>
-          <div><span>직책</span><strong>${escapeHtml(employee.title || "미지정")}</strong></div>
-          <div><span>연락처</span><strong>${escapeHtml(employee.phone || "미등록")}</strong></div>
-          <div><span>이메일</span><strong>${escapeHtml(employee.email || "미등록")}</strong></div>
-          <div><span>주소</span><strong>${escapeHtml(employee.address || "미등록")}</strong></div>
-          <div><span>기본급</span><strong>${formatCurrency(employee.baseSalary)}</strong></div>
-          <div><span>야근 수당</span><strong>${formatCurrency(employee.overtimeRate)}/h</strong></div>
-          <div><span>주말 수당</span><strong>${formatCurrency(employee.weekendRate)}/h</strong></div>
-          <div><span>급여 은행</span><strong>${escapeHtml(employee.bankName || "미등록")}</strong></div>
-          <div><span>계좌번호</span><strong>${escapeHtml(employee.bankAccount || "미등록")}</strong></div>
-          <div><span>예금주</span><strong>${escapeHtml(employee.accountHolder || "미등록")}</strong></div>
-          <div><span>부양가족</span><strong>${escapeHtml(employee.dependents || "미등록")}</strong></div>
-          <div><span>총 근무</span><strong>${monthSummary.statusCounts.totalHours.toFixed(1)}시간</strong></div>
-          <div><span>이번 달 기록</span><strong>${monthSummary.records.length}건</strong></div>
+          <div><span>援щ텇</span><strong>${insuredLabel}</strong></div>
+          <div><span>遺??/span><strong>${escapeHtml(employee.department || "誘몄???)}</strong></div>
+          <div><span>吏곸콉</span><strong>${escapeHtml(employee.title || "誘몄???)}</strong></div>
+          <div><span>?곕씫泥?/span><strong>${escapeHtml(employee.phone || "誘몃벑濡?)}</strong></div>
+          <div><span>?대찓??/span><strong>${escapeHtml(employee.email || "誘몃벑濡?)}</strong></div>
+          <div><span>二쇱냼</span><strong>${escapeHtml(employee.address || "誘몃벑濡?)}</strong></div>
+          <div><span>湲곕낯湲?/span><strong>${formatCurrency(employee.baseSalary)}</strong></div>
+          <div><span>?쇨렐 ?섎떦</span><strong>${formatCurrency(employee.overtimeRate)}/h</strong></div>
+          <div><span>二쇰쭚 ?섎떦</span><strong>${formatCurrency(employee.weekendRate)}/h</strong></div>
+          <div><span>湲됱뿬 ???/span><strong>${escapeHtml(employee.bankName || "誘몃벑濡?)}</strong></div>
+          <div><span>怨꾩쥖踰덊샇</span><strong>${escapeHtml(employee.bankAccount || "誘몃벑濡?)}</strong></div>
+          <div><span>?덇툑二?/span><strong>${escapeHtml(employee.accountHolder || "誘몃벑濡?)}</strong></div>
+          <div><span>遺?묎?議?/span><strong>${escapeHtml(employee.dependents || "誘몃벑濡?)}</strong></div>
+          <div><span>珥?洹쇰Т</span><strong>${monthSummary.statusCounts.totalHours.toFixed(1)}?쒓컙</strong></div>
+          <div><span>?대쾲 ??湲곕줉</span><strong>${monthSummary.records.length}嫄?/strong></div>
         </div>
       </section>
       <section class="employee-info-section-card">
         <div class="employee-info-section-head">
           <div>
-            <p class="section-label">근태 흐름</p>
-            <h3>${state.payrollMonth} 월간 달력</h3>
+            <p class="section-label">洹쇳깭 ?먮쫫</p>
+            <h3>${state.payrollMonth} ?붽컙 ?щ젰</h3>
           </div>
         </div>
         <div class="employee-status-overview">
-          <span class="attendance-status-pill normal">정상 ${monthSummary.statusCounts.normal}</span>
-          <span class="attendance-status-pill late">지각 ${monthSummary.statusCounts.late}</span>
-          <span class="attendance-status-pill early">조퇴 ${monthSummary.statusCounts.early}</span>
-          <span class="attendance-status-pill absent">결근 ${monthSummary.statusCounts.absent}</span>
+          <span class="attendance-status-pill normal">?뺤긽 ${monthSummary.statusCounts.normal}</span>
+          <span class="attendance-status-pill late">吏媛?${monthSummary.statusCounts.late}</span>
+          <span class="attendance-status-pill early">議고눜 ${monthSummary.statusCounts.early}</span>
+          <span class="attendance-status-pill absent">寃곌렐 ${monthSummary.statusCounts.absent}</span>
         </div>
         ${renderEmployeeStatusCalendar(employee)}
       </section>
       <section class="employee-info-section-card">
         <div class="employee-info-section-head">
           <div>
-            <p class="section-label">최근 기록</p>
-            <h3>출퇴근 상세</h3>
+            <p class="section-label">理쒓렐 湲곕줉</p>
+            <h3>異쒗눜洹??곸꽭</h3>
           </div>
         </div>
         <div class="employee-record-list">${recordsMarkup}</div>
@@ -4642,17 +4628,17 @@ function renderEmployeeInfoPage() {
       <section class="employee-info-section-card">
         <div class="employee-info-section-head">
           <div>
-            <p class="section-label">추가 정보</p>
-            <h3>메모와 안내</h3>
+            <p class="section-label">異붽? ?뺣낫</p>
+            <h3>硫붾え? ?덈궡</h3>
           </div>
         </div>
         <div class="employee-info-notes">
-          <p>${escapeHtml(employee.note || "직원별 메모가 아직 없습니다. 업무 특이사항이나 인사 메모를 기록해둘 수 있습니다.")}</p>
+          <p>${escapeHtml(employee.note || "吏곸썝蹂?硫붾え媛 ?꾩쭅 ?놁뒿?덈떎. ?낅Т ?뱀씠?ы빆?대굹 ?몄궗 硫붾え瑜?湲곕줉?대몮 ???덉뒿?덈떎.")}</p>
           <div class="employee-profile-meta">
-            <span class="task-date-chip">증빙서류</span>
-            <span class="task-date-chip">급여계좌</span>
-            <span class="task-date-chip">부양가족</span>
-            <span class="task-date-chip">공지 확인</span>
+            <span class="task-date-chip">利앸튃?쒕쪟</span>
+            <span class="task-date-chip">湲됱뿬怨꾩쥖</span>
+            <span class="task-date-chip">遺?묎?議?/span>
+            <span class="task-date-chip">怨듭? ?뺤씤</span>
           </div>
         </div>
       </section>
@@ -4667,14 +4653,14 @@ function renderEmployeeInfoPage() {
       <div class="employee-mobile-profile">
         <div class="employee-mobile-avatar">${firstLetter}</div>
         <div>
-          <p class="section-label">직원 프로필</p>
+          <p class="section-label">吏곸썝 ?꾨줈??/p>
           <h3>${escapeHtml(employee.name)}</h3>
           <p>${insuredLabel}</p>
         </div>
       </div>
       <div class="employee-profile-meta">
-        <span class="task-date-chip">기본급 ${formatCurrency(employee.baseSalary)}</span>
-        <span class="task-date-chip">실지급 ${formatCurrency(netPay)}</span>
+        <span class="task-date-chip">湲곕낯湲?${formatCurrency(employee.baseSalary)}</span>
+        <span class="task-date-chip">?ㅼ?湲?${formatCurrency(netPay)}</span>
       </div>
     </section>
   `;
@@ -4705,14 +4691,14 @@ function renderEmployeeInfoPage() {
       const typeInput = targetForm.querySelector('select[name="documentType"]');
       const file = fileInput?.files?.[0];
       if (!file) {
-        showToast("업로드할 파일을 선택해 주세요.");
+        showToast("?낅줈?쒗븷 ?뚯씪???좏깮??二쇱꽭??");
         return;
       }
 
       const fileData = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error("파일을 읽지 못했습니다."));
+        reader.onerror = () => reject(new Error("?뚯씪???쎌? 紐삵뻽?듬땲??"));
         reader.readAsDataURL(file);
       });
 
@@ -4739,7 +4725,7 @@ function renderEmployeeInfoPage() {
       state.employeeDocuments.unshift(savedDocument);
       state.selectedEmployeeDocumentId = savedDocument.id;
       renderEmployeeInfoPage();
-      showToast("증빙서류를 업로드했습니다.");
+      showToast("利앸튃?쒕쪟瑜??낅줈?쒗뻽?듬땲??");
     });
   });
 }
@@ -4963,8 +4949,8 @@ function mapEmployeeDocumentRecord(record) {
   return {
     id: record.id,
     employeeId: record.employee_id,
-    type: record.document_type || "기타",
-    fileName: record.file_name || "문서",
+    type: record.document_type || "湲고?",
+    fileName: record.file_name || "臾몄꽌",
     mimeType: record.mime_type || "",
     fileData: record.file_data || "",
     createdAt: record.created_at || new Date().toISOString(),
@@ -5044,7 +5030,7 @@ async function saveEmployee() {
   employeeTypeInput.value = "insured";
   renderEmployeeMemberOptions(employeeMemberInput);
   renderHrWorkspace();
-  showToast(`${name} 직원을 등록했습니다.`);
+  showToast(`${name} 吏곸썝???깅줉?덉뒿?덈떎.`);
 }
 
 async function saveAttendance() {
@@ -5083,7 +5069,7 @@ async function saveAttendance() {
   attendanceClockInInput.value = "09:00";
   attendanceClockOutInput.value = "18:00";
   renderHrWorkspace();
-  showToast("출퇴근 기록을 저장했습니다.");
+  showToast("異쒗눜洹?湲곕줉????ν뻽?듬땲??");
 }
 
 async function updateAttendance() {
@@ -5126,7 +5112,7 @@ async function updateAttendance() {
   if (!rawRecord) {
     await loadHrData();
     closeAttendanceModal();
-    showToast("출퇴근 기록을 다시 불러왔습니다.");
+    showToast("異쒗눜洹?湲곕줉???ㅼ떆 遺덈윭?붿뒿?덈떎.");
     return;
   }
 
@@ -5136,7 +5122,7 @@ async function updateAttendance() {
   );
   closeAttendanceModal();
   renderHrWorkspace();
-  showToast("출퇴근 기록을 수정했습니다.");
+  showToast("異쒗눜洹?湲곕줉???섏젙?덉뒿?덈떎.");
 }
 
 async function deleteAttendance() {
@@ -5158,17 +5144,17 @@ async function deleteAttendance() {
   );
   closeAttendanceModal();
   renderHrWorkspace();
-  showToast("출퇴근 기록을 삭제했습니다.");
+  showToast("異쒗눜洹?湲곕줉????젣?덉뒿?덈떎.");
 }
 
 function renderEmployeeSelect() {
   if (!state.employees.length) {
-    attendanceEmployeeSelect.innerHTML = `<option value="">직원을 먼저 등록해 주세요</option>`;
+    attendanceEmployeeSelect.innerHTML = `<option value="">吏곸썝??癒쇱? ?깅줉??二쇱꽭??/option>`;
     return;
   }
 
   attendanceEmployeeSelect.innerHTML = [
-    `<option value="">직원을 선택하세요</option>`,
+    `<option value="">吏곸썝???좏깮?섏꽭??/option>`,
     ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
   ].join("");
 }
@@ -5179,12 +5165,12 @@ function renderEditAttendanceEmployeeSelect() {
   }
 
   if (!state.employees.length) {
-    editAttendanceEmployeeSelect.innerHTML = `<option value="">직원을 먼저 등록해 주세요</option>`;
+    editAttendanceEmployeeSelect.innerHTML = `<option value="">吏곸썝??癒쇱? ?깅줉??二쇱꽭??/option>`;
     return;
   }
 
   editAttendanceEmployeeSelect.innerHTML = [
-    `<option value="">직원을 선택해 주세요</option>`,
+    `<option value="">吏곸썝???좏깮??二쇱꽭??/option>`,
     ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
   ].join("");
 }
@@ -5192,8 +5178,8 @@ function renderEditAttendanceEmployeeSelect() {
 
 function openEmployeeModal(employee) {
   state.editingEmployeeId = employee.id;
-  employeeModalTitle.textContent = `${employee.name} 정보 수정`;
-  employeeModalSubtitle.textContent = "기본급, 수당, 고용 형태를 수정하거나 직원을 삭제할 수 있습니다.";
+  employeeModalTitle.textContent = `${employee.name} ?뺣낫 ?섏젙`;
+  employeeModalSubtitle.textContent = "湲곕낯湲? ?섎떦, 怨좎슜 ?뺥깭瑜??섏젙?섍굅??吏곸썝????젣?????덉뒿?덈떎.";
   editEmployeeNameInput.value = employee.name || "";
   editEmployeeTypeInput.value = employee.employmentType || "insured";
   renderEmployeeMemberOptions(editEmployeeMemberInput, employee.memberId || "");
@@ -5285,7 +5271,7 @@ async function updateEmployee() {
   );
   closeEmployeeModal();
   renderHrWorkspace();
-  showToast("직원 정보를 수정했습니다.");
+  showToast("吏곸썝 ?뺣낫瑜??섏젙?덉뒿?덈떎.");
 }
 
 async function deleteEmployee() {
@@ -5308,7 +5294,7 @@ async function deleteEmployee() {
   );
   closeEmployeeModal();
   renderHrWorkspace();
-  showToast("직원을 삭제했습니다.");
+  showToast("吏곸썝????젣?덉뒿?덈떎.");
 }
 
 
@@ -5344,7 +5330,7 @@ function renderAttendanceCalendar() {
 
   const currentEmployeeValue = attendanceCalendarEmployeeSelect.value;
   attendanceCalendarEmployeeSelect.innerHTML = [
-    `<option value="">직원을 선택해 주세요</option>`,
+    `<option value="">吏곸썝???좏깮??二쇱꽭??/option>`,
     ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
   ].join("");
 
@@ -5356,14 +5342,14 @@ function renderAttendanceCalendar() {
   const monthDate = new Date(`${monthValue || formatDateKey(today).slice(0, 7)}-01T00:00:00`);
 
   if (!employeeId) {
-    attendanceCalendarLabel.textContent = "직원을 선택하면 월간 근태 흐름이 보입니다";
-    attendanceCalendarGrid.innerHTML = `<div class="empty-state">직원을 선택하면 정상, 지각, 조퇴, 결근 흐름을 월간 달력으로 확인할 수 있습니다.</div>`;
+    attendanceCalendarLabel.textContent = "吏곸썝???좏깮?섎㈃ ?붽컙 洹쇳깭 ?먮쫫??蹂댁엯?덈떎";
+    attendanceCalendarGrid.innerHTML = `<div class="empty-state">吏곸썝???좏깮?섎㈃ ?뺤긽, 吏媛? 議고눜, 寃곌렐 ?먮쫫???붽컙 ?щ젰?쇰줈 ?뺤씤?????덉뒿?덈떎.</div>`;
     return;
   }
 
   const employee = state.employees.find((item) => String(item.id) === String(employeeId));
-  const monthLabelText = `${monthDate.getFullYear()}년 ${monthDate.getMonth() + 1}월`;
-  attendanceCalendarLabel.textContent = `${employee?.name || "직원"} · ${monthLabelText} 근태 달력`;
+  const monthLabelText = `${monthDate.getFullYear()}??${monthDate.getMonth() + 1}??;
+  attendanceCalendarLabel.textContent = `${employee?.name || "吏곸썝"} 쨌 ${monthLabelText} 洹쇳깭 ?щ젰`;
 
   const startDay = new Date(monthDate);
   startDay.setDate(1);
@@ -5382,7 +5368,7 @@ function renderAttendanceCalendar() {
       })
   );
 
-  const dayNames = ["일", "월", "화", "수", "목", "금", "토"]
+  const dayNames = ["??, "??, "??, "??, "紐?, "湲?, "??]
     .map((dayName) => `<span class="attendance-calendar-weekday">${dayName}</span>`)
     .join("");
 
@@ -5408,7 +5394,7 @@ function renderAttendanceCalendar() {
               <span class="attendance-calendar-status">${getAttendanceStatusLabel(recordInfo.summary.attendanceStatus)}</span>
               <span class="attendance-calendar-time">${recordInfo.record.clockIn}-${recordInfo.record.clockOut}</span>
             `
-            : `<span class="attendance-calendar-status empty">${isCurrentMonth ? "기록 없음" : ""}</span>`
+            : `<span class="attendance-calendar-status empty">${isCurrentMonth ? "湲곕줉 ?놁쓬" : ""}</span>`
         }
       </button>
     `;
@@ -5432,7 +5418,7 @@ function renderAttendanceCalendar() {
 function renderAttendanceFilterOptions() {
   const currentFilterValue = state.attendanceEmployeeFilter;
   attendanceEmployeeFilterSelect.innerHTML = [
-    `<option value="all">전체 직원</option>`,
+    `<option value="all">?꾩껜 吏곸썝</option>`,
     ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
   ].join("");
   attendanceEmployeeFilterSelect.value = state.employees.some((employee) => String(employee.id) === String(currentFilterValue))
@@ -5443,7 +5429,7 @@ function renderAttendanceFilterOptions() {
   if (attendanceCalendarEmployeeSelect) {
     const calendarCurrentValue = attendanceCalendarEmployeeSelect.value;
     attendanceCalendarEmployeeSelect.innerHTML = [
-      `<option value="">직원을 선택해 주세요</option>`,
+      `<option value="">吏곸썝???좏깮??二쇱꽭??/option>`,
       ...state.employees.map((employee) => `<option value="${employee.id}">${escapeHtml(employee.name)}</option>`),
     ].join("");
     if (state.employees.some((employee) => String(employee.id) === String(calendarCurrentValue))) {
@@ -5454,7 +5440,7 @@ function renderAttendanceFilterOptions() {
 
 function renderEmployees() {
   if (!state.employees.length) {
-    employeeList.innerHTML = `<div class="empty-state">등록된 직원이 없습니다. 기본급과 수당 기준을 먼저 입력해 주세요.</div>`;
+    employeeList.innerHTML = `<div class="empty-state">?깅줉??吏곸썝???놁뒿?덈떎. 湲곕낯湲됯낵 ?섎떦 湲곗???癒쇱? ?낅젰??二쇱꽭??</div>`;
     return;
   }
 
@@ -5467,21 +5453,21 @@ function renderEmployees() {
           <div class="employee-card-head">
             <div>
               <strong>${employee.name}</strong>
-              ${employee.loginId ? `<p class="employee-card-subtitle">怨꾩젙 ${escapeHtml(employee.loginId)}</p>` : ""}
-              <p class="employee-card-subtitle">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</p>
+              ${employee.loginId ? `<p class="employee-card-subtitle">?④쑴??${escapeHtml(employee.loginId)}</p>` : ""}
+              <p class="employee-card-subtitle">${employee.employmentType === "insured" ? "4?蹂댄뿕 ?곸슜 吏곸썝" : "?꾨━?쒖꽌"}</p>
             </div>
             <div class="employee-card-tools">
-              <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4대보험 적용 직원" : "프리랜서"}</span>
+              <span class="employee-type ${employee.employmentType}">${employee.employmentType === "insured" ? "4?蹂댄뿕 ?곸슜 吏곸썝" : "?꾨━?쒖꽌"}</span>
               <div class="employee-card-actions">
-                <button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="detail" data-id="${employee.id}">상세</button>
-                ${canManageEmployees ? `<button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="edit" data-id="${employee.id}">수정</button>` : ""}
+                <button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="detail" data-id="${employee.id}">?곸꽭</button>
+                ${canManageEmployees ? `<button class="ghost-btn attendance-edit-btn" type="button" data-employee-action="edit" data-id="${employee.id}">?섏젙</button>` : ""}
               </div>
             </div>
           </div>
           <div class="employee-pay-grid">
-            <span>기본급 ${formatCurrency(employee.baseSalary)}</span>
-            <span>야근 수당 ${formatCurrency(employee.overtimeRate)}/h</span>
-            <span>주말 수당 ${formatCurrency(employee.weekendRate)}/h</span>
+            <span>湲곕낯湲?${formatCurrency(employee.baseSalary)}</span>
+            <span>?쇨렐 ?섎떦 ${formatCurrency(employee.overtimeRate)}/h</span>
+            <span>二쇰쭚 ?섎떦 ${formatCurrency(employee.weekendRate)}/h</span>
           </div>
         </article>
       `
@@ -5515,7 +5501,7 @@ function renderEmployees() {
 
 function renderAttendanceList() {
   if (!state.attendanceRecords.length) {
-    attendanceList.innerHTML = `<div class="empty-state">출근기록부가 비어 있습니다. 직원과 출퇴근 시간을 입력해 주세요.</div>`;
+    attendanceList.innerHTML = `<div class="empty-state">異쒓렐湲곕줉遺媛 鍮꾩뼱 ?덉뒿?덈떎. 吏곸썝怨?異쒗눜洹??쒓컙???낅젰??二쇱꽭??</div>`;
     renderAttendanceSummary();
     renderAttendanceCalendar();
     return;
@@ -5524,7 +5510,7 @@ function renderAttendanceList() {
   const filteredRecords = getFilteredAttendanceRecords();
 
   if (!filteredRecords.length) {
-    attendanceList.innerHTML = `<div class="empty-state">현재 필터에 맞는 출근기록이 없습니다. 조회 월이나 직원을 바꿔 보세요.</div>`;
+    attendanceList.innerHTML = `<div class="empty-state">?꾩옱 ?꾪꽣??留욌뒗 異쒓렐湲곕줉???놁뒿?덈떎. 議고쉶 ?붿씠??吏곸썝??諛붽퓭 蹂댁꽭??</div>`;
     renderAttendanceSummary();
     renderAttendanceCalendar();
     return;
@@ -5537,15 +5523,15 @@ function renderAttendanceList() {
       <table class="attendance-table">
         <thead>
           <tr>
-            <th>직원명</th>
-            <th>근무일</th>
-            <th>출근</th>
-            <th>퇴근</th>
-            <th>총근무</th>
-            <th>야근</th>
-            <th>주말</th>
-            <th>근태상태</th>
-            <th>상세</th>
+            <th>吏곸썝紐?/th>
+            <th>洹쇰Т??/th>
+            <th>異쒓렐</th>
+            <th>?닿렐</th>
+            <th>珥앷렐臾?/th>
+            <th>?쇨렐</th>
+            <th>二쇰쭚</th>
+            <th>洹쇳깭?곹깭</th>
+            <th>?곸꽭</th>
           </tr>
         </thead>
         <tbody>
@@ -5555,19 +5541,19 @@ function renderAttendanceList() {
               const summary = calculateAttendance(record, employee);
               return `
                 <tr class="attendance-row attendance-${summary.attendanceStatus}" data-attendance-row="${record.id}">
-                  <td class="attendance-cell-strong" data-label="직원명">
+                  <td class="attendance-cell-strong" data-label="吏곸썝紐?>
                     <button class="attendance-row-link" type="button" data-attendance-employee="${employee?.id || ""}">
-                      ${employee?.name || "이름 없는 직원"}
+                      ${employee?.name || "?대쫫 ?녿뒗 吏곸썝"}
                     </button>
                   </td>
-                  <td data-label="근무일">${record.workDate}</td>
-                  <td data-label="출근">${record.clockIn}</td>
-                  <td data-label="퇴근">${record.clockOut}</td>
-                  <td data-label="총근무">${summary.totalHours.toFixed(1)}h</td>
-                  <td data-label="야근">${summary.overtimeHours.toFixed(1)}h</td>
-                  <td data-label="주말">${summary.weekendHours.toFixed(1)}h</td>
-                  <td data-label="근태상태"><span class="attendance-status-pill is-${summary.attendanceStatus}">${getAttendanceStatusLabel(summary.attendanceStatus)}</span></td>
-                  <td data-label="상세">${canEditAttendance ? `<button class="ghost-btn attendance-edit-btn" type="button" data-attendance-action="edit" data-id="${record.id}">수정</button>` : `<button class="ghost-btn attendance-edit-btn" type="button" data-attendance-action="view" data-id="${record.id}">상세</button>`}</td>
+                  <td data-label="洹쇰Т??>${record.workDate}</td>
+                  <td data-label="異쒓렐">${record.clockIn}</td>
+                  <td data-label="?닿렐">${record.clockOut}</td>
+                  <td data-label="珥앷렐臾?>${summary.totalHours.toFixed(1)}h</td>
+                  <td data-label="?쇨렐">${summary.overtimeHours.toFixed(1)}h</td>
+                  <td data-label="二쇰쭚">${summary.weekendHours.toFixed(1)}h</td>
+                  <td data-label="洹쇳깭?곹깭"><span class="attendance-status-pill is-${summary.attendanceStatus}">${getAttendanceStatusLabel(summary.attendanceStatus)}</span></td>
+                  <td data-label="?곸꽭">${canEditAttendance ? `<button class="ghost-btn attendance-edit-btn" type="button" data-attendance-action="edit" data-id="${record.id}">?섏젙</button>` : `<button class="ghost-btn attendance-edit-btn" type="button" data-attendance-action="view" data-id="${record.id}">?곸꽭</button>`}</td>
                 </tr>
               `;
             })
