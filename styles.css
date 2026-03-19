@@ -9026,6 +9026,10 @@ body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .mini-event
   padding: 24px !important;
 }
 
+.modal[hidden] {
+  display: none !important;
+}
+
 .modal-backdrop {
   position: absolute !important;
   inset: 0 !important;
