@@ -8310,3 +8310,828 @@ body[data-device] .workspace-card.is-active .workspace-card-title {
 body[data-device] .workspace-card.is-active .workspace-card-copy {
   color: rgba(233, 240, 250, 0.9) !important;
 }
+
+/* 2026-03 app reboot theme */
+:root {
+  --wb-bg: #edf2f7;
+  --wb-surface: #ffffff;
+  --wb-surface-soft: #f7f9fc;
+  --wb-surface-tint: #eef3f8;
+  --wb-line: #d7dee8;
+  --wb-line-strong: #bcc7d6;
+  --wb-text: #162235;
+  --wb-text-strong: #0f1b2d;
+  --wb-muted: #64748b;
+  --wb-muted-strong: #4d617b;
+  --wb-primary: #22344f;
+  --wb-primary-strong: #17253a;
+  --wb-primary-soft: #dfe8f3;
+  --wb-accent-soft: #edf3fb;
+  --wb-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+  --wb-radius-xl: 30px;
+  --wb-radius-lg: 22px;
+  --wb-radius-md: 16px;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.78), transparent 34%),
+    linear-gradient(180deg, #f4f7fb 0%, var(--wb-bg) 100%) !important;
+  color: var(--wb-text) !important;
+}
+
+.ambient {
+  display: none !important;
+}
+
+.app-shell {
+  padding: 28px 24px 72px !important;
+  gap: 22px !important;
+}
+
+.site-nav,
+.hero,
+.workspace-hub,
+.dashboard,
+.hr-workspace,
+.employee-info-view {
+  width: min(1360px, calc(100vw - 48px)) !important;
+  max-width: 1360px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.site-nav {
+  margin-bottom: 22px !important;
+}
+
+.site-nav-inner {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  gap: 18px !important;
+  align-items: center !important;
+  padding: 18px 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 30px !important;
+  background: linear-gradient(180deg, #22354f 0%, #1b2d44 100%) !important;
+  box-shadow: 0 24px 60px rgba(17, 25, 40, 0.16) !important;
+}
+
+.site-brand strong,
+.site-brand p,
+.site-nav .ghost-btn,
+.site-nav .session-badge,
+.site-nav .session-badge strong,
+.site-nav .session-badge span {
+  color: #f8fbff !important;
+}
+
+.site-brand p {
+  opacity: 0.68 !important;
+}
+
+.site-nav .icon-chip {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fbff !important;
+}
+
+.site-menu {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 8px !important;
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.site-menu-link {
+  min-height: 46px !important;
+  padding: 0 18px !important;
+  border-radius: 14px !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: rgba(244, 247, 252, 0.76) !important;
+  font-weight: 700 !important;
+}
+
+.site-menu-link.active {
+  background: #f8fbff !important;
+  color: var(--wb-primary-strong) !important;
+  box-shadow: 0 10px 24px rgba(8, 15, 28, 0.16) !important;
+}
+
+.site-nav .site-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.site-nav .session-badge,
+.site-nav #logoutBtn {
+  min-height: 52px !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+}
+
+.site-nav .session-badge {
+  min-width: 210px !important;
+  justify-content: center !important;
+  padding: 0 18px !important;
+}
+
+.site-nav #logoutBtn {
+  padding: 0 18px !important;
+}
+
+.hero {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.24fr) minmax(320px, 0.76fr) !important;
+  gap: 22px !important;
+  align-items: start !important;
+  margin-bottom: 22px !important;
+}
+
+.hero-copy-wrap,
+.workspace-hub-shell,
+.panel,
+.archive-panel,
+.auth-panel,
+.attendance-calendar-panel,
+.employee-info-sidebar,
+.employee-info-profile-card,
+.employee-info-sections,
+.employee-info-mobile-top {
+  border: 1px solid var(--wb-line) !important;
+  border-radius: var(--wb-radius-xl) !important;
+  background: linear-gradient(180deg, var(--wb-surface) 0%, #fbfcfe 100%) !important;
+  box-shadow: var(--wb-shadow) !important;
+}
+
+.hero-copy-wrap {
+  min-height: 0 !important;
+  padding: 30px 32px !important;
+  color: var(--wb-text) !important;
+}
+
+.hero-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  background: var(--wb-surface-soft) !important;
+  border: 1px solid var(--wb-line) !important;
+}
+
+.hero-copy-wrap .eyebrow,
+.hero-copy-wrap .hero-copy,
+.connection-message,
+.build-stamp {
+  color: var(--wb-muted) !important;
+}
+
+.hero-copy-wrap h1 {
+  margin: 0 0 14px !important;
+  color: var(--wb-text-strong) !important;
+  font-size: clamp(3.2rem, 6vw, 5rem) !important;
+  line-height: 0.96 !important;
+  letter-spacing: -0.07em !important;
+}
+
+.hero-copy {
+  max-width: 780px !important;
+  font-size: 1.02rem !important;
+  line-height: 1.65 !important;
+}
+
+.hero-actions {
+  display: flex !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  margin-top: 18px !important;
+}
+
+.hero-btn,
+.ghost-btn,
+.submit-btn,
+.chip,
+.edit-btn,
+.remove-btn,
+.task-choice-btn,
+.attachment-browse-btn {
+  min-height: 48px !important;
+  padding: 0 18px !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--wb-line) !important;
+  background: var(--wb-surface) !important;
+  color: var(--wb-text) !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+.hero-btn.primary,
+.submit-btn,
+.site-nav .submit-btn,
+.chip.active,
+.hero-btn.secondary:hover,
+.ghost-btn.primary {
+  border-color: var(--wb-primary) !important;
+  background: var(--wb-primary) !important;
+  color: #ffffff !important;
+}
+
+.hero-btn.secondary,
+.ghost-btn,
+.chip,
+.task-choice-btn,
+.attachment-browse-btn {
+  background: var(--wb-surface-soft) !important;
+}
+
+.connection-strip {
+  margin-top: 20px !important;
+  padding: 18px 20px !important;
+  border-radius: 20px !important;
+  border: 1px solid var(--wb-line) !important;
+  background: var(--wb-surface-soft) !important;
+}
+
+.connection-badge {
+  background: var(--wb-primary) !important;
+  color: #ffffff !important;
+}
+
+.hero-meta {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-self: start !important;
+}
+
+.metric-card,
+.hero-meta .metric-card.float-card {
+  display: grid !important;
+  gap: 10px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 20px !important;
+  border-radius: 24px !important;
+  border: 1px solid var(--wb-line) !important;
+  background: linear-gradient(180deg, var(--wb-surface) 0%, var(--wb-surface-soft) 100%) !important;
+  box-shadow: none !important;
+}
+
+.metric-card strong {
+  color: var(--wb-text-strong) !important;
+  font-size: 2.45rem !important;
+  line-height: 0.95 !important;
+}
+
+.metric-label,
+.task-summary-label,
+.workspace-card-label,
+.employee-card-subtitle,
+.modal-subtitle,
+.storage-summary-caption,
+.workspace-hub-copy,
+.task-meta,
+.calendar-hint,
+.field span,
+.attendance-ledger-hint {
+  color: var(--wb-muted) !important;
+}
+
+.workspace-hub-shell {
+  padding: 26px !important;
+}
+
+.workspace-hub-head {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.48fr) !important;
+  gap: 20px !important;
+  align-items: end !important;
+}
+
+.workspace-shortcuts {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.workspace-card {
+  min-height: 168px !important;
+  padding: 22px !important;
+  border-radius: 24px !important;
+  border: 1px solid var(--wb-line) !important;
+  background: linear-gradient(180deg, var(--wb-surface) 0%, var(--wb-surface-soft) 100%) !important;
+  color: var(--wb-text) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.workspace-card:hover {
+  border-color: var(--wb-line-strong) !important;
+  background: linear-gradient(180deg, #ffffff 0%, var(--wb-accent-soft) 100%) !important;
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08) !important;
+}
+
+.workspace-card.is-primary {
+  background: linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%) !important;
+}
+
+.workspace-card.is-active {
+  border-color: var(--wb-primary) !important;
+  background: linear-gradient(155deg, #243955 0%, #2e476d 64%, #38567e 100%) !important;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.16) !important;
+}
+
+.workspace-card.is-active .workspace-card-label,
+.workspace-card.is-active .workspace-card-title,
+.workspace-card.is-active .workspace-card-copy {
+  color: #f8fbff !important;
+}
+
+.dashboard,
+.hr-grid,
+.employee-info-main {
+  display: grid !important;
+  gap: 22px !important;
+}
+
+.dashboard {
+  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr) !important;
+}
+
+.hr-workspace,
+.employee-info-view {
+  display: grid !important;
+  gap: 22px !important;
+}
+
+.hr-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+}
+
+.payroll-hero-grid,
+.hr-metrics,
+.employee-info-section-grid,
+.employee-pay-grid,
+.employee-info-facts {
+  display: grid !important;
+  gap: 16px !important;
+}
+
+.payroll-hero-grid,
+.hr-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.employee-info-section-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.panel-head,
+.schedule-head,
+.task-summary-head,
+.modal-head,
+.employee-card-head,
+.attendance-card-head,
+.employee-info-section-head {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 16px !important;
+}
+
+.panel-head h2,
+.panel-head h3,
+.schedule-head h3,
+.workspace-hub-head h2,
+.task-item .task-description-primary,
+.employee-info-hero h2 {
+  color: var(--wb-text-strong) !important;
+  letter-spacing: -0.04em !important;
+}
+
+.panel,
+.archive-panel,
+.auth-panel {
+  padding: 24px !important;
+}
+
+.task-controls,
+.task-toolbar,
+.attendance-ledger,
+.attendance-calendar-panel,
+.employee-info-mobile-card,
+.employee-info-section-card,
+.employee-card,
+.member-card,
+.attendance-summary-card,
+.attendance-card,
+.task-item,
+.archive-task-item,
+.portfolio-form-panel,
+.portfolio-list-panel {
+  border: 1px solid var(--wb-line) !important;
+  border-radius: 22px !important;
+  background: var(--wb-surface-soft) !important;
+  box-shadow: none !important;
+}
+
+.task-toolbar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.12fr) minmax(280px, 0.88fr) !important;
+  gap: 18px !important;
+  margin-bottom: 20px !important;
+}
+
+.task-form,
+.hr-form,
+.modal-task-form,
+.auth-form {
+  display: grid !important;
+  gap: 18px !important;
+}
+
+.task-form-grid,
+.hr-form-grid,
+.portfolio-form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.task-form-wide {
+  grid-column: 1 / -1 !important;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100% !important;
+  min-height: 48px !important;
+  padding: 0 14px !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--wb-line) !important;
+  background: #ffffff !important;
+  color: var(--wb-text) !important;
+  box-shadow: none !important;
+}
+
+.field textarea {
+  min-height: 112px !important;
+  padding: 14px !important;
+}
+
+.task-list,
+.employee-list,
+.member-list,
+.schedule-list,
+.attendance-list,
+.employee-doc-list {
+  display: grid !important;
+  gap: 14px !important;
+}
+
+.task-item,
+.archive-task-item,
+.employee-card,
+.member-card,
+.attendance-summary-card,
+.attendance-card,
+.employee-info-section-card,
+.employee-info-mobile-card {
+  padding: 18px !important;
+}
+
+.task-item {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  gap: 16px !important;
+  align-items: start !important;
+}
+
+.check-btn {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--wb-line-strong) !important;
+  background: #ffffff !important;
+}
+
+.task-client,
+.task-client-link,
+.employee-type,
+.member-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 32px !important;
+  padding: 0 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid var(--wb-line) !important;
+  background: #ffffff !important;
+  color: var(--wb-muted-strong) !important;
+  font-weight: 700 !important;
+}
+
+.task-dates,
+.employee-record-pills,
+.payroll-actions,
+.employee-info-actions,
+.hr-policy,
+.employee-profile-meta {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.task-date-chip,
+.badge,
+.archive-count,
+.attendance-status-pill,
+.attendance-legend-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 30px !important;
+  padding: 0 10px !important;
+  border-radius: 999px !important;
+  border: 1px solid #d6e0eb !important;
+  background: #f1f5f9 !important;
+  color: var(--wb-muted-strong) !important;
+  font-size: 0.83rem !important;
+  font-weight: 700 !important;
+}
+
+.task-choice-group {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.task-choice-btn {
+  min-height: 34px !important;
+  padding: 0 12px !important;
+}
+
+.task-choice-btn.status-todo.is-active {
+  background: #e8f0ff !important;
+  border-color: #bfd0f7 !important;
+  color: #2457bd !important;
+}
+
+.task-choice-btn.status-paused.is-active {
+  background: #fff3e4 !important;
+  border-color: #f1d2a7 !important;
+  color: #ad6a11 !important;
+}
+
+.task-choice-btn.status-done.is-active,
+.task-choice-btn[data-payroll-status="paid"].is-active {
+  background: #e8f6ef !important;
+  border-color: #b7ddca !important;
+  color: #256b53 !important;
+}
+
+.task-choice-btn.priority-high.is-active {
+  background: #fdeceb !important;
+  border-color: #e8c0bc !important;
+  color: #ba453f !important;
+}
+
+.task-choice-btn.priority-medium.is-active,
+.task-choice-btn[data-payroll-status="confirmed"].is-active {
+  background: #edf3fb !important;
+  border-color: #c8d6e9 !important;
+  color: #324f75 !important;
+}
+
+.task-choice-btn.priority-low.is-active,
+.task-choice-btn[data-payroll-status="draft"].is-active {
+  background: #eef2f6 !important;
+  border-color: #d2dae5 !important;
+  color: #56677d !important;
+}
+
+.calendar-scroll,
+.schedule-card,
+.task-summary-card {
+  border: 1px solid var(--wb-line) !important;
+  border-radius: 22px !important;
+  background: var(--wb-surface-soft) !important;
+}
+
+.calendar-scroll {
+  overflow: hidden !important;
+}
+
+.panel-calendar .weekdays {
+  background: #f7f9fc !important;
+  border-bottom: 1px solid var(--wb-line) !important;
+}
+
+.panel-calendar .weekdays span {
+  color: var(--wb-muted) !important;
+  font-weight: 700 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month {
+  background: var(--wb-line) !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-card {
+  min-height: 156px !important;
+  background: #ffffff !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-top,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-top {
+  background: #fbfcfe !important;
+  border-bottom: 1px solid var(--wb-line) !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-number {
+  color: var(--wb-text-strong) !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-sunday .day-number {
+  color: #cf433c !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-saturday .day-number {
+  color: #2d5fb0 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .mini-event {
+  grid-template-columns: 8px minmax(0, 1fr) !important;
+  gap: 8px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.panel-calendar .mini-event-meta,
+.panel-calendar .mini-event-sub,
+.panel-calendar .mini-event-state-icon {
+  display: none !important;
+}
+
+.panel-calendar .mini-event-dot {
+  width: 7px !important;
+  height: 7px !important;
+  margin-top: 5px !important;
+  border-radius: 999px !important;
+  background: #5b6d82 !important;
+}
+
+.panel-calendar .mini-event-title,
+.panel-calendar .mini-event-link {
+  color: var(--wb-text) !important;
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+}
+
+.schedule-card,
+.task-summary-card,
+.attendance-ledger,
+.attendance-calendar-panel {
+  padding: 18px !important;
+}
+
+.employee-info-desktop {
+  display: grid !important;
+  grid-template-columns: 300px minmax(0, 1fr) !important;
+  gap: 22px !important;
+}
+
+.employee-profile-avatar,
+.employee-mobile-avatar {
+  background: var(--wb-primary-soft) !important;
+  color: var(--wb-primary) !important;
+}
+
+.modal {
+  position: fixed !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 24px !important;
+}
+
+.modal-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  background: rgba(15, 23, 42, 0.56) !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+.modal-dialog {
+  position: relative !important;
+  width: min(780px, calc(100vw - 32px)) !important;
+  max-height: calc(100vh - 48px) !important;
+  overflow: auto !important;
+  padding: 24px !important;
+  border-radius: 28px !important;
+  border: 1px solid var(--wb-line) !important;
+  background: var(--wb-surface) !important;
+  box-shadow: 0 28px 70px rgba(8, 15, 28, 0.26) !important;
+}
+
+.auth-panel {
+  max-width: 640px !important;
+  margin: 0 auto !important;
+}
+
+.toast {
+  border-radius: 14px !important;
+  background: var(--wb-primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18) !important;
+}
+
+@media (max-width: 1180px) {
+  .site-nav-inner,
+  .hero,
+  .dashboard,
+  .hr-grid,
+  .employee-info-desktop,
+  .task-toolbar,
+  .workspace-hub-head {
+    grid-template-columns: 1fr !important;
+  }
+
+  .payroll-hero-grid,
+  .hr-metrics,
+  .employee-info-section-grid,
+  .workspace-shortcuts {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 18px 14px 52px !important;
+  }
+
+  .site-nav,
+  .hero,
+  .workspace-hub,
+  .dashboard,
+  .hr-workspace,
+  .employee-info-view {
+    width: min(100%, calc(100vw - 28px)) !important;
+  }
+
+  .site-nav-inner,
+  .site-menu,
+  .site-actions {
+    gap: 10px !important;
+  }
+
+  .site-menu {
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+  }
+
+  .hero-copy-wrap,
+  .workspace-hub-shell,
+  .panel,
+  .archive-panel,
+  .auth-panel {
+    padding: 18px !important;
+    border-radius: 22px !important;
+  }
+
+  .hero-copy-wrap h1 {
+    font-size: clamp(2.4rem, 11vw, 3.6rem) !important;
+  }
+
+  .hero-meta,
+  .payroll-hero-grid,
+  .hr-metrics,
+  .workspace-shortcuts,
+  .task-form-grid,
+  .hr-form-grid,
+  .portfolio-form-grid,
+  .employee-info-section-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .task-item {
+    grid-template-columns: 1fr !important;
+  }
+
+  .task-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+}

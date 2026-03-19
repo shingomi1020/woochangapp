@@ -1912,25 +1912,16 @@ function renderDayCard(config) {
     .slice(0, state.calendarMode === "week" ? 3 : 2)
     .map((task) => {
       const title = escapeHtml(task.description || task.title || task.client || "업무");
-      const client = escapeHtml(task.client || "");
       const clientAttr = escapeHtmlAttribute(task.client || "");
       const clientLinkAttr = task.client ? ` data-client-open="${clientAttr}"` : "";
-      const statusLabel = escapeHtml(getStatusLabel(task.status));
-      const priorityLabel = escapeHtml(getPriorityLabel(task.priority));
 
       return `
-        <div class="mini-event priority-${task.priority} status-${task.status}">
+        <div class="mini-event">
           <div class="mini-event-marker" aria-hidden="true">
             <span class="mini-event-dot"></span>
-            <span class="mini-event-state-icon"></span>
           </div>
           <div class="mini-event-body">
             <span class="mini-event-title mini-event-link"${clientLinkAttr}>${title}</span>
-            <div class="mini-event-meta">
-              <span class="mini-event-status">${statusLabel}</span>
-              <span class="mini-event-priority-label">${priorityLabel}</span>
-            </div>
-            ${task.client ? `<span class="mini-event-sub">${client}</span>` : ""}
           </div>
         </div>
       `;
