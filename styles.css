@@ -2572,6 +2572,8 @@ h2 {
   display: grid;
   place-items: center;
   padding: 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .modal-backdrop {
@@ -2586,6 +2588,10 @@ h2 {
   z-index: 1;
   width: min(760px, 100%);
   padding: 24px;
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border-radius: 30px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 255, 0.96));
   border: 1px solid rgba(47, 99, 233, 0.12);
@@ -2611,6 +2617,8 @@ h2 {
   padding: 0;
   border: 0;
   background: transparent;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .attendance-modal-dialog {
@@ -3201,6 +3209,7 @@ h2 {
 
   .modal-dialog {
     padding: 18px;
+    max-height: calc(100vh - 28px);
     border-radius: 24px;
   }
 
