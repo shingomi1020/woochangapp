@@ -7554,3 +7554,16 @@ body[data-device="mobile"] .panel-calendar .calendar-grid.calendar-mode-month .m
 body[data-device="mobile"] .panel-calendar .calendar-grid.calendar-mode-month .mini-event-title {
   font-size: 0.62rem !important;
 }
+
+/* 2026-03 shared content width pass */
+body[data-device="desktop"] .site-nav,
+body[data-device="desktop"] .hero,
+body[data-device="desktop"] .workspace-hub,
+body[data-device="desktop"] .dashboard,
+body[data-device="desktop"] .hr-workspace,
+body[data-device="desktop"] .employee-info-view {
+  width: 1360px !important;
+  max-width: 1360px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
