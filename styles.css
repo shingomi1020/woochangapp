@@ -7888,3 +7888,17 @@ body[data-device] .workspace-card.is-primary:hover {
 .panel-calendar .calendar-grid.calendar-mode-month .mini-event.priority-low .mini-event-dot {
   background: #94a3b8 !important;
 }
+
+/* 2026-03 employee info width alignment pass */
+body[data-device="desktop"] #employeeinfoView .employee-info-desktop {
+  width: 100% !important;
+  grid-template-columns: 300px minmax(0, 1fr) !important;
+  gap: 24px !important;
+}
+
+body[data-device="desktop"] #employeeinfoView .employee-info-main,
+body[data-device="desktop"] #employeeinfoView .employee-info-profile-card,
+body[data-device="desktop"] #employeeinfoView .employee-info-sections {
+  width: 100% !important;
+  min-width: 0 !important;
+}
