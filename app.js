@@ -1,6 +1,6 @@
 ﻿function ensurePortfolioNavigationAndView() {
   const siteMenu = document.querySelector(".site-menu");
-  if (siteMenu && !siteMenu.querySelector('[data-view="portfolio"]')) {
+  if (siteMenu && !siteMenu.classList.contains("topbar-nav") && !siteMenu.querySelector('[data-view="portfolio"]')) {
     const portfolioButton = document.createElement("button");
     portfolioButton.className = "site-menu-link";
     portfolioButton.type = "button";
@@ -2956,11 +2956,14 @@ function switchView(view, shouldSyncHash = true) {
     authTarget?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   workspaceTabs.forEach((tab) => {
+    const tabView = tab.dataset.view;
     const isActive =
-      (view === "client" && tab.dataset.view === "calendar") ||
-      (view === "calendar" && tab.dataset.view === "calendar") ||
-      (view === "todos" && tab.dataset.view === "todos") ||
-      tab.dataset.view === view;
+      (["calendar", "client"].includes(view) && tabView === "calendar") ||
+      (view === "todos" && tabView === "todos") ||
+      (["hr", "employeeinfo", "portfolio", "estimate", "statement"].includes(view) && tabView === "hr") ||
+      (view === "payroll" && tabView === "payroll") ||
+      (view === "members" && tabView === "members") ||
+      tabView === view;
     tab.classList.toggle("active", isActive);
   });
   if (shouldSyncHash) {
