@@ -1015,7 +1015,7 @@ attachmentPreviewOpenBtn?.addEventListener("click", () => {
   if (!attachment?.fileData) {
     return;
   }
-  window.open(attachment.fileData, "_blank", "noopener,noreferrer");
+  downloadAttachmentFile(attachment);
 });
 
 employeeInfoBackBtn?.addEventListener("click", () => {
@@ -1960,6 +1960,20 @@ function closeMemberModal() {
 
 function getPreviewAttachment() {
   return state.taskAttachments.find((attachment) => String(attachment.id) === String(state.previewAttachmentId)) || null;
+}
+
+function downloadAttachmentFile(attachment) {
+  if (!attachment?.fileData) {
+    return;
+  }
+
+  const link = document.createElement("a");
+  link.href = attachment.fileData;
+  link.download = attachment.fileName || "attachment";
+  link.rel = "noopener";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
 
 function closeAttachmentPreviewModal() {
@@ -3050,6 +3064,42 @@ function renderTaskAttachmentPanels() {
   renderAttachmentUsage();
   bindAttachmentRemoveButtons();
   bindAttachmentPreviewButtons();
+}
+
+function openAttachmentPreviewModal(attachment) {
+  if (!attachmentPreviewModal || !attachment?.fileData) {
+    return;
+  }
+
+  state.previewAttachmentId = attachment.id;
+  attachmentPreviewTitle.textContent = attachment.fileName || "첨부파일 보기";
+  attachmentPreviewName.textContent = attachment.fileName || "-";
+  attachmentPreviewType.textContent = attachment.mimeType || getAttachmentKindLabel(attachment.mimeType);
+  attachmentPreviewSize.textContent = formatFileSize(attachment.fileSize || 0);
+
+  if (attachment.isImage) {
+    attachmentPreviewSubtitle.textContent = "이미지는 이 화면에서 크게 확인할 수 있습니다.";
+    if (attachmentPreviewOpenBtn) {
+      attachmentPreviewOpenBtn.hidden = true;
+    }
+    attachmentPreviewCanvas.innerHTML = `<img src="${attachment.fileData}" alt="${escapeHtml(attachment.fileName || "첨부 이미지")}" />`;
+  } else {
+    attachmentPreviewSubtitle.textContent = "일반 파일은 다운로드해서 확인할 수 있습니다.";
+    if (attachmentPreviewOpenBtn) {
+      attachmentPreviewOpenBtn.hidden = false;
+      attachmentPreviewOpenBtn.textContent = "다운로드";
+    }
+    attachmentPreviewCanvas.innerHTML = `
+      <div class="attachment-preview-file">
+        <span class="attachment-preview-filetype">${escapeHtml(getAttachmentKindLabel(attachment.mimeType))}</span>
+        <strong>${escapeHtml(attachment.fileName || "첨부파일")}</strong>
+        <p>이 파일은 미리보기를 지원하지 않아 다운로드로 제공합니다.</p>
+      </div>
+    `;
+  }
+
+  attachmentPreviewModal.hidden = false;
+  document.body.classList.add("modal-open");
 }
 
 async function attachmentBlobToDataUrl(blob) {
