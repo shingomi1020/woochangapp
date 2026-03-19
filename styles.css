@@ -8034,3 +8034,177 @@ body[data-device] .site-nav .site-menu-link.active {
 .site-nav .icon-chip svg {
   fill: currentColor !important;
 }
+
+/* 2026-03 calendar structure and status pass */
+.panel-calendar .weekdays span:first-child {
+  color: #dc2626 !important;
+}
+
+.panel-calendar .weekdays span:last-child {
+  color: #2563eb !important;
+}
+
+.panel-calendar .mini-event-marker {
+  display: grid !important;
+  align-content: start !important;
+  gap: 4px !important;
+  padding-top: 3px !important;
+}
+
+.panel-calendar .mini-event-state-icon {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 2px !important;
+  background: #94a3b8 !important;
+}
+
+.panel-calendar .mini-event-meta {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+.panel-calendar .mini-event-status,
+.panel-calendar .mini-event-priority-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 0.61rem !important;
+  line-height: 1.1 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.panel-calendar .mini-event.status-todo .mini-event-state-icon {
+  background: #2563eb !important;
+}
+
+.panel-calendar .mini-event.status-paused .mini-event-state-icon {
+  background: #d97706 !important;
+}
+
+.panel-calendar .mini-event.status-done .mini-event-state-icon {
+  background: #059669 !important;
+}
+
+.panel-calendar .mini-event.status-todo .mini-event-status {
+  color: #2563eb !important;
+}
+
+.panel-calendar .mini-event.status-paused .mini-event-status {
+  color: #b45309 !important;
+}
+
+.panel-calendar .mini-event.status-done .mini-event-status {
+  color: #047857 !important;
+}
+
+.panel-calendar .mini-event.priority-high .mini-event-priority-label {
+  color: #dc2626 !important;
+}
+
+.panel-calendar .mini-event.priority-medium .mini-event-priority-label {
+  color: #475569 !important;
+}
+
+.panel-calendar .mini-event.priority-low .mini-event-priority-label {
+  color: #94a3b8 !important;
+}
+
+.panel-calendar .mini-event.status-done .mini-event-title {
+  color: #475569 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-card {
+  display: grid !important;
+  grid-template-rows: 50px minmax(0, 1fr) !important;
+  align-content: start !important;
+  padding: 0 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-top,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-top {
+  position: relative !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  min-height: 50px !important;
+  margin: 0 !important;
+  padding: 10px 10px 8px !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  z-index: 1 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-outside .day-top,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-card.is-outside .day-top {
+  background: #f8fafc !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-selected .day-top,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-card.is-selected .day-top {
+  background: #f3f6f9 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-sunday .day-top {
+  box-shadow: inset 0 2px 0 #dc2626 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-saturday .day-top {
+  box-shadow: inset 0 2px 0 #2563eb !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-sunday:not(.is-selected):not(.is-today) .day-number {
+  color: #dc2626 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-card.is-saturday:not(.is-selected):not(.is-today) .day-number {
+  color: #2563eb !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .day-events,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .day-events {
+  align-content: start !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  padding: 8px 10px 10px !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .mini-event {
+  grid-template-columns: 12px minmax(0, 1fr) !important;
+  gap: 8px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event-body,
+body[data-device] .panel-calendar .calendar-grid.calendar-mode-month .mini-event-body {
+  gap: 2px !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event-title,
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event-link {
+  font-size: 0.7rem !important;
+  line-height: 1.2 !important;
+  font-weight: 700 !important;
+}
+
+.panel-calendar .calendar-grid.calendar-mode-month .mini-event-sub {
+  display: none !important;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-grid.calendar-mode-month .day-card {
+  grid-template-rows: 42px minmax(0, 1fr) !important;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-grid.calendar-mode-month .day-top {
+  min-height: 42px !important;
+  padding: 8px 8px 6px !important;
+}
+
+body[data-device="mobile"] .panel-calendar .calendar-grid.calendar-mode-month .day-events {
+  padding: 6px 8px 8px !important;
+}

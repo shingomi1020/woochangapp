@@ -1905,6 +1905,9 @@ function createDayConfig(date, isOutside) {
 }
 
 function renderDayCard(config) {
+  const weekday = config.date.getDay();
+  const isToday = config.dateKey === formatDateKey(today);
+  const weekdayClass = weekday === 0 ? "is-sunday" : weekday === 6 ? "is-saturday" : "";
   const taskPreview = config.tasks
     .slice(0, state.calendarMode === "week" ? 3 : 2)
     .map((task) => {
@@ -1912,12 +1915,21 @@ function renderDayCard(config) {
       const client = escapeHtml(task.client || "");
       const clientAttr = escapeHtmlAttribute(task.client || "");
       const clientLinkAttr = task.client ? ` data-client-open="${clientAttr}"` : "";
+      const statusLabel = escapeHtml(getStatusLabel(task.status));
+      const priorityLabel = escapeHtml(getPriorityLabel(task.priority));
 
       return `
-        <div class="mini-event priority-${task.priority}">
-          <span class="mini-event-dot" aria-hidden="true"></span>
+        <div class="mini-event priority-${task.priority} status-${task.status}">
+          <div class="mini-event-marker" aria-hidden="true">
+            <span class="mini-event-dot"></span>
+            <span class="mini-event-state-icon"></span>
+          </div>
           <div class="mini-event-body">
             <span class="mini-event-title mini-event-link"${clientLinkAttr}>${title}</span>
+            <div class="mini-event-meta">
+              <span class="mini-event-status">${statusLabel}</span>
+              <span class="mini-event-priority-label">${priorityLabel}</span>
+            </div>
             ${task.client ? `<span class="mini-event-sub">${client}</span>` : ""}
           </div>
         </div>
@@ -1927,7 +1939,7 @@ function renderDayCard(config) {
 
   return `
     <button
-      class="day-card ${config.isOutside ? "is-outside" : ""} ${config.dateKey === state.selectedDateKey ? "is-selected" : ""}"
+      class="day-card ${config.isOutside ? "is-outside" : ""} ${config.dateKey === state.selectedDateKey ? "is-selected" : ""} ${isToday ? "is-today" : ""} ${weekdayClass}"
       type="button"
       data-date="${config.dateKey}"
       aria-label="${text.ariaDay(config.dateKey, config.tasks.length)}"
