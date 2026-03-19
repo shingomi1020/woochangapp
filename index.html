@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260319-67" />
+    <link rel="stylesheet" href="styles.css?v=20260319-68" />
   </head>
   <body>
     <div class="app-shell">
@@ -89,7 +89,7 @@
           <div class="connection-strip">
             <span id="connectionBadge" class="connection-badge is-checking">연결 확인 중</span>
             <p id="connectionMessage" class="connection-message">Supabase 연결 상태를 확인하는 중입니다.</p>
-          <p id="buildStamp" class="build-stamp">Build 2026-03-19 67</p>
+          <p id="buildStamp" class="build-stamp">Build 2026-03-19 68</p>
           </div>
         </div>
 
@@ -1073,7 +1073,46 @@
       </div>
     </div>
 
+    <div id="attachmentPreviewModal" class="modal" hidden>
+      <div id="attachmentPreviewBackdrop" class="modal-backdrop"></div>
+      <div class="modal-dialog attachment-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="attachmentPreviewTitle">
+        <div class="modal-head">
+          <div>
+            <p class="section-label">첨부 미리보기</p>
+            <h3 id="attachmentPreviewTitle">첨부파일 보기</h3>
+            <p id="attachmentPreviewSubtitle" class="modal-subtitle">이미지는 크게 보고, 파일은 새 창에서 열 수 있습니다.</p>
+          </div>
+          <button id="attachmentPreviewCloseBtn" type="button" class="ghost-btn icon-only" aria-label="첨부 미리보기 닫기">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4 6.4 5Z" />
+            </svg>
+          </button>
+        </div>
+        <div class="attachment-preview-body">
+          <div id="attachmentPreviewCanvas" class="attachment-preview-canvas"></div>
+          <div class="attachment-preview-meta">
+            <div class="attachment-preview-row">
+              <span>파일명</span>
+              <strong id="attachmentPreviewName">-</strong>
+            </div>
+            <div class="attachment-preview-row">
+              <span>형식</span>
+              <strong id="attachmentPreviewType">-</strong>
+            </div>
+            <div class="attachment-preview-row">
+              <span>용량</span>
+              <strong id="attachmentPreviewSize">-</strong>
+            </div>
+          </div>
+          <div class="task-form-actions">
+            <button id="attachmentPreviewOpenBtn" type="button" class="ghost-btn">새 창에서 열기</button>
+            <button id="attachmentPreviewDoneBtn" type="button" class="submit-btn task-submit">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__supabaseScriptFailed = true;"></script>
-    <script src="app.js?v=20260319-67"></script>
+    <script src="app.js?v=20260319-68"></script>
   </body>
 </html>

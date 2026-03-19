@@ -5458,6 +5458,112 @@ body[data-device="desktop"] #employeeinfoView .employee-record-item {
   box-shadow: none !important;
 }
 
+:where(
+  .topbar,
+  .topbar-main,
+  .main-nav,
+  .session-summary,
+  .session-card,
+  .panel,
+  .metric-card,
+  .task-item,
+  .schedule-item,
+  .member-card,
+  .member-card-main,
+  .employee-info-shell,
+  .employee-info-hero,
+  .employee-info-main,
+  .employee-info-aside,
+  .employee-info-section-card,
+  .employee-info-facts div,
+  .attendance-table-wrap,
+  .attendance-table th,
+  .attendance-table td,
+  .day-card,
+  .employee-month-cell,
+  .employee-doc-item,
+  .notice-card,
+  .payroll-summary-card,
+  .attendance-summary-card
+) {
+  min-width: 0;
+  max-width: 100%;
+}
+
+:where(
+  .topbar,
+  .main-nav,
+  .session-summary,
+  .session-card,
+  .panel,
+  .metric-card,
+  .task-item,
+  .schedule-item,
+  .member-card,
+  .member-card-main,
+  .employee-info-shell,
+  .employee-info-hero,
+  .employee-info-main,
+  .employee-info-aside,
+  .employee-info-section-card,
+  .employee-info-facts div,
+  .attendance-table th,
+  .attendance-table td,
+  .day-card,
+  .employee-month-cell,
+  .employee-doc-item,
+  .notice-card,
+  .payroll-summary-card,
+  .attendance-summary-card
+) :where(strong, span, p, a, button, label, small) {
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.member-meta span,
+.employee-profile-meta span,
+.employee-card-subtitle,
+.member-profile-line,
+.member-profile-note,
+.attendance-cell-strong,
+.attachment-chip-name,
+.task-attachment-name,
+.employee-info-facts strong,
+.employee-info-notes p,
+.employee-doc-item span,
+.employee-doc-item strong,
+.task-description,
+.task-description-primary,
+.schedule-description-strong,
+.day-card .mini-event-text,
+.day-card .mini-event-client {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.attendance-table th,
+.attendance-table td,
+.employee-info-facts div,
+.member-card-main,
+.task-content,
+.schedule-item,
+.employee-doc-item,
+.employee-info-list-item,
+.day-card {
+  overflow: hidden;
+}
+
+.attendance-table td > *,
+.attendance-table th > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .hero-copy-wrap::before,
 .hero-copy-wrap::after,
 .metric-card::before {
