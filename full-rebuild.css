@@ -1,0 +1,330 @@
+body.rebuild-v3 {
+  background:
+    radial-gradient(circle at top left, rgba(196, 113, 41, 0.16), transparent 24rem),
+    radial-gradient(circle at right top, rgba(24, 84, 74, 0.18), transparent 28rem),
+    linear-gradient(180deg, #f6f0e6 0%, #efe6d8 44%, #e6dccd 100%);
+}
+
+body.rebuild-v3 .app-shell {
+  width: min(1600px, calc(100% - 28px));
+  padding-top: 14px;
+}
+
+body.rebuild-v3 .rebuild-v3-shell {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+body.rebuild-v3 .rebuild-v3-sidebar {
+  position: sticky;
+  top: 14px;
+  display: grid;
+  gap: 16px;
+  align-self: start;
+}
+
+body.rebuild-v3 .rebuild-v3-content {
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+}
+
+body.rebuild-v3 .site-nav {
+  position: static;
+  margin: 0;
+}
+
+body.rebuild-v3 .site-nav-inner {
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(20, 31, 28, 0.96), rgba(29, 46, 41, 0.94));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 54px rgba(22, 31, 28, 0.22);
+}
+
+body.rebuild-v3 .site-brand strong,
+body.rebuild-v3 .site-brand p,
+body.rebuild-v3 .session-badge strong,
+body.rebuild-v3 .session-badge span {
+  color: #f5efe4;
+}
+
+body.rebuild-v3 .site-menu {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+body.rebuild-v3 .site-menu-link {
+  justify-content: flex-start;
+  min-height: 44px;
+  padding-inline: 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.06);
+  color: #f4ecdf;
+}
+
+body.rebuild-v3 .site-menu-link.active {
+  background: linear-gradient(135deg, #d68634 0%, #c16424 100%);
+  border-color: transparent;
+  color: #fff;
+}
+
+body.rebuild-v3 .site-actions {
+  display: grid;
+  gap: 10px;
+}
+
+body.rebuild-v3 .session-badge {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.rebuild-v3 .ghost-btn {
+  border-radius: 14px;
+}
+
+body.rebuild-v3 .rebuild-v3-sidecard {
+  padding: 20px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(255, 250, 243, 0.94), rgba(244, 235, 220, 0.96));
+  border: 1px solid rgba(176, 151, 122, 0.22);
+  box-shadow: 0 16px 40px rgba(64, 50, 32, 0.12);
+}
+
+body.rebuild-v3 .rebuild-v3-sidecard h2 {
+  margin: 0 0 10px;
+  font-family: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
+  font-size: 1.4rem;
+}
+
+body.rebuild-v3 .rebuild-v3-sidecard p:last-child {
+  margin: 0;
+  color: #5d655f;
+  line-height: 1.6;
+}
+
+body.rebuild-v3 .hero .workbench-summary {
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);
+  padding: 34px;
+  border-radius: 34px;
+  background:
+    linear-gradient(135deg, rgba(255, 252, 247, 0.96), rgba(250, 243, 232, 0.92)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5));
+  border: 1px solid rgba(176, 151, 122, 0.16);
+  box-shadow: 0 24px 62px rgba(72, 60, 42, 0.12);
+}
+
+body.rebuild-v3 .workbench-summary-actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+body.rebuild-v3 .hero-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+body.rebuild-v3 .hero-btn {
+  min-height: 54px;
+  border-radius: 18px;
+}
+
+body.rebuild-v3 .hero-btn.primary {
+  background: linear-gradient(135deg, #1c6b60 0%, #13443e 100%);
+}
+
+body.rebuild-v3 .hero-btn.secondary {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+body.rebuild-v3 .connection-strip {
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(246, 240, 230, 0.96), rgba(237, 226, 211, 0.86));
+}
+
+body.rebuild-v3 .workspace-hub-shell {
+  padding: 22px;
+  border-radius: 28px;
+}
+
+body.rebuild-v3 .workspace-shortcuts {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body.rebuild-v3 .workspace-card {
+  min-height: 140px;
+  justify-content: space-between;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 239, 229, 0.98));
+}
+
+body.rebuild-v3 #tasksView,
+body.rebuild-v3 .rebuild-v3-view {
+  display: grid;
+  gap: 20px;
+}
+
+body.rebuild-v3 #tasksView {
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  align-items: start;
+}
+
+body.rebuild-v3 .rebuild-v3-context,
+body.rebuild-v3 .rebuild-panel {
+  padding: 18px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(26, 35, 32, 0.95), rgba(34, 49, 44, 0.94));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #f7f2e8;
+  box-shadow: 0 18px 44px rgba(22, 31, 28, 0.18);
+}
+
+body.rebuild-v3 .rebuild-v3-context h3,
+body.rebuild-v3 .rebuild-panel h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+
+body.rebuild-v3 .rebuild-v3-context p,
+body.rebuild-v3 .rebuild-panel p {
+  margin: 0;
+  color: rgba(247, 242, 232, 0.74);
+  line-height: 1.6;
+}
+
+body.rebuild-v3 .rebuild-v3-points,
+body.rebuild-v3 .rebuild-v3-insight-list,
+body.rebuild-v3 .rebuild-insight-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+body.rebuild-v3 .rebuild-v3-point,
+body.rebuild-v3 .rebuild-insight-item {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(247, 242, 232, 0.88);
+  line-height: 1.5;
+}
+
+body.rebuild-v3 .panel,
+body.rebuild-v3 .task-controls,
+body.rebuild-v3 .task-toolbar,
+body.rebuild-v3 .archive-panel,
+body.rebuild-v3 .attendance-calendar-panel,
+body.rebuild-v3 .payroll-detail-panel {
+  border-radius: 28px;
+}
+
+body.rebuild-v3 .task-toolbar {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body.rebuild-v3 .task-item {
+  padding: 20px;
+  border-radius: 24px;
+  transition: none;
+}
+
+body.rebuild-v3 .task-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+}
+
+body.rebuild-v3 .task-inline-controls,
+body.rebuild-v3 .task-choice-group,
+body.rebuild-v3 .task-choice-btn {
+  position: relative;
+  z-index: 2;
+}
+
+body.rebuild-v3 .task-item::before {
+  pointer-events: none;
+}
+
+body.rebuild-v3 .reveal,
+body.rebuild-v3 .task-item,
+body.rebuild-v3 .day-card,
+body.rebuild-v3 .workspace-card,
+body.rebuild-v3 .site-menu-link {
+  animation: none;
+}
+
+body.rebuild-v3 .day-card {
+  min-height: 170px;
+}
+
+body.rebuild-v3 .schedule-card {
+  border-radius: 24px;
+}
+
+body.rebuild-v3 .attendance-ledger,
+body.rebuild-v3 .employee-info-section-card,
+body.rebuild-v3 .member-card,
+body.rebuild-v3 .portfolio-card {
+  border-radius: 24px;
+}
+
+body.rebuild-v3 .payroll-workbench {
+  grid-template-columns: minmax(0, 1fr) 360px;
+}
+
+body.rebuild-v3 .payroll-detail-panel {
+  position: sticky;
+  top: 16px;
+}
+
+@media (max-width: 1180px) {
+  body.rebuild-v3 .rebuild-v3-shell {
+    grid-template-columns: 1fr;
+  }
+
+  body.rebuild-v3 .rebuild-v3-sidebar {
+    position: static;
+  }
+
+  body.rebuild-v3 .site-nav-inner {
+    grid-template-columns: 1fr;
+  }
+
+  body.rebuild-v3 .site-menu {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  body.rebuild-v3 .workbench-summary-actions,
+  body.rebuild-v3 .payroll-workbench {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  body.rebuild-v3 .app-shell {
+    width: min(100% - 16px, 100%);
+  }
+
+  body.rebuild-v3 .site-menu {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.rebuild-v3 .hero .workbench-summary,
+  body.rebuild-v3 .workspace-shortcuts,
+  body.rebuild-v3 .hero-actions {
+    grid-template-columns: 1fr;
+  }
+}
