@@ -881,18 +881,100 @@ body .workspace-hub[hidden] {
 
   body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-tasks {
     grid-column: 1 !important;
+    grid-row: 1 !important;
   }
 
   body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar {
     grid-column: 2 !important;
+    grid-row: 1 !important;
     align-self: start !important;
     display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto auto auto !important;
+    grid-template-areas:
+      "head"
+      "topline"
+      "calendar"
+      "schedule" !important;
     gap: 14px !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar > .panel-head {
+    grid-area: head !important;
+    margin-bottom: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 10px !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar > .panel-head > div:first-child,
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar > .panel-head h2,
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar > .panel-head .section-label {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar > .panel-head h2 {
+    font-size: 1.55rem !important;
+    line-height: 1.12 !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .calendar-toolbar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .calendar-nav,
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .calendar-view-switch {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .calendar-view-switch {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .calendar-view-switch [data-calendar-view="list"] {
+    display: none !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .calendar-nav .ghost-btn,
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .calendar-view-switch .chip {
+    width: 100% !important;
+    min-height: 40px !important;
+    padding-inline: 0 !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar > .calendar-topline {
+    grid-area: topline !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar > .calendar-scroll {
+    grid-area: calendar !important;
+    min-width: 0 !important;
+    display: block !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar > .schedule-card {
+    grid-area: schedule !important;
+    position: static !important;
+    top: auto !important;
+    margin: 0 !important;
   }
 
   body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .calendar-grid.calendar-mode-month .day-card,
   body[data-device] #tasksView[data-board-view="todos"] .panel-calendar .calendar-grid.calendar-mode-month .day-card {
     min-height: 96px !important;
+  }
+
+  body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .calendar-grid.calendar-mode-month {
+    border-radius: 14px !important;
   }
 
   body[data-device="desktop"] #tasksView[data-board-view="todos"] .panel-calendar .mini-event:nth-child(n + 3) {
