@@ -41,6 +41,12 @@ VITE_SUPABASE_TABLE_NAME=todos
 
 현재 SQL 스키마는 빠른 연결용으로 `anon`과 `authenticated`에 모두 열려 있습니다. 실제 서비스로 운영할 때는 인증과 RLS 정책을 더 좁혀야 합니다.
 
+GitHub Pages 배포에서 Supabase를 쓰려면 저장소의 `Settings > Secrets and variables > Actions > Variables`에 아래 값을 추가하면 됩니다.
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_SUPABASE_TABLE_NAME` (`todos` 권장)
+
 ## GitHub 연결
 
 현재 폴더를 GitHub 저장소에 올릴 때 기본 순서는 아래와 같습니다.
